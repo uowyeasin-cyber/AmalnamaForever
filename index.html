@@ -1,0 +1,1162 @@
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b2226"></head><body style="margin:0"><title>Amalnama</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="description" content="Amalnama — ইবাদত, ক্লাস, পড়াশোনা ও To-Do-র দৈনিক আমলনামা, Google Calendar রিমাইন্ডার ও ল্যাপটপ-মোবাইল সিঙ্কসহ"><meta property="og:title" content="Amalnama"><meta property="og:description" content="দৈনিক আমলনামা · রুটিন · Google Calendar রিমাইন্ডার"><meta property="og:image" content="icon-512.png"><script src="config.js"></script><script src="gshim.js"></script><script src="https://accounts.google.com/gsi/client" async defer></script><style>#gbar{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin:0 0 12px;padding:12px 14px;border-radius:14px;border:1px solid var(--gold);background:var(--gold-soft);font-size:.9rem}#gbar.on{border-color:var(--line);background:var(--accent-soft);font-size:.82rem;padding:8px 12px}#gbar .gbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;padding:9px 14px;border-radius:11px;cursor:pointer}#gbar.on .gbtn{font-weight:400;padding:5px 10px;font-size:.78rem}</style><meta name="apple-mobile-web-app-title" content="Amalnama"><meta name="application-name" content="Amalnama">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Anek+Bangla:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f4eee1;--bg2:#ece3cf;--surface:#fffcf4;--sunk:#efe6d3;--ink:#172723;--muted:#676656;--line:#e0d3b6;
+  --gold:#9c7a36;--gold-2:#c9a45c;--gold-soft:#f4e9d0;--accent:#146a59;--accent-ink:#ffffff;--accent-soft:#dcefe7;--glow:rgb(20 106 89 / .14);
+  --warn:#a85a16;--warn-soft:#f8e7d4;
+  --c-ibadat:#a07a2e;--c-class:#2c6390;--c-study:#146a59;--c-life:#9a5a4a;--c-todo:#6a4fa0;
+  --hero-ink:#f3ecdc;--hero-bg:#0b2226;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#061216;--bg2:#08191e;--surface:#0c2127;--sunk:#112d35;--ink:#f0e9d8;--muted:#98afaa;--line:#1d3b43;
+  --gold:#d9b56b;--gold-2:#e9cd8c;--gold-soft:#2b2819;--accent:#3cc29b;--accent-ink:#03120d;--accent-soft:#0f3a30;--glow:rgb(60 194 155 / .22);
+  --warn:#e3a364;--warn-soft:#352615;
+  --c-ibadat:#d9b56b;--c-class:#7fb4e3;--c-study:#3cc29b;--c-life:#e0a08e;--c-todo:#b59cf0;--hero-bg:#040d10;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#061216;--bg2:#08191e;--surface:#0c2127;--sunk:#112d35;--ink:#f0e9d8;--muted:#98afaa;--line:#1d3b43;
+  --gold:#d9b56b;--gold-2:#e9cd8c;--gold-soft:#2b2819;--accent:#3cc29b;--accent-ink:#03120d;--accent-soft:#0f3a30;--glow:rgb(60 194 155 / .22);
+  --warn:#e3a364;--warn-soft:#352615;
+  --c-ibadat:#d9b56b;--c-class:#7fb4e3;--c-study:#3cc29b;--c-life:#e0a08e;--c-todo:#b59cf0;--hero-bg:#040d10;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;font-size:16px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:16px 64px}
+h1,h2,h3{font-family:"Anek Bangla","Hind Siliguri",sans-serif;margin:0;text-wrap:balance;font-weight:700}
+h2{font-size:1.15rem}
+.ar{font-family:"Amiri",serif;direction:rtl}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- hero */
+.hero{position:relative;overflow:hidden;border-radius:22px;background:radial-gradient(120% 90% at 50% 0%,#12403f 0%,var(--hero-bg) 62%);color:var(--hero-ink);padding:22px 20px 20px;margin-bottom:16px;border:1px solid color-mix(in oklab,var(--gold-2) 35%,transparent)}
+.hero .pat{position:absolute;inset:0;width:100%;height:100%;color:var(--gold-2);opacity:.13;pointer-events:none}
+.hero .inner{position:relative;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.arch{width:84px;height:100px;flex:none}
+.bism{font-size:1.25rem;color:var(--gold-2);line-height:1.6;margin:0}
+.hero h1{font-size:1.7rem;color:#fbf6ea;margin-top:2px}
+.dates{font-size:.86rem;color:#c9d6d1;margin-top:4px}
+.dates .hj{color:var(--gold-2)}
+.hero .quote{position:relative;margin:16px 0 0;padding:10px 14px;border-radius:12px;background:rgb(255 255 255 / .06);border:1px solid rgb(233 205 140 / .22);font-size:.96rem}
+.hero .quote b{color:#fff6e0;font-weight:600}
+.sys{position:relative;display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:#9fc4b9;text-transform:uppercase}
+.sys i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#3cc29b;box-shadow:0 0 8px #3cc29b;margin-right:6px;vertical-align:1px}
+.sys i.off{background:#e3a364;box-shadow:0 0 8px #e3a364}
+@media (max-width:460px){.hero .inner{grid-template-columns:1fr;justify-items:center;text-align:center}.arch{width:70px;height:84px}.sys{justify-content:center}}
+
+/* ---------- tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;background:color-mix(in oklab,var(--surface) 88%,transparent);backdrop-filter:blur(8px);padding:5px;border-radius:14px;margin-bottom:16px;border:1px solid var(--line)}
+.tabs button{border:0;background:none;color:var(--muted);font:inherit;font-weight:500;font-size:.8rem;padding:8px 1px;border-radius:10px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 14px var(--glow)}
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ---------- common */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px}
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.daynav .d{font-weight:600;text-align:center}
+.daynav .d small{display:block;color:var(--muted);font-weight:400;font-size:.82rem}
+.iconbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:40px;height:40px;border-radius:12px;font-size:1.15rem;cursor:pointer}
+.iconbtn:disabled{opacity:.3;cursor:default}
+.primary{background:var(--accent);color:var(--accent-ink);border:0;font:inherit;font-weight:600;padding:12px 22px;border-radius:12px;cursor:pointer;font-size:1.02rem;box-shadow:0 6px 18px var(--glow)}
+.primary:disabled{opacity:.5;cursor:default;box-shadow:none}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink);font:inherit;padding:10px 16px;border-radius:12px;cursor:pointer}
+.linkbtn{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:6px 2px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.status{color:var(--muted);font-size:.9rem}
+.muted{color:var(--muted)}
+.note{background:var(--warn-soft);padding:10px 12px;border-radius:12px;font-size:.9rem;margin-bottom:12px}
+
+/* ---------- progress ring */
+.overview{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.ring{position:relative;width:118px;height:118px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .v{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1.1}
+.ring .v b{font-family:var(--mono);font-size:1.55rem;font-weight:500}
+.ring .v small{display:block;font-size:.72rem;color:var(--muted)}
+.mini{display:grid;gap:8px}
+.mini div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:6px;font-size:.93rem}
+.mini div:last-child{border:0}
+.mini span:last-child{font-family:var(--mono);font-size:.88rem}
+@media (max-width:420px){.overview{grid-template-columns:1fr;justify-items:center}.mini{width:100%}}
+
+/* ---------- lists */
+.group{margin-top:16px}
+.ghead{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 6px}
+.ghead h3{font-size:.82rem;letter-spacing:.05em;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
+.ghead .ar{font-size:1rem;color:var(--gold)}
+.star{width:10px;height:10px;display:inline-block;transform:rotate(45deg);border-radius:2px}
+ul.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+ul.list li+li{border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:11px 14px}
+label.item{cursor:pointer}
+.item input[type=checkbox]{appearance:none;width:24px;height:24px;border:2px solid var(--muted);border-radius:7px;margin:0;display:grid;place-items:center;cursor:pointer;flex:none}
+.item input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--glow)}
+.item input[type=checkbox]:checked::after{content:"";width:6px;height:12px;border:solid var(--accent-ink);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.item input:disabled{opacity:.4;cursor:default}
+.item .lbl{font-weight:500;overflow-wrap:anywhere}
+.item .tm{color:var(--muted);font-family:var(--mono);font-size:.78rem;white-space:nowrap}
+.item.done .lbl{color:var(--muted);text-decoration:line-through}
+.prio{font-size:.68rem;font-weight:600;color:var(--warn);background:var(--warn-soft);padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
+.todo-row{grid-template-columns:auto 1fr auto auto}
+.del{border:0;background:none;color:var(--muted);font-size:1.15rem;cursor:pointer;padding:4px 6px;border-radius:8px}
+.del:hover{color:var(--warn)}
+.empty{padding:14px;color:var(--muted);font-size:.92rem}
+
+/* ---------- plan form */
+.addrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:10px}
+.addrow input[type=text],.addrow input[type=time],.addrow select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.addrow .opts{display:flex;gap:8px;grid-column:1/-1}
+.addrow .opts>*{flex:1}
+@media (max-width:460px){.addrow{grid-template-columns:1fr}.addrow .primary{width:100%}}
+
+/* ---------- results / reports */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.stat{background:var(--sunk);border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
+.stat .n{font-family:var(--mono);font-size:1.35rem;font-weight:500;line-height:1.3}
+.stat .k{color:var(--muted);font-size:.8rem}
+.cats{display:grid;gap:9px;margin-top:8px}
+.cat{display:grid;grid-template-columns:6.5em 1fr 3.2em;gap:10px;align-items:center;font-size:.92rem}
+.bar{height:8px;background:var(--sunk);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px}
+.cat span:last-child{text-align:right;font-family:var(--mono);font-size:.82rem}
+.tips{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.tips li{background:var(--sunk);border-radius:14px;padding:11px 13px;border:1px solid var(--line)}
+.ref{display:block;color:var(--muted);font-size:.86rem;margin-top:5px;border-left:3px solid var(--gold);padding-left:9px}
+.ai{margin-top:12px;padding:13px;border-radius:14px;background:var(--gold-soft);border:1px solid color-mix(in oklab,var(--gold) 30%,transparent);white-space:pre-wrap}
+.chart{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:160px;margin-top:12px}
+.col{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.col .b{width:100%;max-width:36px;background:linear-gradient(180deg,var(--gold-2),var(--accent));border-radius:8px 8px 3px 3px;min-height:3px}
+.col .b.none{background:var(--sunk)}
+.col .v{font-size:.7rem;color:var(--muted);font-family:var(--mono)}
+.col .l{font-size:.78rem;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}
+.cal .h{font-size:.72rem;color:var(--muted);text-align:center}
+.cal .c{aspect-ratio:1;border-radius:9px;background:var(--sunk);display:grid;place-items:center;font-size:.78rem;font-family:var(--mono)}
+.cal .c.e{background:none}
+.cal .c.today{outline:2px solid var(--gold);outline-offset:-2px}
+.legend{display:flex;gap:6px;align-items:center;font-size:.75rem;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.miss{list-style:none;padding:0;margin:8px 0 0}
+.miss li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.miss li span:last-child{color:var(--warn);font-family:var(--mono);font-size:.82rem;white-space:nowrap}
+h3.sub{font-size:1rem;margin-top:16px}
+.backup{margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+.backup p{color:var(--muted);font-size:.88rem;margin:4px 0 10px}
+.foot{margin-top:26px;text-align:center;color:var(--muted);font-size:.85rem}
+.foot .ar{font-size:1.2rem;color:var(--gold);display:block}
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+.adbar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,transparent,var(--bg) 30%)}
+.ad{max-width:720px;margin:0 auto;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;cursor:pointer;border:1px solid color-mix(in oklab,var(--gold-2) 45%,transparent);border-radius:16px;padding:10px 14px;color:var(--hero-ink);background:radial-gradient(140% 160% at 0% 0%,#15504a 0%,var(--hero-bg) 70%);box-shadow:0 10px 30px rgb(0 0 0 / .25);text-align:left;font:inherit;width:100%}
+.ad .cd{font-family:var(--mono);text-align:center;line-height:1.1;min-width:54px;padding:6px 8px;border-radius:12px;background:rgb(233 205 140 / .12);border:1px solid rgb(233 205 140 / .35);color:var(--gold-2)}
+.ad .cd b{display:block;font-size:1.25rem;font-weight:500}
+.ad .cd small{font-size:.62rem;letter-spacing:.06em}
+.ad .tt{min-width:0}
+.ad .tt .k{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#9fc4b9}
+.ad .tt .k.hot{color:var(--gold-2)}
+.ad .tt b{display:block;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fbf6ea}
+.ad .tt span{display:block;font-size:.78rem;color:#c9d6d1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad .dots{display:flex;gap:4px}
+.ad .dots i{width:6px;height:6px;border-radius:50%;background:rgb(255 255 255 / .25)}
+.ad .dots i.on{background:var(--gold-2)}
+.ad.hot{animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 3px rgb(233 205 140 / .35),0 10px 30px rgb(0 0 0 / .25)}}
+.fade{animation:fin .5s ease}
+@keyframes fin{from{opacity:0;transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.ad.hot,.fade{animation:none}}
+.evform{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.evform input,.evform textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0;width:100%}
+.evform .full{grid-column:1/-1}
+.evform label{display:grid;gap:4px;font-size:.8rem;color:var(--muted)}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px;align-items:start}
+.ev .when{font-family:var(--mono);text-align:center;min-width:56px;border-radius:12px;padding:6px;background:var(--gold-soft);border:1px solid color-mix(in oklab,var(--gold) 35%,transparent);color:var(--gold)}
+.ev .when b{display:block;font-size:1.3rem;font-weight:500;line-height:1.1}
+.ev .when small{font-size:.66rem}
+.ev h3{font-size:1.02rem}
+.ev .meta{color:var(--muted);font-size:.85rem;margin-top:2px}
+.ev .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.chip{font-size:.72rem;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.chip.hot{background:var(--warn-soft);color:var(--warn)}
+.chip.past{background:var(--sunk);color:var(--muted)}
+.ev a.cal{font-size:.85rem;color:var(--accent);font-weight:600;text-decoration:none}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:-4px 0 14px}
+.ad2{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;font:inherit;cursor:pointer;min-height:84px;padding:10px 12px;border-radius:16px;color:var(--hero-ink);border:1px solid color-mix(in oklab,var(--gold-2) 40%,transparent);background:radial-gradient(130% 150% at 100% 0%,#16463f 0%,var(--hero-bg) 70%);box-shadow:0 6px 18px rgb(0 0 0 / .18)}
+.ad2.as{background:radial-gradient(130% 150% at 100% 0%,#1d3a55 0%,var(--hero-bg) 70%)}
+.ad2::after{content:"";position:absolute;right:-18px;top:-18px;width:64px;height:64px;border:1px solid rgb(233 205 140 / .22);transform:rotate(45deg);border-radius:6px}
+.ad2 .cd{font-family:var(--mono);text-align:center;line-height:1.05;min-width:46px;padding:6px 6px;border-radius:11px;background:rgb(233 205 140 / .12);border:1px solid rgb(233 205 140 / .35);color:var(--gold-2)}
+.ad2 .cd b{display:block;font-size:1.25rem;font-weight:500}
+.ad2 .cd small{font-size:.58rem}
+.ad2 .tt{min-width:0}
+.ad2 .k{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#9fc4b9;display:flex;justify-content:space-between;gap:6px}
+.ad2 .k.hot{color:var(--gold-2)}
+.ad2 b.t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.9rem;line-height:1.3;color:#fbf6ea;margin-top:2px}
+.ad2 .s{display:block;font-size:.72rem;color:#c9d6d1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.ad2.hot{animation:glow 2.4s ease-in-out infinite}
+@media (max-width:380px){.ad2{grid-template-columns:1fr}.ad2 .cd{justify-self:start;display:flex;gap:6px;align-items:baseline;padding:3px 8px}.ad2 .cd b{font-size:1rem}}
+@media (prefers-reduced-motion:reduce){.ad2.hot{animation:none}}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:inline-block;padding:8px 14px;border-radius:99px;border:1px solid var(--line);cursor:pointer;font-weight:500}
+.seg input:checked+span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.evform select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.kind{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:6px;margin-right:6px;vertical-align:2px}
+.kind.exam{background:color-mix(in oklab,var(--warn) 18%,transparent);color:var(--warn)}
+.kind.assignment{background:color-mix(in oklab,var(--c-class) 18%,transparent);color:var(--c-class)}
+.ev.done h3{text-decoration:line-through;color:var(--muted)}
+.gbtn{border:1px solid var(--line);background:var(--surface);color:var(--accent);font:inherit;font-size:.78rem;font-weight:600;border-radius:99px;padding:2px 10px;cursor:pointer;margin-left:8px}
+.days7{display:flex;gap:5px;flex-wrap:wrap}
+.days7 label{position:relative}
+.days7 input{position:absolute;opacity:0;pointer-events:none}
+.days7 span{display:inline-grid;place-items:center;min-width:42px;padding:7px 6px;border-radius:10px;border:1px solid var(--line);cursor:pointer;font-size:.85rem}
+.days7 input:checked+span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.days7 input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.ritem{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px 14px}
+.ritem .lbl{font-weight:600}
+.ritem .meta{color:var(--muted);font-size:.8rem;font-family:var(--mono)}
+.ritem .act{display:flex;gap:4px;align-items:center}
+.sync{font-size:.72rem;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.sync.ok{background:var(--accent-soft);color:var(--accent)}
+.sync.pend{background:var(--gold-soft);color:var(--gold)}
+button.sync{border:0;font:inherit;font-size:.72rem;cursor:pointer}
+.remx{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;width:100%;margin-top:6px}
+.sync.err{background:var(--warn-soft);color:var(--warn);cursor:pointer;border:0;font:inherit;font-size:.72rem}
+.editbtn{border:1px solid var(--line);background:none;color:var(--ink);border-radius:9px;padding:4px 10px;cursor:pointer;font:inherit;font-size:.82rem}
+.remind{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border:1px solid color-mix(in oklab,var(--gold) 40%,transparent);border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:.92rem}
+@media (max-width:440px){.stat .n{font-size:1.1rem}.cat{grid-template-columns:5.5em 1fr 3em}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <svg class="pat" aria-hidden="true"><defs><pattern id="gp" width="56" height="56" patternUnits="userSpaceOnUse"><g fill="none" stroke="currentColor" stroke-width="1"><rect x="14" y="14" width="28" height="28"/><rect x="14" y="14" width="28" height="28" transform="rotate(45 28 28)"/><circle cx="28" cy="28" r="5"/><path d="M0 0L14 14M56 0L42 14M0 56L14 42M56 56L42 42"/></g></pattern></defs><rect width="100%" height="100%" fill="url(#gp)"/></svg>
+    <div class="inner">
+      <svg class="arch" viewBox="0 0 100 120" aria-hidden="true">
+        <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b5a52"/><stop offset="1" stop-color="#07191c"/></linearGradient></defs>
+        <path d="M8 118V56Q8 18 50 4Q92 18 92 56V118Z" fill="url(#ag)" stroke="#e9cd8c" stroke-width="1.6"/>
+        <path d="M16 118V58Q16 26 50 13Q84 26 84 58V118" fill="none" stroke="#e9cd8c" stroke-opacity=".35" stroke-width="1"/>
+        <g transform="translate(26 58)"><path d="M24 4 44 13 24 22 4 13Z" fill="#2c2c2c"/><path d="M4 13 24 22 24 46 4 37Z" fill="#0e0e0e"/><path d="M44 13 24 22 24 46 44 37Z" fill="#1b1b1b"/><path d="M4 18 24 27 44 18 44 21.5 24 30.5 4 21.5Z" fill="#e9cd8c"/></g>
+        <circle cx="50" cy="36" r="2.2" fill="#e9cd8c"/>
+      </svg>
+      <div>
+        <p class="bism ar" lang="ar">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+        <h1 style="font-family:'Anek Bangla',sans-serif;letter-spacing:.02em">Amalnama</h1>
+        <div class="dates" id="dates"></div>
+      </div>
+    </div>
+    <p class="quote" id="quote"></p>
+    <div class="sys"><span id="sync"><i class="off"></i>সংযোগ হচ্ছে</span><span id="sysday"></span></div>
+  </header>
+
+  <div class="duo">
+    <button class="ad2" id="adExam" aria-label="আসন্ন পরীক্ষা দেখো"></button>
+    <button class="ad2" id="adAsg" aria-label="বাকি অ্যাসাইনমেন্ট দেখো"></button>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-today" aria-selected="true" data-v="today">আজ</button>
+    <button role="tab" id="tab-plan" aria-selected="false" data-v="plan">প্ল্যান</button>
+    <button role="tab" id="tab-acad" aria-selected="false" data-v="acad">একাডেমিক</button>
+    <button role="tab" id="tab-events" aria-selected="false" data-v="events">ইভেন্ট</button>
+    <button role="tab" id="tab-week" aria-selected="false" data-v="week">সপ্তাহ</button>
+    <button role="tab" id="tab-month" aria-selected="false" data-v="month">মাস</button>
+  </nav>
+  <div id="note" class="note" hidden></div>
+
+  <!-- TODAY -->
+  <section id="v-today">
+    <div id="remind"></div>
+    <div id="gbar"><span class="gtxt">Google সংযোগ লোড হচ্ছে…</span><button class="gbtn" type="button"></button></div>
+    <div class="card" id="setup" hidden style="margin-top:0;border-color:var(--gold)">
+      <h2>আসসালামু আলাইকুম! Amalnama সেট আপ করো</h2>
+      <p class="muted" style="margin:4px 0 12px;font-size:.9rem">একবার পূরণ করলেই হবে। পরে সবকিছু "⚙ রুটিন সাজাও" আর নিচের সেটিংস থেকে বদলানো যাবে।</p>
+      <form id="setupform" class="evform" autocomplete="off">
+        <label>তোমার নাম<input id="s-name" type="text" maxlength="40" placeholder="যেমন: Rahim"></label>
+        <label>শহর<input id="s-city" type="text" maxlength="40" placeholder="যেমন: Kuala Lumpur"></label>
+        <label>ডিপার্টমেন্ট / প্রোগ্রাম<input id="s-dept" type="text" maxlength="60" placeholder="যেমন: CSE, BBA, Engineering"></label><label>বিশ্ববিদ্যালয় / প্রতিষ্ঠান<input id="s-uni" type="text" maxlength="60" placeholder="যেমন: UOWM"></label>
+        <label class="full">টাইমজোন<input id="s-tz" type="text" maxlength="60"></label>
+        <div class="full"><span style="font-size:.85rem;font-weight:600">৫ ওয়াক্ত সালাতের সময় (তোমার মসজিদ/এলাকা অনুযায়ী)</span>
+          <div class="evform" style="grid-template-columns:repeat(5,1fr);margin-top:6px">
+            <label>Fajr<input id="s-fajr" type="time" value="05:50"></label><label>Zohor<input id="s-zohor" type="time" value="13:10"></label><label>Asar<input id="s-asar" type="time" value="16:20"></label><label>Maghrib<input id="s-maghrib" type="time" value="19:10"></label><label>Isyak<input id="s-isyak" type="time" value="20:20"></label>
+          </div></div>
+        <div class="full"><span style="font-size:.85rem;font-weight:600">শুরুতে কোনগুলো রাখবে?</span>
+          <div class="days7" style="margin-top:6px">
+            <label><input type="checkbox" id="s-quran" checked><span>Quran tilawat (Fajr-এর পর)</span></label>
+            <label><input type="checkbox" id="s-study" checked><span>রাতের পড়া ৮–১০টা</span></label>
+            <label><input type="checkbox" id="s-sleep" checked><span>ঘুম ১১টা</span></label>
+            <label><input type="checkbox" id="s-plan" checked><span>রবিবার সাপ্তাহিক পরিকল্পনা</span></label>
+          </div></div>
+        <label>সালাতের রিমাইন্ডার (মিনিট আগে)<input id="s-remsalat" type="text" inputmode="numeric" value="10, 0"></label><label>অন্য কাজের রিমাইন্ডার (মিনিট আগে)<input id="s-remother" type="text" inputmode="numeric" value="15"></label>
+        <div class="full actions"><button class="primary" type="submit">শুরু করো</button><span class="status muted" id="sstatus">এরপর "⚙ রুটিন সাজাও" থেকে ক্লাস যোগ করো।</span></div>
+      </form>
+    </div>
+    <div class="daynav">
+      <button class="iconbtn" id="prev" aria-label="আগের দিন">‹</button>
+      <div class="d" id="dlabel"></div>
+      <button class="iconbtn" id="next" aria-label="পরের দিন">›</button>
+    </div>
+    <div class="card overview" style="margin-top:0">
+      <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" style="stroke:var(--sunk)" stroke-width="10"/><circle id="ringArc" cx="60" cy="60" r="50" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset .4s"/><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--gold-2)"/><stop offset="1" style="stop-color:var(--accent)"/></linearGradient></defs></svg>
+        <div class="v"><div><b id="ringPct">০%</b><small>সম্পন্ন</small></div></div></div>
+      <div class="mini">
+        <div><span>৫ ওয়াক্ত সালাত</span><span id="mSalat">–</span></div>
+        <div><span>রুটিন</span><span id="mRoutine">–</span></div>
+        <div><span>To-Do</span><span id="mTodo">–</span></div>
+        <div><span>টানা ধারা (৬০%+)</span><span id="mStreak">–</span></div>
+      </div>
+    </div>
+    <div id="groups"></div>
+    <div class="actions" style="margin-top:16px">
+      <button class="primary" id="submit">জমা দাও</button>
+      <button class="linkbtn" id="gotoPlan">আগামীকালের পরিকল্পনা করো →</button>
+      <button class="linkbtn" id="gotoRoutine">⚙ রুটিন সাজাও</button>
+      <span class="status" id="status"></span>
+    </div>
+    <div id="result"></div>
+  </section>
+
+  <!-- PLAN / TO-DO -->
+  <section id="v-plan" hidden>
+    <div class="daynav">
+      <button class="iconbtn" id="pprev" aria-label="আগের দিন">‹</button>
+      <div class="d" id="plabel"></div>
+      <button class="iconbtn" id="pnext" aria-label="পরের দিন">›</button>
+    </div>
+    <form id="addform" class="addrow" autocomplete="off">
+      <input id="newtask" type="text" placeholder="নতুন কাজ, যেমন: OS assignment শেষ করা" maxlength="140" required>
+      <input id="newtime" type="time" aria-label="সময় (ঐচ্ছিক)">
+      <button class="primary" type="submit">যোগ করো</button>
+      <div class="opts">
+        <select id="newprio" aria-label="অগ্রাধিকার"><option value="n">সাধারণ অগ্রাধিকার</option><option value="h">উচ্চ অগ্রাধিকার</option></select>
+      </div>
+    </form>
+    <div class="group" style="margin-top:4px">
+      <div class="ghead"><h3><span class="star" style="background:var(--c-todo)"></span>To-Do তালিকা</h3><span class="ar" lang="ar">مهام</span></div>
+      <ul class="list" id="planlist"></ul>
+    </div>
+    <div class="actions">
+      <button class="ghost" id="carry">আগের দিনের বাকি কাজ এই দিনে আনো</button>
+      <span class="status" id="pstatus"></span>
+    </div>
+    <div class="card" id="planeval"></div>
+  </section>
+
+  <section id="v-routine" hidden>
+    <div class="card" style="margin-top:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 id="rfTitle">রুটিনে নতুন কাজ যোগ করো</h2><button class="linkbtn" id="rBack">← আজ-এ ফিরে যাও</button></div>
+      <p class="muted" style="margin:4px 0 0;font-size:.88rem">সেভ করলে Google Calendar-এ নিজে থেকেই ইভেন্ট আর রিমাইন্ডার সেট হবে। প্রথমবার Google Calendar ব্যবহারের অনুমতি চাইবে। (শুধু ফাইল হিসেবে খুললে প্রতিটার পাশে "📅 ক্যালেন্ডারে যোগ" লিংক থাকবে।)</p>
+      <form id="rform" class="evform" autocomplete="off" style="margin-top:12px">
+        <label class="full">নাম<input id="rlabel" type="text" maxlength="120" required placeholder="যেমন: Tahajjud, Gym, Arabic শেখা"></label>
+        <label class="full">বিভাগ<select id="rcat"><option value="ibadat">ইবাদত</option><option value="class">ক্লাস</option><option value="study">পড়াশোনা</option><option value="life">দৈনন্দিন</option></select></label>
+        <div class="full"><span style="font-size:.8rem;color:var(--muted)">⏰ রিমাইন্ডার: কত মিনিট আগে? (একাধিক বাছাই করা যায়, সর্বোচ্চ ৫টা)</span><div class="days7" id="rrem" style="margin-top:4px"></div><input class="remx" id="rremx" type="text" inputmode="numeric" placeholder="নিজের মতো মিনিট, কমা দিয়ে (যেমন: 45, 90)"></div>
+        <div class="full"><span style="font-size:.8rem;color:var(--muted)">কোন কোন দিন</span>
+          <div class="days7" id="rdays" style="margin-top:4px">
+            <label><input type="checkbox" value="6"><span>শনি</span></label><label><input type="checkbox" value="0"><span>রবি</span></label><label><input type="checkbox" value="1" checked><span>সোম</span></label><label><input type="checkbox" value="2" checked><span>মঙ্গল</span></label><label><input type="checkbox" value="3" checked><span>বুধ</span></label><label><input type="checkbox" value="4" checked><span>বৃহ</span></label><label><input type="checkbox" value="5" checked><span>শুক্র</span></label>
+          </div></div>
+        <label>শুরুর সময়<input id="rstart" type="time" required></label>
+        <label>শেষের সময়<input id="rend" type="time" required></label>
+        <label>রুম / স্থান (ঐচ্ছিক)<input id="rroom" type="text" maxlength="60" placeholder="যেমন: 03-CRM-07"></label>
+        <label>কোন তারিখ পর্যন্ত (ঐচ্ছিক)<input id="runtil" type="date"></label>
+        <label class="full">রিমাইন্ডারের উক্তি (ঐচ্ছিক)<input id="rquote" type="text" maxlength="120" placeholder="যেমন: Now Or Never"></label>
+        <div class="full actions" style="margin-top:2px"><button class="primary" type="submit" id="rsave">সেভ করো</button><button class="ghost" type="button" id="rcancel" hidden>বাতিল</button><span class="status" id="rstatus"></span></div>
+      </form>
+    </div>
+    <div class="actions" style="margin-top:14px"><span class="muted" style="font-size:.85rem">দেখাও:</span>
+      <div class="seg" id="rfilter"><label><input type="radio" name="rf" value="all" checked><span>সব</span></label><label><input type="radio" name="rf" value="ibadat"><span>ইবাদত</span></label><label><input type="radio" name="rf" value="class"><span>ক্লাস</span></label><label><input type="radio" name="rf" value="study"><span>পড়াশোনা</span></label><label><input type="radio" name="rf" value="life"><span>দৈনন্দিন</span></label></div></div>
+    <div id="rlist"></div>
+    <p class="muted" style="font-size:.85rem;margin-top:14px">To-Do আলাদা: "প্ল্যান" ট্যাবে যোগ করো। সময় দিলে সেটাও Google Calendar-এ রিমাইন্ডারসহ চলে যাবে।</p>
+  </section>
+
+  <section id="v-acad" hidden>
+    <div class="card overview" style="margin-top:0;grid-template-columns:1fr">
+      <div class="stats" style="margin:0"><div class="stat"><div class="n" id="acExam">০</div><div class="k">আসন্ন পরীক্ষা</div></div>
+      <div class="stat"><div class="n" id="acAsg">০</div><div class="k">বাকি অ্যাসাইনমেন্ট</div></div>
+      <div class="stat"><div class="n" id="acNext">–</div><div class="k">সবচেয়ে কাছের ডেডলাইন</div></div></div>
+    </div>
+    <div class="card">
+      <h2>পরীক্ষা বা অ্যাসাইনমেন্ট যোগ করো</h2>
+      <form id="acform" class="evform" autocomplete="off" style="margin-top:10px">
+        <div class="full seg" role="radiogroup" aria-label="ধরন">
+          <label><input type="radio" name="actype" value="exam" checked><span>📝 পরীক্ষা</span></label>
+          <label><input type="radio" name="actype" value="assignment"><span>📄 অ্যাসাইনমেন্ট</span></label>
+        </div>
+        <label class="full">কোর্স<select id="accourse" data-dyn="1">
+          <option>অন্যান্য</option></select></label>
+        <label class="full">শিরোনাম<input id="actitle" type="text" maxlength="120" required placeholder="যেমন: Midterm, Tutorial 2, Lab Report 1"></label>
+        <label><span id="acdatelbl">পরীক্ষার তারিখ</span><input id="acdate" type="date" required></label>
+        <label>সময় (ঐচ্ছিক)<input id="actime" type="time"></label>
+        <label><span id="acvenuelbl">রুম / স্থান</span><input id="acvenue" type="text" maxlength="120" placeholder="যেমন: GF-LTR-07 / Moodle"></label>
+        <label>মার্কস / ওজন % (ঐচ্ছিক)<input id="acweight" type="number" min="0" max="100" step="1" inputmode="numeric"></label>
+        <label class="full">নোট (ঐচ্ছিক)<input id="acnote" type="text" maxlength="200" placeholder="সিলেবাস, অধ্যায়, গ্রুপ মেম্বার…"></label>
+        <div class="full actions" style="margin-top:2px"><button class="primary" type="submit">যোগ করো</button><span class="status" id="acstatus"></span></div>
+      </form>
+    </div>
+    <div class="group">
+      <div class="ghead"><h3><span class="star" style="background:var(--warn)"></span>আসন্ন ও বাকি</h3><span class="ar" lang="ar">امتحانات</span></div>
+      <ul class="list" id="aclist"></ul>
+    </div>
+    <div class="group" id="acdonewrap" hidden>
+      <div class="ghead"><h3><span class="star" style="background:var(--muted)"></span>জমা দেওয়া / শেষ</h3></div>
+      <ul class="list" id="acdone"></ul>
+    </div>
+  </section>
+
+  <section id="v-events" hidden>
+    <div class="card" style="margin-top:0">
+      <h2>নতুন ইভেন্ট</h2>
+      <form id="evform" class="evform" autocomplete="off" style="margin-top:10px">
+        <label class="full">ইভেন্টের নাম<input id="evtitle" type="text" maxlength="120" required placeholder="যেমন: Neoteric Summit Malaysia"></label>
+        <label>শুরুর তারিখ<input id="evstart" type="date" required></label>
+        <label>শেষের তারিখ (ঐচ্ছিক)<input id="evend" type="date"></label>
+        <label>সময় (ঐচ্ছিক)<input id="evtime" type="time"></label>
+        <label>স্থান<input id="evloc" type="text" maxlength="120" placeholder="Kuala Lumpur"></label>
+        <label class="full">নোট (ঐচ্ছিক)<input id="evnote" type="text" maxlength="200" placeholder="টিকিট, রেজিস্ট্রেশন, কী নিতে হবে…"></label>
+        <div class="full actions" style="margin-top:2px"><button class="primary" type="submit">ইভেন্ট যোগ করো</button><span class="status" id="evstatus"></span></div>
+      </form>
+    </div>
+    <div class="group">
+      <div class="ghead"><h3><span class="star" style="background:var(--gold)"></span>আসন্ন ইভেন্ট</h3><span class="ar" lang="ar">مناسبات</span></div>
+      <ul class="list" id="evlist"></ul>
+    </div>
+    <div class="group" id="evpastwrap" hidden>
+      <div class="ghead"><h3><span class="star" style="background:var(--muted)"></span>শেষ হয়ে গেছে</h3></div>
+      <ul class="list" id="evpast"></ul>
+    </div>
+  </section>
+
+  <section id="v-week" hidden></section>
+  <section id="v-month" hidden></section>
+
+  <section class="backup">
+    <h2>ব্যাকআপ</h2>
+    <p>তোমার তথ্য অনলাইনে আর এই ডিভাইসের ব্রাউজারে নিজে থেকেই সেভ হয়। ফোনের ফোল্ডারেও কপি রাখতে ব্যাকআপ ফাইল ডাউনলোড করো (সপ্তাহে একবার)।</p>
+    <div class="actions">
+      <button class="ghost" id="dl" hidden>ব্যাকআপ ফাইল ডাউনলোড</button>
+      <label class="ghost" for="restore" tabindex="0">ফাইল থেকে ফিরিয়ে আনো</label>
+      <input type="file" id="restore" accept="application/json,.json" hidden>
+      <span class="status" id="bstatus"></span>
+    </div>
+  </section>
+  <div class="adbar" id="adbar" hidden><button class="ad" id="ad" aria-label="আসন্ন ইভেন্ট দেখো"></button></div>
+  <section class="backup" id="settings">
+    <h2>সেটিংস</h2>
+    <form id="setform" class="evform" autocomplete="off" style="margin-top:10px">
+      <label>নাম<input id="t-name" type="text" maxlength="40"></label>
+      <label>শহর<input id="t-city" type="text" maxlength="40"></label>
+      <label>ডিপার্টমেন্ট / প্রোগ্রাম<input id="t-dept" type="text" maxlength="60"></label><label>বিশ্ববিদ্যালয় / প্রতিষ্ঠান<input id="t-uni" type="text" maxlength="60"></label>
+      <label class="full">টাইমজোন<input id="t-tz" type="text" maxlength="60"></label>
+      <div class="full"><span style="font-size:.85rem;font-weight:600">⏰ ডিফল্ট রিমাইন্ডার (মিনিট আগে, কমা দিয়ে একাধিক, সর্বোচ্চ ৫টা)</span><p class="muted" style="margin:2px 0 6px;font-size:.8rem">নতুন কিছু যোগ করলে এগুলো আগে থেকে বাছাই থাকবে। ১ ঘণ্টা = 60, ১ দিন = 1440, ১ সপ্তাহ = 10080।</p>
+        <div class="evform" id="remdefs"></div></div>
+      <label class="full">নিজের মোটিভেশনের লাইন (প্রতি লাইনে একটা)<textarea id="t-quotes" rows="4"></textarea></label>
+      <div class="full actions"><button class="ghost" type="submit">সেটিংস সেভ করো</button><button class="ghost" type="button" id="icsbtn">📅 পুরো রুটিন ক্যালেন্ডার ফাইল (.ics) ডাউনলোড</button><span class="status" id="tstatus"></span></div>
+    </form>
+  </section>
+  <p class="foot"><span class="ar" lang="ar">رَبِّ زِدْنِي عِلْمًا</span>“হে আমার রব, আমার জ্ঞান বৃদ্ধি করে দিন।” — সূরা ত্বা-হা ২০:১১৪</p>
+</div>
+
+<script>
+const SET=(()=>{try{return JSON.parse(localStorage.getItem("am-settings"))||{};}catch(e){return {};}})();
+const DEF_REM={ibadat:[10,0],class:[30],study:[30],life:[15],todo:[10],acad:[1440,60],event:[10080,1440]};
+const REM_NAMES={ibadat:"ইবাদত",class:"ক্লাস",study:"পড়াশোনা",life:"দৈনন্দিন",todo:"To-Do",acad:"পরীক্ষা / অ্যাসাইনমেন্ট",event:"ইভেন্ট"};
+const REMD={...DEF_REM,...(SET.rem||{})};
+const REM_P=[0,5,10,15,30,60,120,1440];
+const toAscii=t=>String(t).replace(/[০-৯]/g,d=>"০১২৩৪৫৬৭৮৯".indexOf(d));
+function parseRem(t){return [...new Set(toAscii(t||"").split(/[^0-9]+/).filter(Boolean).map(Number).filter(n=>n>=0&&n<=40320))].sort((a,b)=>a-b).slice(0,5);}
+function remLbl(m){const b=typeof bn==="function"?bn:(x=>x);return m===0?"শুরুতে":m%10080===0?b(m/10080)+" সপ্তাহ":m%1440===0?b(m/1440)+" দিন":m>=60&&m%60===0?b(m/60)+" ঘণ্টা":b(m)+" মি.";}
+function remText(a){return (a&&a.length?a:[30]).slice().sort((p,q)=>p-q).map(remLbl).join(", ");}
+const saveSET=()=>{SET.updatedAt=new Date().toISOString();try{localStorage.setItem("am-settings",JSON.stringify(SET));}catch(e){}if(window.__dirty)window.__dirty();};
+const TZ=SET.tz||(Intl.DateTimeFormat().resolvedOptions().timeZone)||"UTC";
+const bn=s=>String(s).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
+const DAYS=["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"];
+const DSHORT=["রবি","সোম","মঙ্গল","বুধ","বৃহ","শুক্র","শনি"];
+const MONTHS=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+const QUOTES_DEFAULT=["Now Or Never.","Restart","আগামী ২বছর পর, এই সময়ের জন্য আফসোস করো না।","এই সময় অপচয় অতি শীঘ্রই তোমায় কাঁদাবে।","তুমি নিজেকে কোথায় দেখতে চাও?","তুমি কি পারবে? AI এর যুগে নিজেকে খুঁজে পেতে?","তোমার হতাশার কারণ কি এই সময় অপচয়?","তোমার হতাশার কারণ কি অহেতুক আড্ডা এবং Social media স্ক্রলিং?"];
+const QUOTES=(SET.quotes&&SET.quotes.length)?SET.quotes:QUOTES_DEFAULT;
+const CATS={ibadat:{n:"ইবাদত",ar:"عبادة",c:"var(--c-ibadat)"},class:{n:"ক্লাস",ar:"دروس",c:"var(--c-class)"},study:{n:"পড়াশোনা",ar:"علم",c:"var(--c-study)"},life:{n:"দৈনন্দিন",ar:"حياة",c:"var(--c-life)"},todo:{n:"To-Do",ar:"مهام",c:"var(--c-todo)"}};
+const SALAT_IDS=["fajr","zohor","asar","maghrib","isyak"];
+
+// ---- dates (Malaysia time)
+function klToday(){return new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());}
+function parse(s){const [y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d));}
+function fmt(dt){return dt.toISOString().slice(0,10);}
+function addDays(s,n){const d=parse(s);d.setUTCDate(d.getUTCDate()+n);return fmt(d);}
+function wd(s){return parse(s).getUTCDay();}
+function nice(s){const d=parse(s);return bn(d.getUTCDate())+" "+MONTHS[d.getUTCMonth()]+" "+bn(d.getUTCFullYear());}
+function hijri(s){try{const p=new Intl.DateTimeFormat("bn-BD-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).formatToParts(parse(s));const g=t=>(p.find(x=>x.type===t)||{}).value||"";return `${g("day")} ${g("month")} ${g("year")} হিজরি`.trim();}catch(e){return "";}}
+function t12(v){if(!v)return "";let [h,m]=v.split(":").map(Number);const ap=h<12?"AM":"PM";h=h%12||12;return bn(h+":"+String(m).padStart(2,"0"))+" "+ap;}
+
+// ---- routine
+const T=(id,t,label,cat)=>({id,t,label,cat});
+function tasksForLegacy(date){
+  const w=wd(date), classes=date<="2027-01-15", out=[T("fajr","৬:১০","Fajr (Subuh) salat","ibadat"),T("zohor","২:০০","Zohor salat","ibadat"),T("asar","৫:১৫","Asar salat","ibadat"),T("maghrib","৭:১৫","Maghrib salat","ibadat"),T("isyak","৮:৪৫","Isyak salat","ibadat")];
+  const weekday=w>=1&&w<=5;
+  if(weekday){out.push(T("wake","৬:১০","ঘুম থেকে ওঠা, ফ্রেশ হওয়া","life"),T("quran","৬:৩০","Quran tilawat","ibadat"),T("breakfast","৭:০০","নাস্তা + Class Note (Review)","study"),T("campus","৭:৩০","ক্যাম্পাসে যাওয়া","life"));}
+  const C=(id,t,l)=>out.push(T(id,t,l,"class")), N=(id,t)=>out.push(T(id,t,"Lecture note করা","study"));
+  if(classes){
+    if(w===1){C("c-pse","৯:০০","Principles of Software Engineering");N("ln1","১০:০০");C("c-dcn","১১:০০","Data Communication & Networking");N("ln2","১২:০০");}
+    if(w===2){C("c-pse","৮:০০","Principles of Software Engineering");C("c-dsa","১০:০০","Data Structures & Algorithms");N("ln1","১১:০০");N("ln2","২:০০");C("c-os","৩:০০","Operating Systems");}
+    if(w===3){C("c-hci","৯:০০","HCI & User Experience");N("ln1","১০:০০");C("c-dcn","২:০০","Data Communication & Networking");}
+    if(w===4){C("c-dsa","৮:০০","Data Structures & Algorithms");N("ln1","১০:০০");N("ln2","২:০০");C("c-os","৪:০০","Operating Systems");}
+    if(w===5){C("c-hci","৮:০০","HCI & User Experience");}
+  }
+  if(weekday){
+    out.push(T("lunch","১:০০","দুপুরের খাবার + বিশ্রাম","life"));
+    if(w===1||w===5)out.push(T("study-pm","৩:৩০","মনোযোগ দিয়ে পড়া","study"));
+    if(w===3)out.push(T("study-pm","৪:০০","মনোযোগ দিয়ে পড়া","study"));
+    if(date==="2026-10-27"){out.push(T("devday","৬:০০","OpenAI DevDay Exchange Community","study"));}
+    else{out.push(T("sports",w===4?"৬:০০":"৫:৩০","খেলাধুলা, বাইরে ঘোরা / বিশ্রাম","life"),T("dinner","৭:০০","রাতের খাবার","life"),T("study-night","৮:০০","মনোযোগ দিয়ে পড়া (৮–১০:৩০)","study"));}
+    out.push(T("winddown","১০:৩০","স্ক্রিন বন্ধ, ঘুমের প্রস্তুতি, ব্যাগ গোছানো","life"),T("sleep","১১:০০","১১টায় ঘুম","life"));
+  }
+  if(w===6){out.push(T("revision","৯:০০","পুরো সপ্তাহের রিভিশন","study"),T("tsc","২:০০","Tools + Skills + Career","study"),T("markaz","৩:০০","মারকাজে অবস্থান","ibadat"));}
+  if(w===0){out.push(T("light","৯:০০","হালকা পড়া","study"),T("chores","১১:০০","বাজার, কাপড় ধোয়া, রুম পরিষ্কার","life"),T("plan","৭:০০","পরের সপ্তাহের পরিকল্পনা","study"));}
+  return out;
+}
+
+// ---- customisable routine (db "routine"), mirrored to Google Calendar
+const CAT_COLOR={ibadat:"10",class:"9",study:"2",life:"8",todo:"3"};
+let routine={};
+function hm(v){return v?t12(v).replace(/ (AM|PM)$/,""):"";}
+function tasksFor(date){
+  const items=Object.values(routine).filter(r=>r&&r.days&&r.days.includes(wd(date))&&(!r.until||date<=r.until)&&!(r.except||[]).includes(date)&&(!r.from||date>=r.from));
+  if(!Object.keys(routine).length)return [];
+  return items.sort((a,b)=>a.start<b.start?-1:a.start>b.start?1:0).map(r=>({id:r.id,t:hm(r.start),label:r.label+(r.room?" ("+r.room+")":""),cat:r.cat}));
+}
+
+// ---- state + local storage
+const TODAY=klToday();
+let sel=TODAY, psel=addDays(TODAY,1), view="today", db=null, sample=null, draft={};
+const $=id=>document.getElementById(id);
+const LS="rc-days-v1", LST="rc-todos-v1";
+const lsGet=k=>{try{return JSON.parse(localStorage.getItem(k))||{};}catch(e){return {};}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));if(window.__dirty)window.__dirty();return true;}catch(e){return false;}};
+let TOMB=(()=>{try{return JSON.parse(localStorage.getItem("am-tomb"))||{};}catch(e){return {};}})();
+function tomb(id){TOMB[id]=new Date().toISOString();try{localStorage.setItem("am-tomb",JSON.stringify(TOMB));}catch(e){}}
+routine=lsGet("rc-routine-v1");
+let days=lsGet(LS), todos=lsGet(LST), events=lsGet("rc-events-v1");
+const saveEventsLS=()=>lsSet("rc-events-v1",events);
+let acad=lsGet("rc-acad-v1");const saveAcadLS=()=>lsSet("rc-acad-v1",acad);
+const saveLS=()=>lsSet(LS,days), saveTodosLS=()=>lsSet(LST,todos);
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+$("quote").innerHTML="আজকের কথা: <b></b>";$("quote").querySelector("b").textContent="“"+QUOTES[(parse(TODAY)/86400000|0)%QUOTES.length]+"”";
+$("dates").innerHTML=`${DAYS[wd(TODAY)]}, ${nice(TODAY)}${hijri(TODAY)?` · <span class="hj">${hijri(TODAY)}</span>`:""}`;
+$("sysday").textContent=[SET.dept,SET.uni,SET.city].filter(Boolean).join(" · ").toUpperCase()+(SET.dept||SET.uni||SET.city?" · ":"")+TZ.toUpperCase();
+function setSync(on,txt){$("sync").innerHTML=`<i class="${on?"":"off"}"></i>${txt}`;}
+
+// ---- todos
+function todoList(date){return (todos[date]&&todos[date].items)||[];}
+const todoTimers={};
+function saveTodo(date){
+  todos[date]={date,items:todoList(date),updatedAt:new Date().toISOString()};saveTodosLS();
+  clearTimeout(todoTimers[date]);
+  if(db)todoTimers[date]=setTimeout(async()=>{try{await db.doc("todos/"+date).set(todos[date]);setSync(true,"অনলাইনে সেভ হয়েছে");}catch(e){setSync(false,"শুধু এই ডিভাইসে সেভ");}},500);
+}
+function sortTodos(a){return a.slice().sort((x,y)=>(x.done-y.done)||((y.prio==="h")-(x.prio==="h"))||((x.time||"99")>(y.time||"99")?1:-1));}
+function todoItemsAsTasks(date){return todoList(date).map(i=>({id:"todo-"+i.id,label:i.text,cat:"todo",t:t12(i.time),prio:i.prio}));}
+
+// ---- today view
+function checkedSet(date){
+  if(draft[date])return draft[date];
+  const s=new Set((days[date]&&days[date].done)||[]);
+  todoList(date).forEach(i=>{if(i.done)s.add("todo-"+i.id);});
+  return s;
+}
+function allTasks(date){return tasksFor(date).concat(todoItemsAsTasks(date));}
+function streak(){let s=0,d=TODAY;if(!days[d])d=addDays(d,-1);while(days[d]&&pct(days[d].doneCount,days[d].total)>=60){s++;d=addDays(d,-1);}return s;}
+
+function renderToday(){
+  const tasks=allTasks(sel), set=checkedSet(sel), saved=days[sel];
+  const dl=$("dlabel");dl.textContent=sel===TODAY?"আজ, "+DAYS[wd(sel)]:DAYS[wd(sel)];
+  const sm=document.createElement("small");sm.textContent=nice(sel)+(saved?" · জমা দেওয়া হয়েছে":"");dl.append(sm);
+  $("next").disabled=sel>=TODAY;
+  const g=$("groups");g.innerHTML="";
+  for(const k of Object.keys(CATS)){
+    const list=tasks.filter(t=>t.cat===k);
+    if(!list.length&&k!=="todo")continue;
+    const box=document.createElement("div");box.className="group";
+    box.innerHTML=`<div class="ghead"><h3><span class="star" style="background:${CATS[k].c}"></span>${CATS[k].n}<button class="gbtn" data-cat="${k}">${k==="todo"?"+ To-Do":"+ যোগ / সাজাও"}</button></h3><span class="ar" lang="ar">${CATS[k].ar}</span></div>`;
+    box.querySelector(".gbtn").onclick=()=>{if(k==="todo"){psel=sel;setView("plan");}else openRoutine(k);};
+    const ul=document.createElement("ul");ul.className="list";
+    if(!list.length){ul.innerHTML=`<li class="empty">এই দিনের জন্য কোনো To-Do নেই। <button class="linkbtn" data-plan="1">কাজ যোগ করো</button></li>`;ul.querySelector("[data-plan]").onclick=()=>{psel=sel;setView("plan");};}
+    list.forEach(t=>{const li=document.createElement("li");const on=set.has(t.id);
+      li.innerHTML=`<label class="item${on?" done":""}"><input type="checkbox"${on?" checked":""}><span class="lbl"></span><span class="tm">${t.t||""}</span></label>`;
+      li.querySelector(".lbl").textContent=t.label;
+      if(t.prio==="h"){const p=document.createElement("span");p.className="prio";p.textContent="উচ্চ";li.querySelector(".lbl").append(p);}
+      li.querySelector("input").onchange=e=>{
+        const s=new Set(checkedSet(sel));e.target.checked?s.add(t.id):s.delete(t.id);draft[sel]=s;
+        if(t.cat==="todo"){const it=todoList(sel).find(i=>"todo-"+i.id===t.id);if(it){it.done=e.target.checked;saveTodo(sel);}}
+        renderToday();};
+      ul.append(li);});
+    box.append(ul);g.append(box);
+  }
+  const n=tasks.filter(t=>set.has(t.id)).length, p=pct(n,tasks.length);
+  $("ringArc").style.strokeDashoffset=314.16*(1-p/100);$("ringPct").textContent=bn(p)+"%";
+  const sal=SALAT_IDS.filter(i=>set.has(i)).length;$("mSalat").textContent=bn(sal)+"/৫";
+  const rt=tasksFor(sel);$("mRoutine").textContent=bn(rt.filter(t=>set.has(t.id)).length)+"/"+bn(rt.length);
+  const td=todoList(sel);$("mTodo").textContent=td.length?bn(td.filter(i=>set.has("todo-"+i.id)).length)+"/"+bn(td.length):"–";
+  $("mStreak").textContent=bn(streak())+" দিন";
+  $("submit").textContent=saved?"আবার জমা দাও":"জমা দাও";
+  if(saved&&!draft[sel])renderResult(sel,false);else if(!draft[sel])$("result").innerHTML="";
+}
+
+// ---- tips with sources
+const SALAT={t:"সালাত মিস হলে: প্রতিটা ওয়াক্তের ১০ মিনিট আগের রিমাইন্ডার এলেই ওযু করে নাও, কাজ পরে।",r:"“আল্লাহর কাছে সবচেয়ে প্রিয় আমল হলো সময়মতো সালাত আদায় করা।” — সহীহ বুখারী ৫২৭"};
+const TIPS={
+  fajr:{t:"Fajr মিস হলে: ইশার পর আড্ডা বা স্ক্রিন বাদ দিয়ে তাড়াতাড়ি ঘুমাও, অ্যালার্ম বিছানা থেকে দূরে রাখো।",r:"রাসূল ﷺ ইশার আগে ঘুমানো এবং ইশার পরে গল্পগুজব অপছন্দ করতেন। — সহীহ বুখারী ৫৬৮"},
+  zohor:SALAT,asar:{t:"Asar ক্লাসের সময়ে পড়লে: ক্লাস শেষ হওয়ামাত্র প্রথম কাজ আসর।",r:"“তোমরা সালাতসমূহের প্রতি যত্নবান হও, বিশেষ করে মধ্যবর্তী সালাতের।” — সূরা আল-বাকারা ২:২৩৮"},
+  maghrib:SALAT,isyak:SALAT,
+  quran:{t:"Quran tilawat: ফজরের পরপরই মাত্র ৫ মিনিট দিয়ে শুরু করো, ধীরে সময় বাড়াও।",r:"“তোমাদের মধ্যে সর্বোত্তম সে, যে কুরআন শেখে ও শেখায়।” — সহীহ বুখারী ৫০২৭"},
+  sleep:{t:"দেরিতে ঘুম: ১০:৩০-এ ফোন অন্য ঘরে চার্জে দাও।",r:"“দুটি নিয়ামতের ব্যাপারে অনেক মানুষ ধোঁকায় আছে: সুস্থতা ও অবসর।” — সহীহ বুখারী ৬৪১২"},
+  winddown:{t:"১০:৩০-এ স্ক্রিন বন্ধ করা কঠিন হলে ফোনে Bedtime mode চালু করো।",r:"“মানুষের ইসলামের সৌন্দর্য হলো অনর্থক বিষয় ত্যাগ করা।” — জামে তিরমিযী ২৩১৭"},
+  "study-night":{t:"রাতের পড়া: ২৫ মিনিট পড়া + ৫ মিনিট বিরতি দিয়ে শুরু করো, ফোন দূরে রাখো।",r:"“যে ব্যক্তি জ্ঞান অর্জনের পথে চলে, আল্লাহ তার জন্য জান্নাতের পথ সহজ করে দেন।” — সহীহ মুসলিম ২৬৯৯"},
+  "study-pm":{t:"বিকেলের পড়া: লাইব্রেরিতে বসো, রুমে ফিরলে মনোযোগ কমে যায়।",r:"গভীর মনোযোগের কাজের জন্য আলাদা জায়গা ও সময় ঠিক রাখো। — Cal Newport, Deep Work"},
+  ln1:{t:"Lecture note: ক্লাস শেষ হওয়ার সাথে সাথে ১০ মিনিটে মূল পয়েন্টগুলো লিখে ফেলো।",r:"“হে আমার রব, আমার জ্ঞান বৃদ্ধি করে দিন।” — সূরা ত্বা-হা ২০:১১৪"},
+  ln2:{t:"Lecture note: বিরতির শুরুতেই নোট খোলো, আড্ডা পরে।",r:"“মানুষের ইসলামের সৌন্দর্য হলো অনর্থক বিষয় ত্যাগ করা।” — জামে তিরমিযী ২৩১৭"},
+  sports:{t:"খেলাধুলা: অন্তত ২০ মিনিট হাঁটা হলেও করো।",r:"“শক্তিশালী মুমিন দুর্বল মুমিনের চেয়ে উত্তম ও আল্লাহর কাছে বেশি প্রিয়।” — সহীহ মুসলিম ২৬৬৪"},
+  wake:{t:"৬:১০-এ ওঠা: অ্যালার্ম বিছানা থেকে দূরে রাখো।",r:"ছোট অভ্যাস প্রতিদিন ধরে রাখলে বড় পরিবর্তন আসে। — James Clear, Atomic Habits"}
+};
+const CLASS_TIP={t:"কোনো ক্লাস মিস হয়েছে: আজ রাতেই স্লাইড দেখে নাও আর বন্ধুর নোট চেয়ে নাও।",r:"“আল্লাহ কোনো জাতির অবস্থা পরিবর্তন করেন না, যতক্ষণ না তারা নিজেরা নিজেদের অবস্থা পরিবর্তন করে।” — সূরা আর-রা'দ ১৩:১১"};
+const TODO_TIP={t:"To-Do বাকি রয়ে গেছে: কাল সকালে সবচেয়ে কঠিন কাজটা আগে করো, আর দিনে ৩–৫টার বেশি কাজ রেখো না।",r:"দিনের সবচেয়ে কঠিন ও গুরুত্বপূর্ণ কাজ আগে করো। — Brian Tracy, Eat That Frog!"};
+function tipsFor(tasks,doneSet){
+  const miss=tasks.filter(t=>!doneSet.has(t.id));const out=[];
+  if(miss.some(t=>t.cat==="class"))out.push(CLASS_TIP);
+  miss.forEach(t=>{const k=t.id.startsWith("ln-")?"ln1":t.id.startsWith("study-pm")?"study-pm":t.id.startsWith("sports")?"sports":t.id;const tp=TIPS[k];if(tp&&out.length<4&&!out.includes(tp))out.push(tp);});
+  if(miss.some(t=>t.cat==="todo")&&out.length<4)out.push(TODO_TIP);
+  if(!miss.length)out.push({t:"আজ সব কাজ শেষ! কালও এই ধারা ধরে রাখো।",r:"“আল্লাহর কাছে সবচেয়ে প্রিয় আমল তা-ই, যা নিয়মিত করা হয়, যদিও তা অল্প হয়।” — সহীহ বুখারী ৬৪৬৪, সহীহ মুসলিম ৭৮৩"});
+  else if(!out.length)out.push({t:"বাদ পড়া কাজগুলো কাল সকালে প্রথম ১ ঘণ্টায় করে ফেলো।",r:"“নিশ্চয়ই কষ্টের সাথেই স্বস্তি আছে।” — সূরা আল-ইনশিরাহ ৯৪:৬"});
+  return out;
+}
+const recTasks=(d)=>(days[d]&&days[d].tasks)||tasksFor(d);
+function catBreak(tasks,doneSet){return Object.keys(CATS).map(k=>{const l=tasks.filter(t=>t.cat===k);return {k,tot:l.length,done:l.filter(t=>doneSet.has(t.id)).length};}).filter(c=>c.tot);}
+function catHTML(br){return `<div class="cats">${br.map(c=>`<div class="cat"><span>${CATS[c.k].n}</span><div class="bar"><i style="width:${pct(c.done,c.tot)}%;background:${CATS[c.k].c}"></i></div><span>${bn(pct(c.done,c.tot))}%</span></div>`).join("")}</div>`;}
+
+function renderResult(date,fresh){
+  const rec=days[date];if(!rec)return;
+  const tasks=recTasks(date), set=new Set(rec.done), p=pct(rec.doneCount,rec.total);
+  const last7=[...Array(7)].map((_,i)=>days[addDays(date,-i)]).filter(Boolean);
+  const avg7=last7.length?Math.round(last7.reduce((a,r)=>a+pct(r.doneCount,r.total),0)/last7.length):0;
+  const sal=SALAT_IDS.filter(i=>set.has(i)).length;
+  $("result").innerHTML=`<div class="card"><h2>${fresh?"জমা হয়েছে! ":""}${date===TODAY?"আজকের":nice(date)+"-এর"} মূল্যায়ন</h2>
+  <div class="stats"><div class="stat"><div class="n">${bn(p)}%</div><div class="k">সম্পন্ন (${bn(rec.doneCount)}/${bn(rec.total)})</div></div>
+  <div class="stat"><div class="n">${bn(sal)}/৫</div><div class="k">ওয়াক্ত সালাত</div></div>
+  <div class="stat"><div class="n">${bn(avg7)}%</div><div class="k">৭ দিনের গড়</div></div></div>
+  ${catHTML(catBreak(tasks,set))}
+  <h3 class="sub">পরামর্শ</h3><ul class="tips">${tipsFor(tasks,set).map(t=>`<li>${t.t}<span class="ref">${t.r}</span></li>`).join("")}</ul>
+  ${sample?`<div class="actions"><button class="ghost" id="askai">Claude-এর কাছে বিস্তারিত পরামর্শ নাও</button></div><div id="aiout"></div>`:""}</div>`;
+  const b=$("askai");if(b)b.onclick=()=>askAI(date,b);
+}
+
+const SRC_RULES=`প্রতিটা পরামর্শের নিচে একটা প্রাসঙ্গিক উৎস দাও: কুরআনের আয়াত (সূরার নাম ও আয়াত নম্বর), অথবা সহীহ হাদিস (গ্রন্থের নাম ও হাদিস নম্বর), অথবা পরিচিত বই (বইয়ের নাম ও লেখক)। শুধু সেই উদ্ধৃতি দাও যা তুমি নিশ্চিতভাবে জানো সঠিক ও সহীহ; নিশ্চিত না হলে উদ্ধৃতি বানিয়ো না, বরং পরিচিত বই থেকে দাও। দুর্বল বা জাল হাদিস দিও না।`;
+async function runSample(prompt,out,btn){
+  btn.disabled=true;out.className="ai";out.textContent="ভাবছে…";
+  try{const r=await sample(prompt,{modelTier:"quick",onText:({text})=>{out.textContent=text;}});out.textContent=r.text;}
+  catch(e){out.textContent=e&&e.code==="not_granted"?"Claude-এর পরামর্শ এই মুহূর্তে পাওয়া যাচ্ছে না।":"পরামর্শ আনা যায়নি, একটু পরে আবার চেষ্টা করো।";btn.disabled=false;}
+}
+function askAI(date,btn){
+  const hist=[...Array(7)].map((_,i)=>addDays(date,-i)).filter(d=>days[d]).map(d=>{const t=recTasks(d),s=new Set(days[d].done);return `${d} (${DAYS[wd(d)]}): ${pct(days[d].doneCount,days[d].total)}%, বাদ: ${t.filter(x=>!s.has(x.id)).map(x=>x.label).join(", ")||"কিছু না"}`;}).join("\n");
+  runSample(`তুমি একজন মুসলিম বিশ্ববিদ্যালয় ছাত্রের  সহায়ক কোচ। নিচে তার গত ৭ দিনের দৈনিক চেকলিস্টের ফল (৫ ওয়াক্ত সালাত, ক্লাস, পড়া, দৈনন্দিন কাজ, নিজের To-Do)। বাংলায়, উষ্ণ কিন্তু সরাসরি, ঠিক ৩টা ছোট ও বাস্তবসম্মত পরামর্শ দাও (প্রতিটা ১–২ বাক্য), কোন প্যাটার্ন দেখছ সেটা ধরে।\n${SRC_RULES}\nফরম্যাট: "১. পরামর্শ" তারপর নতুন লাইনে "— উৎস: ..."। শেষে এক লাইনের উৎসাহ। কোনো শিরোনাম বা মার্কডাউন দিও না।\n\n${hist}`,$("aiout"),btn);
+}
+
+async function submit(){
+  const tasks=allTasks(sel), set=checkedSet(sel), done=tasks.filter(t=>set.has(t.id)).map(t=>t.id);
+  const rt=tasksFor(sel), td=todoItemsAsTasks(sel);
+  const rec={date:sel,weekday:wd(sel),done,tasks:tasks.map(t=>({id:t.id,label:t.label,cat:t.cat})),total:tasks.length,doneCount:done.length,
+    routineTotal:rt.length,routineDone:rt.filter(t=>set.has(t.id)).length,todoTotal:td.length,todoDone:td.filter(t=>set.has(t.id)).length,submittedAt:new Date().toISOString()};
+  $("submit").disabled=true;$("status").textContent="জমা হচ্ছে…";
+  todoList(sel).forEach(i=>{i.done=set.has("todo-"+i.id);});if(todoList(sel).length)saveTodo(sel);
+  days[sel]=rec;delete draft[sel];
+  const local=saveLS();let cloud=false;
+  if(db){try{await db.doc("days/"+sel).set(rec);cloud=true;}catch(e){}}
+  setSync(cloud,cloud?"অনলাইনে সেভ হয়েছে":"শুধু এই ডিভাইসে সেভ");
+  renderToday();renderResult(sel,true);
+  $("status").textContent=cloud?"সেভ হয়েছে (অনলাইন + এই ডিভাইস)":local?"এই ডিভাইসে সেভ হয়েছে। অনলাইন সেভ পরে নিজে থেকে হবে।":"সেভ করা যায়নি।";
+  $("result").scrollIntoView({behavior:"smooth",block:"start"});
+  $("submit").disabled=false;
+}
+
+// ---- plan view
+function renderPlan(){
+  const pl=$("plabel");pl.textContent=psel===TODAY?"আজ, "+DAYS[wd(psel)]:psel===addDays(TODAY,1)?"আগামীকাল, "+DAYS[wd(psel)]:DAYS[wd(psel)];
+  const sm=document.createElement("small");sm.textContent=nice(psel)+(psel>TODAY?" · পরিকল্পনা":psel<TODAY?" · অতীত":"");pl.append(sm);
+  $("pnext").disabled=psel>=addDays(TODAY,14);
+  const ul=$("planlist");ul.innerHTML="";const items=sortTodos(todoList(psel));const future=psel>TODAY;
+  if(!items.length)ul.innerHTML=`<li class="empty">এই দিনের জন্য এখনো কোনো কাজ যোগ করা হয়নি। উপরে লিখে "যোগ করো" চাপো।</li>`;
+  items.forEach(it=>{const li=document.createElement("li");
+    li.innerHTML=`<div class="item todo-row${it.done?" done":""}"><input type="checkbox" aria-label="সম্পন্ন"${it.done?" checked":""}${future?" disabled":""}><span class="lbl"></span><span class="tm">${t12(it.time)}</span><button class="del" aria-label="মুছে ফেলো">×</button></div>`;
+    li.querySelector(".lbl").textContent=it.text;
+    if(it.prio==="h"){const p=document.createElement("span");p.className="prio";p.textContent="উচ্চ";li.querySelector(".lbl").append(p);}
+    li.querySelector("input").onchange=e=>{it.done=e.target.checked;if(draft[psel])e.target.checked?draft[psel].add("todo-"+it.id):draft[psel].delete("todo-"+it.id);saveTodo(psel);renderPlan();if(psel===sel)renderToday();};
+    li.querySelector(".del").onclick=()=>{if(it.gcalId)gcal("delete_event",{eventId:it.gcalId,notificationLevel:"NONE"}).catch(()=>{});todos[psel].items=todoList(psel).filter(x=>x!==it);if(draft[psel])draft[psel].delete("todo-"+it.id);saveTodo(psel);renderPlan();if(psel===sel)renderToday();};
+    ul.append(li);});
+  renderPlanEval();
+}
+function renderPlanEval(){
+  const items=todoList(psel), rt=tasksFor(psel), classes=rt.filter(t=>t.cat==="class"), hi=items.filter(i=>i.prio==="h");
+  const box=$("planeval");
+  if(psel>TODAY){
+    const warn=items.length>6?`<li>কাজ বেশি হয়ে গেছে (${bn(items.length)}টা)। সবচেয়ে গুরুত্বপূর্ণ ৩–৫টা রাখো, বাকিগুলো অন্য দিনে সরাও।<span class="ref">দিনের সবচেয়ে কঠিন ও গুরুত্বপূর্ণ কাজ আগে করো। — Brian Tracy, Eat That Frog!</span></li>`:
+      !items.length?`<li>এখনো কোনো কাজ নেই। আগামীকালের ১–৩টা গুরুত্বপূর্ণ কাজ লিখে রাখো, সকালে ভাবতে হবে না।<span class="ref">“হে ঈমানদারগণ, আল্লাহকে ভয় করো, আর প্রত্যেকে যেন ভেবে দেখে আগামীকালের জন্য সে কী পাঠিয়েছে।” — সূরা আল-হাশর ৫৯:১৮</span></li>`:
+      `<li>পরিকল্পনা ভালো আকারে আছে। সবচেয়ে কঠিন কাজটা Lecture note বা বিকেলের পড়ার সময়ে রাখো।<span class="ref">“আল্লাহর কাছে সবচেয়ে প্রিয় আমল তা-ই, যা নিয়মিত করা হয়, যদিও তা অল্প হয়।” — সহীহ বুখারী ৬৪৬৪</span></li>`;
+    box.innerHTML=`<h2>পরিকল্পনার মূল্যায়ন</h2>
+    <div class="stats"><div class="stat"><div class="n">${bn(items.length)}</div><div class="k">To-Do কাজ</div></div>
+    <div class="stat"><div class="n">${bn(hi.length)}</div><div class="k">উচ্চ অগ্রাধিকার</div></div>
+    <div class="stat"><div class="n">${bn(classes.length)}</div><div class="k">সেদিনের ক্লাস</div></div></div>
+    <p class="muted" style="margin:0">সেদিনের রুটিনে ${bn(rt.length)}টা কাজ আছে${classes.length?`, ক্লাস: ${classes.map(c=>esc(c.label)+" ("+c.t+")").join(", ")}`:""}।</p>
+    <ul class="tips">${warn}</ul>
+    ${sample?`<div class="actions"><button class="ghost" id="askplan">Claude দিয়ে পরিকল্পনা যাচাই করো</button></div><div id="planai"></div>`:""}`;
+    const b=$("askplan");if(b)b.onclick=()=>runSample(`তুমি একজন মুসলিম বিশ্ববিদ্যালয় ছাত্রের পরিকল্পনা-কোচ। ${nice(psel)} (${DAYS[wd(psel)]}) দিনের জন্য তার নির্দিষ্ট রুটিন আর নিজের To-Do নিচে দেওয়া। বাংলায় সংক্ষেপে: (ক) পরিকল্পনাটা বাস্তবসম্মত কিনা এক লাইনে বলো, (খ) প্রতিটা To-Do কোন ফাঁকা সময়ে করা ভালো তা রুটিনের সময় মিলিয়ে বলো (সালাত আর ক্লাসের সময় বাদ দিয়ে), (গ) একটা পরামর্শ দাও।\n${SRC_RULES}\nকোনো মার্কডাউন দিও না।\n\nরুটিন:\n${rt.map(t=>t.t+" "+t.label).join("\n")}\n\nTo-Do:\n${items.map(i=>(i.prio==="h"?"[উচ্চ] ":"")+(i.time?t12(i.time)+" ":"")+i.text).join("\n")||"(কিছু নেই)"}`,$("planai"),b);
+  }else{
+    const done=items.filter(i=>i.done), undone=items.filter(i=>!i.done);
+    box.innerHTML=`<h2>To-Do মূল্যায়ন</h2>
+    <div class="stats"><div class="stat"><div class="n">${bn(pct(done.length,items.length))}%</div><div class="k">সম্পন্ন (${bn(done.length)}/${bn(items.length)})</div></div>
+    <div class="stat"><div class="n">${bn(hi.filter(i=>i.done).length)}/${bn(hi.length)}</div><div class="k">উচ্চ অগ্রাধিকার</div></div>
+    <div class="stat"><div class="n">${bn(undone.length)}</div><div class="k">বাকি</div></div></div>
+    ${items.length?(undone.length?`<ul class="tips"><li>বাকি কাজগুলো পরের দিনে নিতে "পরিকল্পনা" থেকে পরের দিনে গিয়ে "আগের দিনের বাকি কাজ এই দিনে আনো" চাপো।<span class="ref">দিনের সবচেয়ে কঠিন ও গুরুত্বপূর্ণ কাজ আগে করো। — Brian Tracy, Eat That Frog!</span></li></ul>`:`<p class="muted" style="margin:0">মাশাআল্লাহ, সব কাজ শেষ!</p>`):`<p class="muted" style="margin:0">এই দিনের জন্য কোনো To-Do ছিল না।</p>`}`;
+  }
+}
+$("addform").onsubmit=e=>{
+  e.preventDefault();const text=$("newtask").value.trim();if(!text)return;
+  const it={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),text,time:$("newtime").value||"",prio:$("newprio").value,done:false};
+  todos[psel]={date:psel,items:todoList(psel).concat(it)};saveTodo(psel);
+  if(it.time)syncTodo(psel,it);
+  $("newtask").value="";$("newtime").value="";$("newprio").value="n";$("pstatus").textContent="যোগ হয়েছে";
+  renderPlan();if(psel===sel)renderToday();$("newtask").focus();
+};
+$("carry").onclick=()=>{
+  const prev=addDays(psel,-1), left=todoList(prev).filter(i=>!i.done), have=new Set(todoList(psel).map(i=>i.text));
+  const add=left.filter(i=>!have.has(i.text)).map(i=>({...i,id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),done:false}));
+  if(!add.length){$("pstatus").textContent="আগের দিনের কোনো বাকি কাজ নেই।";return;}
+  todos[psel]={date:psel,items:todoList(psel).concat(add)};saveTodo(psel);$("pstatus").textContent=bn(add.length)+"টা কাজ আনা হয়েছে।";renderPlan();if(psel===sel)renderToday();
+};
+
+// ---- events
+const dayDiff=(a,b)=>Math.round((parse(b)-parse(a))/86400000);
+function evEnd(e){return e.end&&e.end>=e.start?e.end:e.start;}
+function evRange(e){const s=parse(e.start),en=parse(evEnd(e));const sm=s.getUTCMonth()===en.getUTCMonth();
+  return e.start===evEnd(e)?nice(e.start):(sm?bn(s.getUTCDate())+"–"+bn(en.getUTCDate())+" "+MONTHS[en.getUTCMonth()]+" "+bn(en.getUTCFullYear()):nice(e.start)+" – "+nice(evEnd(e)));}
+function evStatus(e){const d=dayDiff(TODAY,e.start);if(TODAY>evEnd(e))return {k:"past",t:"শেষ",n:null};if(d<=0)return {k:"now",t:"চলছে",n:0};return {k:d<=7?"hot":"up",t:"আর "+bn(d)+" দিন",n:d};}
+function upcoming(){return Object.values(events).filter(e=>e&&e.start&&evEnd(e)>=TODAY).sort((a,b)=>a.start<b.start?-1:1);}
+function gcalLink(e){const ymd=s=>s.replace(/-/g,"");let dates;
+  if(e.time){const st=ymd(e.start)+"T"+e.time.replace(":","")+"00";const [h,m]=e.time.split(":").map(Number);const eh=String(Math.min(h+2,23)).padStart(2,"0");dates=st+"/"+ymd(evEnd(e))+"T"+eh+String(m).padStart(2,"0")+"00";}
+  else dates=ymd(e.start)+"/"+ymd(addDays(evEnd(e),1));
+  const p=new URLSearchParams({action:"TEMPLATE",text:e.title,dates,details:e.note||"",location:e.location||"",ctz:TZ});return "https://calendar.google.com/calendar/render?"+p.toString();}
+function saveEvent(e){e.updatedAt=new Date().toISOString();events[e.id]=e;saveEventsLS();if(db)db.doc("events/"+e.id).set(e).then(()=>setSync(true,"অনলাইনে সেভ হয়েছে")).catch(()=>setSync(false,"শুধু এই ডিভাইসে সেভ"));}
+function deleteEvent(id){tomb(id);const _e=events[id];if(_e&&_e.gcalId&&mcp)gcal("delete_event",{eventId:_e.gcalId,notificationLevel:"NONE"}).catch(()=>{});delete events[id];saveEventsLS();if(db)db.doc("events/"+id).delete().catch(()=>{});}
+function evItem(e){
+  const st=evStatus(e), li=document.createElement("li"), s=parse(e.start);
+  li.innerHTML=`<div class="ev"><div class="when"><b>${bn(s.getUTCDate())}</b><small>${MONTHS[s.getUTCMonth()].slice(0,3)} ${bn(s.getUTCFullYear()%100)}</small></div>
+  <div><h3></h3><div class="meta"></div><div class="meta note"></div>
+  <div class="row"><span class="chip ${st.k==="hot"||st.k==="now"?"hot":st.k==="past"?"past":""}">${st.t}</span>
+  ${e.inCalendar?`<span class="chip">Google Calendar-এ আছে ✓</span>`:`<a class="cal" href="${gcalLink(e)}" target="_blank" rel="noopener">Google Calendar-এ যোগ করো ↗</a>`}
+  <button class="del" aria-label="মুছে ফেলো">×</button></div></div></div>`;
+  li.querySelector("h3").textContent=e.title;
+  li.querySelector(".meta").textContent=evRange(e)+(e.time?" · "+t12(e.time):"")+(e.location?" · "+e.location:"");
+  const nt=li.querySelector(".note");if(e.note)nt.textContent=e.note;else nt.remove();
+  li.querySelector(".del").onclick=()=>{deleteEvent(e.id);renderEvents();renderAd();renderRemind();};
+  return li;
+}
+function renderEvents(){
+  const up=upcoming(), past=Object.values(events).filter(e=>e&&e.start&&evEnd(e)<TODAY).sort((a,b)=>a.start<b.start?1:-1);
+  const ul=$("evlist");ul.innerHTML="";if(!up.length)ul.innerHTML=`<li class="empty">কোনো আসন্ন ইভেন্ট নেই। উপরের ফর্ম থেকে যোগ করো।</li>`;up.forEach(e=>ul.append(evItem(e)));
+  $("evpastwrap").hidden=!past.length;const pl=$("evpast");pl.innerHTML="";past.slice(0,10).forEach(e=>pl.append(evItem(e)));
+}
+$("evstart").min=TODAY;
+$("evform").onsubmit=e=>{e.preventDefault();
+  const ev={id:"ev-"+Date.now().toString(36),title:$("evtitle").value.trim(),start:$("evstart").value,end:$("evend").value||"",time:$("evtime").value||"",location:$("evloc").value.trim(),note:$("evnote").value.trim(),createdAt:new Date().toISOString()};
+  if(!ev.title||!ev.start)return;if(ev.end&&ev.end<ev.start)ev.end="";
+  saveEvent(ev);$("evform").reset();renderEvents();renderAd();renderRemind();
+  if(!mcp){$("evstatus").textContent="যোগ হয়েছে। রিমাইন্ডারের জন্য \"Google Calendar-এ যোগ করো\" চাপো।";return;}
+  $("evstatus").textContent="যোগ হয়েছে, Google Calendar-এ যাচ্ছে…";
+  syncOne({...ev,rem:REMD.event}).then(id=>{ev.gcalId=id;ev.inCalendar=true;saveEvent(ev);renderEvents();$("evstatus").textContent="✓ Google Calendar-এ সেট হয়েছে ("+remText(REMD.event)+" আগে রিমাইন্ডার)।";})
+   .catch(err=>{$("evstatus").textContent="অ্যাপে যোগ হয়েছে, কিন্তু ক্যালেন্ডারে যায়নি: "+errText(err);});};
+// ---- academic (exams & assignments)
+const ACK={exam:"পরীক্ষা",assignment:"অ্যাসাইনমেন্ট"};
+function acStatus(a){const d=dayDiff(TODAY,a.date);
+  if(a.type==="assignment"&&a.done)return {k:"done",t:"জমা দেওয়া হয়েছে",n:null};
+  if(d<0)return a.type==="exam"?{k:"done",t:"শেষ",n:null}:{k:"late",t:"সময় পেরিয়ে গেছে!",n:d};
+  if(d===0)return {k:"now",t:"আজ",n:0};
+  return {k:d<=7?"hot":"up",t:"আর "+bn(d)+" দিন",n:d};}
+function acOpen(){return Object.values(acad).filter(a=>a&&a.date&&acStatus(a).k!=="done").sort((x,y)=>(x.date+(x.time||""))<(y.date+(y.time||""))?-1:1);}
+function saveAc(a){a.updatedAt=new Date().toISOString();acad[a.id]=a;saveAcadLS();if(db)db.doc("academic/"+a.id).set(a).then(()=>setSync(true,"অনলাইনে সেভ হয়েছে")).catch(()=>setSync(false,"শুধু এই ডিভাইসে সেভ"));}
+function delAc(id){tomb(id);const _a=acad[id];if(_a&&_a.gcalId&&mcp)gcal("delete_event",{eventId:_a.gcalId,notificationLevel:"NONE"}).catch(()=>{});delete acad[id];saveAcadLS();if(db)db.doc("academic/"+id).delete().catch(()=>{});}
+function acGcal(a){return gcalLink({title:(a.type==="exam"?"📝 ":"📄 ")+a.course+" — "+a.title,start:a.date,end:"",time:a.time,location:a.venue,note:a.note});}
+function acItem(a){
+  const st=acStatus(a),li=document.createElement("li"),s=parse(a.date);
+  li.innerHTML=`<div class="ev${st.k==="done"?" done":""}"><div class="when"><b>${bn(s.getUTCDate())}</b><small>${MONTHS[s.getUTCMonth()].slice(0,3)} ${bn(s.getUTCFullYear()%100)}</small></div>
+  <div><h3><span class="kind ${a.type}">${ACK[a.type]}</span><span class="tx"></span></h3><div class="meta m1"></div><div class="meta m2"></div>
+  <div class="row"><span class="chip ${st.k==="hot"||st.k==="now"||st.k==="late"?"hot":st.k==="done"?"past":""}">${st.t}</span>
+  ${a.type==="assignment"?`<label class="chip" style="cursor:pointer;display:inline-flex;gap:6px;align-items:center"><input type="checkbox" class="sub"${a.done?" checked":""}> জমা দিয়েছি</label>`:""}
+  ${st.k!=="done"?`<button class="linkbtn prep">প্রস্তুতি To-Do-তে যোগ করো</button>`:""}
+  ${st.k!=="done"?(a.gcalId?`<span class="chip">📅 ক্যালেন্ডারে ✓</span>`:`<a class="cal" href="${acGcal(a)}" target="_blank" rel="noopener">Google Calendar ↗</a>`):""}
+  <button class="del" aria-label="মুছে ফেলো">×</button></div></div></div>`;
+  li.querySelector(".tx").textContent=a.title;
+  li.querySelector(".m1").textContent=a.course+(a.weight?" · "+bn(a.weight)+"%":"");
+  const m2=[nice(a.date)+(a.time?" · "+t12(a.time):""),a.venue].filter(Boolean).join(" · ")+(a.note?" — "+a.note:"");li.querySelector(".m2").textContent=m2;
+  const sb=li.querySelector(".sub");if(sb)sb.onchange=e=>{a.done=e.target.checked;a.doneAt=a.done?new Date().toISOString():"";saveAc(a);renderAcad();renderRemind();startAd();};
+  const pb=li.querySelector(".prep");if(pb)pb.onclick=()=>{
+    const day=a.date<=addDays(TODAY,1)?TODAY:addDays(TODAY,1);
+    const text=(a.type==="exam"?"প্রস্তুতি: ":"কাজ করা: ")+a.course+" — "+a.title;
+    if(todoList(day).some(i=>i.text===text)){$("acstatus").textContent="এই To-Do আগেই যোগ করা আছে।";return;}
+    todos[day]={date:day,items:todoList(day).concat({id:Date.now().toString(36),text,time:"",prio:"h",done:false})};saveTodo(day);
+    $("acstatus").textContent=(day===TODAY?"আজকের":"আগামীকালের")+" To-Do-তে যোগ হয়েছে (উচ্চ অগ্রাধিকার)।";};
+  li.querySelector(".del").onclick=()=>{delAc(a.id);renderAcad();renderRemind();startAd();};
+  return li;
+}
+function fillCourses(){const sel=$("accourse"),cur=sel.value;const names=[...new Set(Object.values(routine).filter(r=>r&&r.cat==="class").map(r=>r.label))].sort();
+  sel.innerHTML=names.map(n=>`<option>${esc(n)}</option>`).join("")+"<option>অন্যান্য</option>";if(cur)sel.value=cur;}
+function renderAcad(){fillCourses();
+  const open=acOpen(),done=Object.values(acad).filter(a=>a&&acStatus(a).k==="done").sort((x,y)=>x.date<y.date?1:-1);
+  $("acExam").textContent=bn(open.filter(a=>a.type==="exam").length);$("acAsg").textContent=bn(open.filter(a=>a.type==="assignment").length);
+  const nx=open[0];$("acNext").textContent=nx?(acStatus(nx).k==="late"?"পেরিয়ে গেছে":acStatus(nx).k==="now"?"আজ":bn(acStatus(nx).n)+" দিন"):"–";
+  const ul=$("aclist");ul.innerHTML="";if(!open.length)ul.innerHTML=`<li class="empty">কোনো আসন্ন পরীক্ষা বা বাকি অ্যাসাইনমেন্ট নেই।</li>`;open.forEach(a=>ul.append(acItem(a)));
+  $("acdonewrap").hidden=!done.length;const dl=$("acdone");dl.innerHTML="";done.slice(0,15).forEach(a=>dl.append(acItem(a)));
+}
+document.querySelectorAll('input[name=actype]').forEach(r=>r.onchange=()=>{const ex=r.value==="exam"&&r.checked||(r.value!=="exam"&&!r.checked);
+  const t=document.querySelector('input[name=actype]:checked').value;$("acdatelbl").textContent=t==="exam"?"পরীক্ষার তারিখ":"জমার শেষ তারিখ";$("acvenuelbl").textContent=t==="exam"?"রুম / স্থান":"কোথায় জমা (Moodle ইত্যাদি)";});
+$("acform").onsubmit=e=>{e.preventDefault();
+  const a={id:"ac-"+Date.now().toString(36),type:document.querySelector('input[name=actype]:checked').value,course:$("accourse").value,title:$("actitle").value.trim(),date:$("acdate").value,time:$("actime").value||"",venue:$("acvenue").value.trim(),weight:$("acweight").value?Number($("acweight").value):null,note:$("acnote").value.trim(),done:false,createdAt:new Date().toISOString()};
+  if(!a.title||!a.date)return;saveAc(a);
+  const keep=a.type;$("acform").reset();document.querySelector(`input[name=actype][value=${keep}]`).checked=true;
+  $("acstatus").textContent="যোগ হয়েছে। ফোনে রিমাইন্ডারের জন্য \"Google Calendar ↗\" চাপো।";renderAcad();renderRemind();startAd();;
+  if(mcp){syncOne({title:(a.type==="exam"?"📝 ":"📄 ")+a.course+" — "+a.title,start:a.date,end:"",time:a.time,location:a.venue,note:a.note,rem:REMD.acad})
+    .then(id=>{a.gcalId=id;saveAc(a);renderAcad();$("acstatus").textContent="✓ Google Calendar-এ সেট হয়েছে ("+remText(REMD.acad)+" আগে রিমাইন্ডার)।";})
+    .catch(err=>{$("acstatus").textContent="অ্যাপে যোগ হয়েছে, কিন্তু ক্যালেন্ডারে যায়নি: "+errText(err);});}
+};
+
+// ---- combined feed: banner + reminders
+function feed(){
+  const f=upcoming().map(e=>{const st=evStatus(e);return {kind:"ইভেন্ট",view:"events",title:e.title,sub:evRange(e)+(e.location?" · "+e.location:""),st,date:e.start};});
+  acOpen().forEach(a=>{const st=acStatus(a);f.push({kind:a.type==="exam"?"পরীক্ষা":"অ্যাসাইনমেন্ট জমা",view:"acad",title:a.course+" — "+a.title,sub:nice(a.date)+(a.time?" · "+t12(a.time):"")+(a.venue?" · "+a.venue:""),st,date:a.date});});
+  return f.sort((x,y)=>x.date<y.date?-1:1);
+}
+const isHot=st=>st.k==="hot"||st.k==="now"||st.k==="late";
+let adIdx=0,adTimer=null,adView="events";
+function renderAd(){
+  const up=feed().filter(i=>i.view==="events"),bar=$("adbar"),ad=$("ad");bar.hidden=false;
+  if(!up.length){adView="events";ad.className="ad";ad.innerHTML=`<div class="cd"><b>+</b><small>EVENT</small></div><div class="tt"><div class="k">ইভেন্ট</div><b>কোনো আসন্ন ইভেন্ট নেই</b><span>চাপ দিয়ে নতুন যোগ করো</span></div><div></div>`;return;}
+  adIdx%=up.length;const it=up[adIdx],st=it.st,hot=isHot(st);adView=it.view;
+  ad.className="ad"+(hot?" hot":"");
+  const big=st.k==="now"?"আজ":st.k==="late"?"!":bn(st.n), small=st.k==="now"?"আজ":st.k==="late"?"দেরি":"দিন বাকি";
+  ad.innerHTML=`<div class="cd fade"><b>${big}</b><small>${small}</small></div><div class="tt fade"><div class="k${hot?" hot":""}">${hot?"⏰ রিমাইন্ডার · ":""}${it.kind}</div><b></b><span></span></div><div class="dots">${up.length>1?up.slice(0,8).map((_,i)=>`<i class="${i===adIdx?"on":""}"></i>`).join(""):""}</div>`;
+  ad.querySelector(".tt b").textContent=it.title;ad.querySelector(".tt span").textContent=it.sub;
+}
+let duoIdx=0;
+function renderDuoOne(el,type,list){
+  const lbl=type==="exam"?"📝 EXAM":"📄 ASSIGNMENT";
+  el.className="ad2"+(type==="assignment"?" as":"");
+  if(!list.length){el.innerHTML=`<div class="cd"><b>+</b><small>ADD</small></div><div class="tt"><div class="k">${lbl}</div><b class="t">${type==="exam"?"কোনো আসন্ন পরীক্ষা নেই":"কোনো বাকি অ্যাসাইনমেন্ট নেই"}</b><span class="s">চাপ দিয়ে যোগ করো</span></div>`;return;}
+  const a=list[duoIdx%list.length],st=acStatus(a),hot=isHot(st);if(hot)el.className+=" hot";
+  const big=st.k==="now"?"আজ":st.k==="late"?"!":bn(st.n),small=st.k==="now"?"TODAY":st.k==="late"?"LATE":"দিন বাকি";
+  el.innerHTML=`<div class="cd fade"><b>${big}</b><small>${small}</small></div><div class="tt fade"><div class="k${hot?" hot":""}"><span>${hot?"⏰ ":""}${lbl}</span><span>${list.length>1?bn(duoIdx%list.length+1)+"/"+bn(list.length):""}</span></div><b class="t"></b><span class="s"></span></div>`;
+  el.querySelector("b.t").textContent=a.title;
+  el.querySelector(".s").textContent=a.course+" · "+nice(a.date)+(a.time?" · "+t12(a.time):"")+(a.venue?" · "+a.venue:"");
+}
+function renderDuo(){const open=acOpen();renderDuoOne($("adExam"),"exam",open.filter(a=>a.type==="exam"));renderDuoOne($("adAsg"),"assignment",open.filter(a=>a.type==="assignment"));}
+function pickType(t){const r=document.querySelector(`input[name=actype][value=${t}]`);if(r){r.checked=true;r.dispatchEvent(new Event("change"));}}
+$("adExam").onclick=()=>{setView("acad");if(!acOpen().some(a=>a.type==="exam")){pickType("exam");$("actitle").focus();}};
+$("adAsg").onclick=()=>{setView("acad");if(!acOpen().some(a=>a.type==="assignment")){pickType("assignment");$("actitle").focus();}};
+function startAd(){clearInterval(adTimer);renderAd();renderDuo();if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;adTimer=setInterval(()=>{adIdx++;duoIdx++;renderAd();renderDuo();},5000);}
+$("ad").onclick=()=>setView(adView);
+function renderRemind(){
+  const soon=feed().filter(i=>isHot(i.st));
+  $("remind").innerHTML=soon.map(i=>`<div class="remind">⏰ <span><b>${esc(i.kind)}: ${esc(i.title)}</b> — ${i.st.k==="now"?"আজ":i.st.k==="late"?"সময় পেরিয়ে গেছে":i.st.t+" পর"} (${esc(i.sub)})</span></div>`).join("");
+}
+
+// ---- reports
+function missRank(dates){
+  const m={};dates.forEach(d=>{const r=days[d];if(!r)return;const s=new Set(r.done);recTasks(d).forEach(t=>{m[t.label]=m[t.label]||{miss:0};if(!s.has(t.id))m[t.label].miss++;});});
+  return Object.entries(m).filter(([,v])=>v.miss).sort((a,b)=>b[1].miss-a[1].miss).slice(0,5);
+}
+function catAgg(dates){
+  const agg={};dates.forEach(d=>{const r=days[d];if(!r)return;const s=new Set(r.done);recTasks(d).forEach(t=>{agg[t.cat]=agg[t.cat]||{done:0,tot:0};agg[t.cat].tot++;if(s.has(t.id))agg[t.cat].done++;});});
+  return Object.keys(CATS).filter(k=>agg[k]).map(k=>({k,...agg[k]}));
+}
+function summaryCard(dates){
+  const sub=dates.filter(d=>days[d]);const avg=sub.length?Math.round(sub.reduce((a,d)=>a+pct(days[d].doneCount,days[d].total),0)/sub.length):0;
+  const best=sub.slice().sort((a,b)=>pct(days[b].doneCount,days[b].total)-pct(days[a].doneCount,days[a].total))[0];
+  let salD=0,salT=0;sub.forEach(d=>{const s=new Set(days[d].done);salT+=5;salD+=SALAT_IDS.filter(i=>s.has(i)).length;});
+  let tdT=0,tdD=0;dates.forEach(d=>{const l=todoList(d);tdT+=l.length;tdD+=l.filter(i=>i.done).length;});
+  const mr=missRank(dates);
+  return `<div class="stats"><div class="stat"><div class="n">${bn(avg)}%</div><div class="k">গড় সম্পন্ন</div></div>
+  <div class="stat"><div class="n">${bn(salD)}/${bn(salT)}</div><div class="k">ওয়াক্ত সালাত</div></div>
+  <div class="stat"><div class="n">${bn(tdD)}/${bn(tdT)}</div><div class="k">To-Do সম্পন্ন</div></div></div>
+  <div class="stats" style="margin-top:0"><div class="stat"><div class="n">${bn(sub.length)}/${bn(dates.length)}</div><div class="k">দিন জমা দিয়েছ</div></div>
+  <div class="stat"><div class="n">${best?DSHORT[wd(best)]+" "+bn(parse(best).getUTCDate()):"–"}</div><div class="k">সেরা দিন</div></div>
+  <div class="stat"><div class="n">${bn(streak())}</div><div class="k">টানা ধারা</div></div></div>
+  ${sub.length?`<h3 class="sub">বিভাগ অনুযায়ী</h3>${catHTML(catAgg(dates))}
+  <h3 class="sub">সবচেয়ে বেশি বাদ পড়েছে</h3>${mr.length?`<ul class="miss">${mr.map(([l,v])=>`<li><span>${esc(l)}</span><span>${bn(v.miss)} বার বাদ</span></li>`).join("")}</ul>`:`<p class="muted">কিছুই বাদ পড়েনি!</p>`}`:`<p class="muted">এখনো কোনো দিন জমা দেওয়া হয়নি। প্রতিদিন রাতে "আজ" ট্যাব থেকে জমা দিলে এখানে রিপোর্ট দেখাবে।</p>`}`;
+}
+function renderWeek(){
+  const dates=[...Array(7)].map((_,i)=>addDays(TODAY,i-6));
+  const bars=dates.map(d=>{const r=days[d];const p=r?pct(r.doneCount,r.total):null;
+    return `<div class="col"><span class="v">${p===null?"":bn(p)+"%"}</span><div class="b${p===null?" none":""}" style="height:${p===null?4:Math.max(p,3)}%"></div><span class="l">${DSHORT[wd(d)]}</span></div>`;}).join("");
+  $("v-week").innerHTML=`<div class="card" style="margin-top:0"><h2>গত ৭ দিন</h2><p class="muted" style="margin:2px 0 0">${nice(dates[0])} – ${nice(dates[6])}</p>
+  <div class="chart" role="img" aria-label="গত ৭ দিনের সম্পন্ন শতাংশ">${bars}</div>${summaryCard(dates)}</div>`;
+}
+function renderMonth(){
+  const t=parse(TODAY),y=t.getUTCFullYear(),m=t.getUTCMonth(),first=fmt(new Date(Date.UTC(y,m,1))),n=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+  const dates=[...Array(n)].map((_,i)=>addDays(first,i)).filter(d=>d<=TODAY);
+  const shade=p=>p===null?"var(--sunk)":`color-mix(in oklab, var(--accent) ${Math.max(18,p)}%, var(--sunk))`;
+  let cells=DSHORT.map(d=>`<div class="h">${d}</div>`).join("")+`<div class="c e"></div>`.repeat(wd(first));
+  for(let i=0;i<n;i++){const d=addDays(first,i),r=days[d],p=r?pct(r.doneCount,r.total):null;
+    cells+=`<div class="c${d===TODAY?" today":""}" style="background:${shade(p)};color:${p!==null&&p>=55?"var(--accent-ink)":"var(--ink)"}" title="${p===null?"জমা হয়নি":bn(p)+"%"}">${bn(i+1)}</div>`;}
+  $("v-month").innerHTML=`<div class="card" style="margin-top:0"><h2>${MONTHS[m]} ${bn(y)}</h2>
+  <div class="cal">${cells}</div>
+  <div class="legend">কম <i style="background:var(--sunk)"></i><i style="background:${shade(30)}"></i><i style="background:${shade(60)}"></i><i style="background:${shade(100)}"></i> বেশি</div>
+  ${summaryCard(dates)}</div>`;
+}
+
+// ---- calendar links + .ics export (for devices without the Claude connector)
+function recurLink(r){const d=firstDate(r),e=r.end<=r.start?addDays(d,1):d,f=x=>x.replace(/[-:]/g,"");
+  const days=r.days.length===7?"RRULE:FREQ=DAILY":"RRULE:FREQ=WEEKLY;BYDAY="+r.days.slice().sort().map(x=>DAYCODE[x]).join(",");
+  const p=new URLSearchParams({action:"TEMPLATE",text:r.label+(r.room?" ( "+r.room+" )":"")+(r.quote?" | "+r.quote:""),dates:f(d)+"T"+f(r.start)+"00/"+f(e)+"T"+f(r.end)+"00",ctz:TZ,recur:days+(r.until?";UNTIL="+f(r.until)+"T235959Z":""),location:r.room||""});
+  return "https://calendar.google.com/calendar/render?"+p.toString();}
+function buildICS(){const f=x=>x.replace(/[-:]/g,""),now=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const esc2=t=>String(t).replace(/[\\,;]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Amalnama//BN","CALSCALE:GREGORIAN"];
+  Object.values(routine).forEach(r=>{if(!r||!r.days||!r.days.length)return;const d=firstDate(r),e=r.end<=r.start?addDays(d,1):d;
+    const rule=r.days.length===7?"FREQ=DAILY":"FREQ=WEEKLY;BYDAY="+r.days.slice().sort().map(x=>DAYCODE[x]).join(",");
+    L.push("BEGIN:VEVENT","UID:"+r.id+"@amalnama","DTSTAMP:"+now,"DTSTART;TZID="+TZ+":"+f(d)+"T"+f(r.start)+"00","DTEND;TZID="+TZ+":"+f(e)+"T"+f(r.end)+"00",
+      "RRULE:"+rule+(r.until?";UNTIL="+f(r.until)+"T235959Z":""),"SUMMARY:"+esc2(r.label+(r.room?" ( "+r.room+" )":"")+(r.quote?" | "+r.quote:"")));
+    if(r.room)L.push("LOCATION:"+esc2(r.room));
+    (r.rem||[30]).forEach(m=>L.push("BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+esc2(r.label),"TRIGGER:-PT"+m+"M","END:VALARM"));
+    L.push("END:VEVENT");});
+  L.push("END:VCALENDAR");return L.join("\r\n");}
+async function saveFile(name,data,type){
+  if(window._downloads){try{await window._downloads.save({filename:name,data});return true;}catch(e){return false;}}
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);return true;}catch(e){return false;}}
+
+// ---- Google Calendar sync (viewer's own connector)
+let mcp=null;
+async function gcal(tool,input){if(!mcp)throw {code:"no_mcp"};const r=await mcp.callTool("Google Calendar",tool,input,{cache:false});
+  let p=r&&r.payload;if(!p&&r&&r.content){const tx=r.content.find(c=>c.type==="text");try{p=JSON.parse(tx.text);}catch(e){}}return p||{};}
+const DAYCODE=["SU","MO","TU","WE","TH","FR","SA"];
+function firstDate(r){let d=r.from&&r.from>TODAY?r.from:TODAY;for(let i=0;i<7;i++){if(r.days.includes(wd(d)))return d;d=addDays(d,1);}return TODAY;}
+function evInput(r){
+  const d=firstDate(r),endD=r.end<=r.start?addDays(d,1):d;
+  const rule=r.days.length===7?"RRULE:FREQ=DAILY":"RRULE:FREQ=WEEKLY;BYDAY="+r.days.slice().sort().map(x=>DAYCODE[x]).join(",");
+  const until=r.until?";UNTIL="+r.until.replace(/-/g,"")+"T235959Z":"";
+  const rec=[rule+until];(r.except||[]).forEach(x=>rec.push("EXDATE;TZID="+TZ+":"+x.replace(/-/g,"")+"T"+r.start.replace(":","")+"00"));
+  return {summary:r.label+(r.room?" ( "+r.room+" )":"")+(r.quote?" | "+r.quote:""),startTime:d+"T"+r.start+":00",endTime:endD+"T"+r.end+":00",timeZone:TZ,
+    recurrenceData:rec,colorId:CAT_COLOR[r.cat]||"8",location:r.room||"",overrideReminders:(r.rem||[30]).map(m=>({method:"popup",minutes:m}))};
+}
+const sameRec=(a,b)=>a&&b&&a.days.slice().sort().join()===b.days.slice().sort().join()&&(a.until||"")===(b.until||"")&&(a.except||[]).join()===(b.except||[]).join();
+async function syncRoutine(r,prev){
+  if(!mcp){r.sync="";saveR(r,true);renderRoutine();return;}
+  r.sync="pend";saveR(r,false);renderRoutine();
+  try{
+    const inp=evInput(r);
+    if(prev&&prev.gcalId&&sameRec(prev,r)){
+      await gcal("update_event",{eventId:prev.gcalId,summary:inp.summary,startTime:inp.startTime,endTime:inp.endTime,timeZone:TZ,colorId:inp.colorId,location:inp.location,overrideReminders:inp.overrideReminders,notificationLevel:"NONE"});
+      r.gcalId=prev.gcalId;
+    }else{
+      if(prev&&prev.gcalId){try{await gcal("delete_event",{eventId:prev.gcalId,notificationLevel:"NONE"});}catch(e){}}
+      const ev=await gcal("create_event",inp);r.gcalId=ev.id||r.gcalId||"";
+    }
+    r.sync="ok";r.syncErr="";
+  }catch(e){r.sync="err";r.syncErr=errText(e);}
+  saveR(r,true);renderRoutine();
+}
+async function syncTodo(date,it){
+  const trem=REMD.todo&&REMD.todo.length?REMD.todo:[10];
+  if(!mcp){$("pstatus").innerHTML=`যোগ হয়েছে। <a class="cal" target="_blank" rel="noopener" href="${gcalLink({title:"✅ "+it.text,start:date,end:"",time:it.time,location:"",note:""})}">Google Calendar-এ যোগ করো ↗</a>`;return;}
+  try{const endH=it.time.split(":").map(Number);const e=new Date(Date.UTC(2000,0,1,endH[0],endH[1]+30));const end=String(e.getUTCHours()).padStart(2,"0")+":"+String(e.getUTCMinutes()).padStart(2,"0");
+    const ev=await gcal("create_event",{summary:"✅ "+it.text,startTime:date+"T"+it.time+":00",endTime:(end<it.time?addDays(date,1):date)+"T"+end+":00",timeZone:TZ,colorId:"3",overrideReminders:trem.map(m=>({method:"popup",minutes:m}))});
+    it.gcalId=ev.id||"";saveTodo(date);$("pstatus").textContent="যোগ হয়েছে, Google Calendar-এ রিমাইন্ডারসহ ("+remText(trem)+" আগে)।";}
+  catch(e){$("pstatus").textContent="যোগ হয়েছে, কিন্তু Google Calendar-এ যায়নি ("+errText(e)+")।";}
+}
+function saveR(r,cloud){r.updatedAt=new Date().toISOString();routine[r.id]=r;lsSet("rc-routine-v1",routine);if(cloud&&db)db.doc("routine/"+r.id).set(r).catch(()=>{});}
+function delR(id){tomb(id);const r=routine[id];delete routine[id];lsSet("rc-routine-v1",routine);if(db)db.doc("routine/"+id).delete().catch(()=>{});
+  if(r&&r.gcalId)gcal("delete_event",{eventId:r.gcalId,notificationLevel:"NONE"}).catch(()=>{});}
+function remChips(box){const el=document.getElementById(box);if(el&&!el.children.length)el.innerHTML=REM_P.map(m=>`<label><input type="checkbox" value="${m}"><span>${remLbl(m)}</span></label>`).join("");}
+function getRem(box,x,def){const set=new Set([...document.querySelectorAll("#"+box+" input:checked")].map(i=>Number(i.value)));parseRem($(x).value).forEach(n=>set.add(n));const a=[...set].sort((p,q)=>p-q).slice(0,5);return a.length?a:def;}
+function setRem(box,x,arr){remChips(box);document.querySelectorAll("#"+box+" input").forEach(i=>i.checked=arr.includes(Number(i.value)));$(x).value=arr.filter(m=>!REM_P.includes(m)).join(", ");}
+function errText(e){const c=e&&e.code;return c==="no_mcp"||c==="not_granted"||c==="capability_disabled"||c==="capability_removed"?"এখানে Google Calendar সংযোগ নেই":c==="server_not_connected"?"উপরে \"Google দিয়ে সংযোগ\" চাপো":c==="needs_reauth"?"উপরে \"আবার সংযোগ\" চাপো":c==="selection_required"?"কোন Google Calendar সেটা বেছে নাও":c==="not_in_manifest"||c==="consent_required"?"Google Calendar-এর অনুমতি দেওয়া হয়নি":"সিঙ্ক হয়নি, আবার চেষ্টা করো";}
+async function syncOne(o){const inp={summary:o.title,location:o.location||"",description:o.note||"",timeZone:TZ,overrideReminders:(o.rem||[30]).slice(0,5).map(m=>({method:"popup",minutes:m}))};
+  if(o.time){const [h,m]=o.time.split(":").map(Number);inp.startTime=o.start+"T"+o.time+":00";inp.endTime=(o.end||o.start)+"T"+String(Math.min(h+2,23)).padStart(2,"0")+":"+String(m).padStart(2,"0")+":00";if(!o.end&&h>=22)inp.endTime=o.start+"T23:59:00";}
+  else{inp.allDay=true;inp.startTime=o.start+"T00:00:00";inp.endTime=addDays(o.end||o.start,1)+"T00:00:00";}
+  const ev=await gcal("create_event",inp);return ev.id||"";}
+let editing=null;
+function openRoutine(cat){setView("routine");if(cat){$("rcat").value=cat;if(!editing)setRem("rrem","rremx",REMD[cat]||[30]);const f=document.querySelector(`input[name=rf][value=${cat}]`);if(f){f.checked=true;renderRoutine();}}window.scrollTo(0,0);}
+function dayText(ds){if(ds.length===7)return "প্রতিদিন";const s=ds.slice().sort().join();if(s==="1,2,3,4,5")return "সোম–শুক্র";return [6,0,1,2,3,4,5].filter(d=>ds.includes(d)).map(d=>DSHORT[d]).join(", ");}
+function renderRoutine(){
+  const f=(document.querySelector("input[name=rf]:checked")||{}).value||"all";
+  const box=$("rlist");box.innerHTML="";
+  const uns=Object.values(routine).filter(r=>r&&!r.gcalId&&r.sync!=="pend");
+  if(mcp&&uns.length){const b=document.createElement("div");b.className="note";b.innerHTML=`${bn(uns.length)}টা কাজ এখনো Google Calendar-এ নেই। <button class="linkbtn" id="syncAll">সব ক্যালেন্ডারে পাঠাও</button>`;box.append(b);
+    b.querySelector("#syncAll").onclick=async()=>{for(const r of uns){await syncRoutine(r,null);}};}
+  Object.keys(CATS).filter(k=>k!=="todo"&&(f==="all"||f===k)).forEach(k=>{
+    const list=Object.values(routine).filter(r=>r&&r.cat===k).sort((a,b)=>(a.days.slice().sort()[0]-b.days.slice().sort()[0])||(a.start<b.start?-1:1));
+    const g=document.createElement("div");g.className="group";
+    g.innerHTML=`<div class="ghead"><h3><span class="star" style="background:${CATS[k].c}"></span>${CATS[k].n} (${bn(list.length)})</h3><span class="ar" lang="ar">${CATS[k].ar}</span></div>`;
+    const ul=document.createElement("ul");ul.className="list";
+    if(!list.length)ul.innerHTML=`<li class="empty">এখনো কিছু নেই।</li>`;
+    list.forEach(r=>{const li=document.createElement("li");
+      const sc=!mcp?`<a class="cal" target="_blank" rel="noopener" href="${recurLink(r)}" style="font-size:.78rem">📅 ক্যালেন্ডারে যোগ ↗</a>`:r.sync==="err"?`<button class="sync err" title="${esc(r.syncErr||"")}">⚠ আবার সিঙ্ক</button>`:r.sync==="pend"?`<span class="sync pend">⟳ সিঙ্ক হচ্ছে</span>`:r.gcalId?`<span class="sync ok">📅 ক্যালেন্ডারে</span>`:`<button class="sync pend" data-s>📅 ক্যালেন্ডারে পাঠাও</button>`;
+      li.innerHTML=`<div class="ritem"><div><div class="lbl"></div><div class="meta">${dayText(r.days)} · ${hm(r.start)}–${hm(r.end)} · ⏰ ${remText(r.rem)} আগে${r.until?" · "+nice(r.until)+" পর্যন্ত":""}</div></div>
+      <div class="act">${sc}<button class="editbtn" data-e>✎</button><button class="del" aria-label="মুছে ফেলো">×</button></div></div>`;
+      li.querySelector(".lbl").textContent=r.label+(r.room?" ("+r.room+")":"");
+      const eb=li.querySelector(".sync.err");if(eb)eb.onclick=()=>syncRoutine(r,r.gcalId?r:null);
+      const sb=li.querySelector("[data-s]");if(sb)sb.onclick=()=>syncRoutine(r,null);
+      li.querySelector("[data-e]").onclick=()=>startEdit(r);
+      li.querySelector(".del").onclick=()=>{if(li.dataset.c){delR(r.id);renderRoutine();renderToday();}else{li.dataset.c="1";li.querySelector(".del").textContent="নিশ্চিত?";setTimeout(()=>{if(li.isConnected){delete li.dataset.c;li.querySelector(".del").textContent="×";}},3000);}};
+      ul.append(li);});
+    g.append(ul);box.append(g);});
+}
+function startEdit(r){editing=r.id;$("rfTitle").textContent="সম্পাদনা: "+r.label;$("rlabel").value=r.label;$("rcat").value=r.cat;$("rstart").value=r.start;$("rend").value=r.end;$("rroom").value=r.room||"";$("runtil").value=r.until||"";$("rquote").value=r.quote||"";
+  setRem("rrem","rremx",r.rem||[30]);document.querySelectorAll("#rdays input").forEach(i=>i.checked=r.days.includes(Number(i.value)));$("rcancel").hidden=false;$("rsave").textContent="পরিবর্তন সেভ করো";window.scrollTo({top:0,behavior:"smooth"});}
+function resetRForm(){editing=null;$("rform").reset();$("rfTitle").textContent="রুটিনে নতুন কাজ যোগ করো";$("rcancel").hidden=true;$("rsave").textContent="সেভ করো";setRem("rrem","rremx",REMD[$("rcat").value]||[30]);}
+$("rcancel").onclick=resetRForm;
+$("rcat").onchange=()=>{if(!editing)setRem("rrem","rremx",REMD[$("rcat").value]||[30]);};
+setRem("rrem","rremx",REMD[$("rcat").value]||[30]);
+$("rBack").onclick=()=>setView("today");
+$("gotoRoutine").onclick=()=>openRoutine();
+document.querySelectorAll("input[name=rf]").forEach(i=>i.onchange=renderRoutine);
+$("rform").onsubmit=e=>{e.preventDefault();
+  const ds=[...document.querySelectorAll("#rdays input:checked")].map(i=>Number(i.value));
+  if(!ds.length){$("rstatus").textContent="অন্তত একটা দিন বেছে নাও।";return;}
+  const prev=editing?JSON.parse(JSON.stringify(routine[editing])):null;
+  const r={...(prev||{}),id:editing||"r-"+Date.now().toString(36),label:$("rlabel").value.trim(),cat:$("rcat").value,days:ds,start:$("rstart").value,end:$("rend").value,room:$("rroom").value.trim(),until:$("runtil").value||"",quote:$("rquote").value.trim(),rem:getRem("rrem","rremx",REMD[$("rcat").value]||[30]),updatedAt:new Date().toISOString()};
+  if(!prev)r.from=TODAY;
+  if(!r.label||!r.start||!r.end)return;
+  saveR(r,true);$("rstatus").textContent=prev?"সেভ হয়েছে, ক্যালেন্ডার আপডেট হচ্ছে…":"যোগ হয়েছে, ক্যালেন্ডারে যাচ্ছে…";resetRForm();renderToday();
+  syncRoutine(r,prev).then(()=>{$("rstatus").textContent=r.sync==="ok"?"✓ Google Calendar-এ সেট হয়েছে ("+remText(r.rem)+" আগে রিমাইন্ডার)।":mcp?"অ্যাপে সেভ হয়েছে, কিন্তু ক্যালেন্ডারে যায়নি: "+(r.syncErr||"")+"। তালিকায় ⚠ চেপে আবার চেষ্টা করো।":"সেভ হয়েছে। তালিকায় \"📅 ক্যালেন্ডারে যোগ\" চেপে ক্যালেন্ডারে নাও।";});
+};
+
+function setView(v){view=v;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
+  ["today","plan","routine","acad","events","week","month"].forEach(k=>$("v-"+k).hidden=k!==v);if(v==="routine")renderRoutine();if(v==="events")renderEvents();if(v==="acad")renderAcad();
+  if(v==="plan")renderPlan();if(v==="week")renderWeek();if(v==="month")renderMonth();if(v==="today")renderToday();}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
+$("prev").onclick=()=>{sel=addDays(sel,-1);renderToday();};
+$("next").onclick=()=>{if(sel<TODAY){sel=addDays(sel,1);renderToday();}};
+$("pprev").onclick=()=>{psel=addDays(psel,-1);renderPlan();};
+$("pnext").onclick=()=>{if(psel<addDays(TODAY,14)){psel=addDays(psel,1);renderPlan();}};
+$("gotoPlan").onclick=()=>{psel=addDays(TODAY,1);setView("plan");};
+$("submit").onclick=submit;
+try{const h=location.hash.slice(1);if(["plan","routine","acad","events","week","month"].includes(h))view=h;}catch(e){}
+setView(view);renderRemind();startAd();
+
+// ---- setup + settings
+function greet(){if(SET.name)$("dates").insertAdjacentText("afterbegin","আসসালামু আলাইকুম, "+SET.name+" · ");}
+greet();
+$("s-tz").value=TZ;$("t-name").value=SET.name||"";$("t-city").value=SET.city||"";$("t-tz").value=TZ;$("t-quotes").value=QUOTES.join("\n");$("t-dept").value=SET.dept||"";$("t-uni").value=SET.uni||"";
+$("remdefs").innerHTML=Object.keys(DEF_REM).map(k=>`<label>${REM_NAMES[k]}<input type="text" inputmode="numeric" data-rk="${k}" value="${REMD[k].join(", ")}"></label>`).join("");
+function maybeSetup(){$("setup").hidden=!!(SET.setupDone||Object.keys(routine).length);}
+if(!window.claude)maybeSetup();
+$("setupform").onsubmit=e=>{e.preventDefault();
+  SET.name=$("s-name").value.trim();SET.city=$("s-city").value.trim();SET.tz=$("s-tz").value.trim()||TZ;SET.dept=$("s-dept").value.trim();SET.uni=$("s-uni").value.trim();
+  const RS=parseRem($("s-remsalat").value),RO=parseRem($("s-remother").value);SET.rem={...(SET.rem||{}),ibadat:RS.length?RS:DEF_REM.ibadat,life:RO.length?RO:DEF_REM.life};SET.setupDone=true;saveSET();
+  const rs=RS.length?RS:[10,0],ro=RO.length?RO:[15];
+  const add=(id,label,cat,days,start,end,rem)=>{routine[id]={id,label,cat,days,start,end,room:"",quote:"",rem:cat==="ibadat"?rs:ro,until:"",except:[],gcalId:"",from:TODAY,updatedAt:new Date().toISOString()};};
+  const A=[0,1,2,3,4,5,6],plus=(t,m)=>{const [h,mm]=t.split(":").map(Number),x=h*60+mm+m;return String(Math.floor(x/60)%24).padStart(2,"0")+":"+String(x%60).padStart(2,"0");};
+  [["fajr","Fajr salat"],["zohor","Zohor salat"],["asar","Asar salat"],["maghrib","Maghrib salat"],["isyak","Isyak salat"]].forEach(([id,l])=>{const t=$("s-"+id).value;if(t)add(id,l,"ibadat",A,t,plus(t,20),10);});
+  if($("s-quran").checked&&$("s-fajr").value)add("quran","Quran tilawat","ibadat",A,plus($("s-fajr").value,20),plus($("s-fajr").value,45),10);
+  if($("s-study").checked)add("study-night","মনোযোগ দিয়ে পড়া (রাত)","study",[0,1,2,3,4,5,6],"20:00","22:00",15);
+  if($("s-sleep").checked){add("winddown","স্ক্রিন বন্ধ, ঘুমের প্রস্তুতি","life",A,"22:30","23:00",10);add("sleep","ঘুম","life",A,"23:00","06:00",15);}
+  if($("s-plan").checked)add("plan","সাপ্তাহিক পরিকল্পনা","study",[0],"20:00","20:30",30);
+  lsSet("rc-routine-v1",routine);if(db)Object.values(routine).forEach(r=>db.doc("routine/"+r.id).set(r).catch(()=>{}));
+  const go=()=>flushSync().then(()=>location.reload());
+  if(!mcp){go();return;}
+  (async()=>{const list=Object.values(routine).filter(r=>!r.gcalId);let n=0;
+    for(const r of list){$("sstatus").textContent="Google Calendar-এ সেট হচ্ছে… "+bn(++n)+"/"+bn(list.length);await syncRoutine(r,null);}
+    go();})();
+};
+$("setform").onsubmit=e=>{e.preventDefault();SET.name=$("t-name").value.trim();SET.city=$("t-city").value.trim();SET.tz=$("t-tz").value.trim()||TZ;SET.dept=$("t-dept").value.trim();SET.uni=$("t-uni").value.trim();
+  SET.rem={};document.querySelectorAll("#remdefs input").forEach(i=>{const a=parseRem(i.value);SET.rem[i.dataset.rk]=a.length?a:DEF_REM[i.dataset.rk];});
+  const q=$("t-quotes").value.split("\n").map(x=>x.trim()).filter(Boolean);SET.quotes=q;SET.setupDone=true;saveSET();$("tstatus").textContent="সেভ হয়েছে, পেজ রিলোড হচ্ছে…";flushSync().then(()=>location.reload());};
+$("icsbtn").onclick=async()=>{if(!Object.keys(routine).length){$("tstatus").textContent="রুটিনে এখনো কিছু নেই।";return;}
+  const ok=await saveFile("amalnama-routine.ics",buildICS(),"text/calendar");$("tstatus").textContent=ok?"ফাইল ডাউনলোড হয়েছে। Google Calendar বা ফোনের ক্যালেন্ডারে Import করো।":"ডাউনলোড করা যায়নি।";};
+
+// ---- backup
+$("restore").onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{const data=JSON.parse(await f.text());const inc=data.days||data, incT=data.todos||{};let n=0;
+    for(const [k,v] of Object.entries(inc)){if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!v||!Array.isArray(v.done))continue;
+      if(!days[k]||(v.submittedAt||"")>(days[k].submittedAt||"")){days[k]=v;n++;if(db){try{await db.doc("days/"+k).set(v);}catch(err){}}}}
+    for(const [k,v] of Object.entries(incT)){if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!v||!Array.isArray(v.items))continue;
+      if(!todos[k]||(v.updatedAt||"")>(todos[k].updatedAt||"")){todos[k]=v;n++;if(db){try{await db.doc("todos/"+k).set(v);}catch(err){}}}}
+    for(const [k,v] of Object.entries(data.events||{})){if(!v||!v.title||!v.start||events[k])continue;events[k]=v;n++;if(db){try{await db.doc("events/"+k).set(v);}catch(err){}}}
+    for(const [k,v] of Object.entries(data.academic||{})){if(!v||!v.title||!v.date||acad[k])continue;acad[k]=v;n++;if(db){try{await db.doc("academic/"+k).set(v);}catch(err){}}}
+    for(const [k,v] of Object.entries(data.routine||{})){if(!v||!v.label||!Array.isArray(v.days)||routine[k])continue;routine[k]=v;n++;}
+    lsSet("rc-routine-v1",routine);if(data.settings&&!SET.setupDone){Object.assign(SET,data.settings);saveSET();}
+    saveAcadLS();saveEventsLS();saveLS();saveTodosLS();setView(view);renderRemind();startAd();$("bstatus").textContent=bn(n)+"টা দিনের তথ্য ফিরিয়ে আনা হয়েছে।";}
+  catch(err){$("bstatus").textContent="ফাইলটা পড়া যায়নি।";}
+  e.target.value="";
+};
+
+
+// ---- Google Drive sync (viewer's own Drive: one file "Amalnama-data.json")
+const DRIVE="Google Drive",DFILE="Amalnama-data.json";
+let syncBusy=false,syncAgain=false,dirtyT=null,applying=false,driveState="off",lastPull=0;
+async function dcall(tool,input){const r=await mcp.callTool(DRIVE,tool,input,{cache:false});let p=r&&r.payload;
+  if(!p&&r&&r.content){const tx=r.content.find(c=>c.type==="text");try{p=JSON.parse(tx.text);}catch(e){}}return p||{};}
+function b64u(x){const b=atob(x);const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
+function mergeMap(L,R,f){const o={...(L||{})};for(const [k,v] of Object.entries(R||{})){if(!v)continue;if(!o[k]||(v[f]||"")>(o[k][f]||""))o[k]=v;}return o;}
+function dropTomb(m,f){for(const k of Object.keys(m)){if(TOMB[k]&&TOMB[k]>=((m[k]&&m[k][f])||""))delete m[k];}return m;}
+function snapshot(){return {days,todos,events,academic:acad,routine,settings:SET,tomb:TOMB};}
+function stable(o){return JSON.stringify(o,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);}
+function mergeIn(R){
+  const hadSetup=!!SET.setupDone;
+  TOMB={...(R.tomb||{}),...TOMB};for(const [k,v] of Object.entries(R.tomb||{}))if(v>(TOMB[k]||""))TOMB[k]=v;
+  days=mergeMap(days,R.days,"submittedAt");todos=mergeMap(todos,R.todos,"updatedAt");
+  events=dropTomb(mergeMap(events,R.events,"updatedAt"),"updatedAt");acad=dropTomb(mergeMap(acad,R.academic,"updatedAt"),"updatedAt");
+  routine=dropTomb(mergeMap(routine,R.routine,"updatedAt"),"updatedAt");
+  let setChanged=false;if(R.settings&&(R.settings.updatedAt||"")>(SET.updatedAt||"")){for(const k of Object.keys(SET))delete SET[k];Object.assign(SET,R.settings);setChanged=true;}
+  applying=true;try{localStorage.setItem("am-tomb",JSON.stringify(TOMB));localStorage.setItem("am-settings",JSON.stringify(SET));saveLS();saveTodosLS();saveEventsLS();saveAcadLS();lsSet("rc-routine-v1",routine);}catch(e){}applying=false;
+  return {reload:(!hadSetup&&SET.setupDone)||setChanged};
+}
+async function syncNow(opts){
+  if(!mcp)return;if(syncBusy){syncAgain=true;return;}syncBusy=true;setSync(false,"☁ সিঙ্ক হচ্ছে…");
+  let needReload=false;
+  try{
+    const r=await dcall("search_files",{query:`title = '${DFILE}'`,excludeContentSnippets:true,pageSize:25});
+    const files=(r.files||[]).filter(f=>f&&f.title===DFILE).sort((a,b)=>(b.createdTime||"")>(a.createdTime||"")?1:-1);
+    let remote=null;
+    if(files.length){const d=await dcall("download_file_content",{fileId:files[0].id});remote=JSON.parse(b64u(d.content||""));}
+    const before=remote?stable({days:remote.days||{},todos:remote.todos||{},events:remote.events||{},academic:remote.academic||{},routine:remote.routine||{},settings:remote.settings||{},tomb:remote.tomb||{}}):"";
+    if(remote)needReload=mergeIn(remote).reload;
+    const after=stable(snapshot());
+    const hasData=Object.keys(routine).length||Object.keys(days).length||SET.setupDone;
+    if(hasData&&after!==before){
+      const f=await dcall("create_file",{title:DFILE,textContent:JSON.stringify({app:"Amalnama",v:2,savedAt:new Date().toISOString(),...snapshot()}),contentMimeType:"application/json",disableConversionToGoogleType:true});
+      for(const o of files){if(o.id!==f.id)dcall("trash_file",{fileId:o.id}).catch(()=>{});}
+    }
+    driveState="ok";lastPull=Date.now();setSync(true,"☁ ল্যাপটপ-মোবাইল সিঙ্ক চালু");
+  }catch(e){const c=e&&e.code;driveState="err";
+    setSync(false,c==="server_not_connected"?"Google সংযোগ করো (সিঙ্কের জন্য)":c==="not_in_manifest"||c==="consent_required"?"Google-এর অনুমতি দাওনি · এই ডিভাইসে সেভ":"এই ডিভাইসে সেভ · সিঙ্ক পরে হবে");}
+  syncBusy=false;
+  if(needReload&&!(opts&&opts.noReload)){location.reload();return;}
+  if(opts&&opts.first){maybeSetup();setView(view);renderRemind();startAd();}
+  else if(!applying){setView(view);renderRemind();startAd();}
+  if(syncAgain){syncAgain=false;syncNow();}
+}
+window.__dirty=()=>{if(applying||!mcp)return;clearTimeout(dirtyT);dirtyT=setTimeout(()=>syncNow(),4000);};
+function flushSync(){clearTimeout(dirtyT);return mcp?syncNow({noReload:true}).catch(()=>{}):Promise.resolve();}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&mcp&&Date.now()-lastPull>20000)syncNow();});
+
+
+async function dbMigrate(){try{if(localStorage.getItem("am-dbmig"))return null;const c=window.claude;const db2=c&&c.use?await c.use("db"):null;if(!db2)return null;
+  const R={};for(const col of ["days","todos","events","academic","routine","settings"]){R[col]={};try{const snap=await db2.collection(col).get();snap.docs.forEach(d=>{const v=d.data();if(v)R[col][d.id]=v;});}catch(e){}}
+  const res=mergeIn({days:R.days,todos:R.todos,events:R.events,academic:R.academic,routine:R.routine,settings:R.settings.me||null,tomb:{}});
+  localStorage.setItem("am-dbmig","1");return res;}catch(e){return null;}}
+
+// ---- capabilities
+(async()=>{
+  const c=window.claude;
+  const downloads=c&&c.use?await c.use("downloads"):null;window._downloads=downloads;
+  if(downloads){$("dl").hidden=false;$("dl").onclick=async()=>{
+    try{await downloads.save({filename:"routine-backup-"+TODAY+".json",data:JSON.stringify({exportedAt:new Date().toISOString(),days,todos,events,academic:acad,routine,settings:SET},null,1)});$("bstatus").textContent="ব্যাকআপ সেভ হয়েছে।";}
+    catch(e){$("bstatus").textContent=e&&e.code==="declined"?"":"ডাউনলোড করা যায়নি।";}};}
+  else{$("dl").hidden=false;$("dl").onclick=async()=>{const ok=await saveFile("amalnama-backup-"+TODAY+".json",JSON.stringify({exportedAt:new Date().toISOString(),days,todos,events,academic:acad,routine,settings:SET},null,1),"application/json");$("bstatus").textContent=ok?"ব্যাকআপ ফাইল ডাউনলোড হয়েছে।":"ডাউনলোড করা যায়নি।";};}
+  mcp=c&&c.use?await c.use("mcp"):null;
+  db=null;
+  try{sample=c&&c.use?await c.use("sample"):null;}catch(e){sample=null;}
+  const mg=await dbMigrate();if(mg&&mg.reload){if(mcp)await syncNow({noReload:true});location.reload();return;}
+  if(mcp){syncNow({first:true});}else{setSync(false,"এই ডিভাইসে সেভ হচ্ছে");maybeSetup();setView(view);renderRemind();startAd();}
+})();
+</script>
+<script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});</script>
+</body></html>

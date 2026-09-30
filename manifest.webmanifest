@@ -1,0 +1,32 @@
+{
+ "name": "Amalnama",
+ "short_name": "Amalnama",
+ "description": "ইবাদত, ক্লাস, পড়াশোনা ও To-Do-র দৈনিক আমলনামা",
+ "id": "./",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#0b2a2e",
+ "theme_color": "#0b2226",
+ "lang": "bn",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
