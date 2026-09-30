@@ -1159,4 +1159,12 @@ async function dbMigrate(){try{if(localStorage.getItem("am-dbmig"))return null;c
 })();
 </script>
 <script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});</script>
+<style>#gbar .gbtn[hidden]{display:none}#instbtn{position:fixed;right:14px;bottom:96px;z-index:60;display:none;align-items:center;gap:8px;border:0;border-radius:99px;padding:11px 16px;font:inherit;font-weight:700;background:linear-gradient(135deg,#f3dc9c,#c9a24f);color:#1b1405;box-shadow:0 8px 22px rgba(0,0,0,.35);cursor:pointer}#instbtn.show{display:inline-flex}</style>
+<button id="instbtn" type="button">📲 অ্যাপ ইনস্টল করো</button>
+<script>(function(){var b=document.getElementById("instbtn"),dp=null;var sa=matchMedia("(display-mode: standalone)").matches||navigator.standalone;if(sa)return;
+var ua=navigator.userAgent,mob=/Android|iPhone|iPad|iPod/i.test(ua);
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;b.classList.add("show")});
+if(mob)setTimeout(function(){b.classList.add("show")},2500);
+b.onclick=async function(){if(dp){dp.prompt();var r=await dp.userChoice;dp=null;if(r&&r.outcome==="accepted")b.classList.remove("show");}else{location.href="install.html"}};
+window.addEventListener("appinstalled",function(){b.classList.remove("show")});})();</script>
 </body></html>
