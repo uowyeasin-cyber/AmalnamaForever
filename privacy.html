@@ -2,21 +2,60 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Amalnama - Privacy Policy</title>
 <link rel="icon" href="favicon.ico">
-<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 18px;line-height:1.65;color:#1c2a2b;background:#fbf7ec}h1{color:#0f5a52}h2{color:#0f5a52;font-size:1.1rem;margin-top:1.6em}a{color:#0f5a52}</style></head>
+<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 18px;line-height:1.65;color:#1c2a2b;background:#fbf7ec}h1{color:#0f5a52}h2{color:#0f5a52;font-size:1.1rem;margin-top:1.6em}a{color:#0f5a52}table{border-collapse:collapse;width:100%;font-size:.93rem}td,th{border:1px solid #d9ccae;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efe6d3}.box{background:#fff;border:1px solid #d9ccae;border-radius:10px;padding:10px 14px}nav a{margin-right:14px}</style></head>
 <body>
+<nav><a href="about.html">Home</a><a href="./">Open the app</a><a href="terms.html">Terms</a></nav>
 <h1>Amalnama - Privacy Policy</h1>
-<p>Last updated: 30 September 2026</p>
-<p>Amalnama is a free personal routine and worship checklist web app available at <a href="https://uowyeasin-cyber.github.io/AmalnamaForever/">https://uowyeasin-cyber.github.io/AmalnamaForever/</a>. It has no server and no database of its own.</p>
-<h2>Data the app accesses</h2>
-<p>Only if you choose "Connect with Google", the app asks for two permissions:</p>
-<ul><li><b>Google Calendar events</b> - to create, update and delete the reminder events that you add in the app.</li>
-<li><b>Google Drive app files (drive.file)</b> - to save one file named Amalnama-data.json in your own Drive so your laptop and phone stay in sync. The app can only see files it created itself.</li></ul>
-<h2>Where your data is stored</h2>
-<p>Your routine, checklist and settings are stored in your own browser and, if connected, in your own Google Drive and Google Calendar. The developer never receives, sees, sells or shares your data. No analytics, tracking or advertising is used.</p>
-<h2>Access tokens</h2>
-<p>Google access tokens stay only in your browser session and expire after about one hour.</p>
-<h2>Removing your data</h2>
-<p>You can disconnect at any time with the button in the app or at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Delete Amalnama-data.json from your Drive and the Amalnama events from your Calendar to remove all data.</p>
-<h2>Contact</h2>
-<p>Developer: Yeasin Arafat - uowyeasin@gmail.com</p>
+<p>Last updated: 1 October 2026</p>
+<p>Amalnama ("the app") is a free, ad-free daily routine, prayer and study planner available at <a href="https://uowyeasin-cyber.github.io/AmalnamaForever/">https://uowyeasin-cyber.github.io/AmalnamaForever/</a> and as an Android app that opens the same website. It is made by Yeasin Arafat, an individual developer. This policy explains what data the app uses, why, and where it is stored.</p>
+
+<h2>1. Data stored on your device</h2>
+<p>Your routine, daily checklist, to-dos, exams, events, settings, language, prayer-time settings and Quran bookmarks are stored in your own browser (local storage). They never leave your device unless you connect Google (section 2) or join the Community (section 3).</p>
+
+<h2>2. Google user data (only if you choose "Connect with Google")</h2>
+<table>
+<tr><th>Permission (scope)</th><th>What the app does with it</th></tr>
+<tr><td>Google Calendar events (optional, only if you turn on Calendar reminders)<br><code>https://www.googleapis.com/auth/calendar.events</code></td><td>Creates, updates and deletes the reminder events for the routine items, to-dos, exams and events that <b>you</b> add in the app, with the reminder times you choose. It does not read, change or delete any other events in your calendar.</td></tr>
+<tr><td>Google Drive app files<br><code>https://www.googleapis.com/auth/drive.file</code></td><td>Saves one file named <code>Amalnama-data.json</code> in your own Drive so your laptop and phone stay in sync. The app can only see files it created itself.</td></tr>
+</table>
+<p>Google data goes directly between your browser and Google's servers. The developer has no server that receives it and never sees, stores, sells or shares it. Access tokens stay in your browser session and expire after about one hour.</p>
+<div class="box"><b>Limited Use.</b> Amalnama's use and transfer of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements. Google user data is used only to provide the reminder and sync features described above. It is not used for advertising, is not sold, is not transferred to anyone, and is not read by humans.</div>
+
+<h2>3. Community (only if you sign in to the Community)</h2>
+<p>The optional Community lets members post, comment and chat. It uses Google Firebase (Authentication and Cloud Firestore, operated by Google, data region Singapore).</p>
+<ul>
+<li>When you sign in with Google for the Community, the app receives your <b>name, email address and profile photo</b> (basic profile scopes only).</li>
+<li>When you request to join, it stores your name, email, photo, the optional country and one-line introduction you type, and your chosen language, so the administrator can approve your request.</li>
+<li>Your community profile (the name, photo and short "about" text you choose, and when you were last online) is visible to approved members.</li>
+<li>Posts, comments, likes and group chat messages you send are stored so other approved members can see them. Your email address is visible only to you and the administrator, never to other members.</li>
+<li><b>Private chats</b> between two members can be read only by those two people, not by other members or the administrator. Photos, videos, voice messages and files sent in chats are deleted automatically 30 days after they are sent and cannot be opened after that.</li>
+<li><b>Voice and video calls</b> connect directly between the two devices (WebRTC). Only the technical connection details are passed through Firestore and deleted after the call; calls are not recorded. To find a network route, devices may contact Google's public STUN servers.</li>
+<li>You can delete your own posts, comments and messages at any time. To delete your membership and everything you posted, email the developer (section 8).</li>
+</ul>
+
+<h2>4. Other online services the app calls</h2>
+<ul>
+<li><b>Quran text and audio</b>: <a href="https://alquran.cloud">api.alquran.cloud</a> and cdn.islamic.network. The app only requests the surah you open. No personal data is sent.</li>
+<li><b>Prayer times</b>: <a href="https://aladhan.com">api.aladhan.com</a>. Only if you use automatic prayer times, the city and country you type, or your approximate location if you press "Use my location", are sent to calculate the times.</li>
+<li><b>Azan audio</b>: Wikimedia Commons. No personal data is sent.</li>
+<li><b>Fonts</b>: Google Fonts.</li>
+</ul>
+
+<h2>5. What the app does not do</h2>
+<p>No advertising, no analytics, no tracking cookies, no selling or sharing of personal data.</p>
+
+<h2>6. Removing your data</h2>
+<ul>
+<li>Disconnect Google in the app, or at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</li>
+<li>Delete <code>Amalnama-data.json</code> from your Drive and the Amalnama events from your Calendar.</li>
+<li>Clear the site data in your browser to remove data stored on your device.</li>
+<li>Email the developer to delete your Community account and posts. Requests are handled within 30 days.</li>
+</ul>
+
+<h2>7. Children</h2>
+<p>The Community is not intended for children under 13.</p>
+
+<h2>8. Contact</h2>
+<p>Developer: Yeasin Arafat · <a href="mailto:uowyeasin@gmail.com">uowyeasin@gmail.com</a></p>
+<p>Changes to this policy will be posted on this page with a new date.</p>
 </body></html>

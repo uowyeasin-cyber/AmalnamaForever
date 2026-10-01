@@ -957,7 +957,7 @@ async function syncRoutine(r,prev){
       const ev=await gcal("create_event",inp);r.gcalId=ev.id||r.gcalId||"";
     }
     r.sync="ok";r.syncErr="";
-  }catch(e){r.sync="err";r.syncErr=errText(e);}
+  }catch(e){if(e&&e.code==="cal_off"){r.sync="";r.syncErr="";}else{r.sync="err";r.syncErr=errText(e);}}
   saveR(r,true);renderRoutine();
 }
 async function syncTodo(date,it){
@@ -974,7 +974,7 @@ function delR(id){tomb(id);const r=routine[id];delete routine[id];lsSet("rc-rout
 function remChips(box){const el=document.getElementById(box);if(el&&!el.children.length)el.innerHTML=REM_P.map(m=>`<label><input type="checkbox" value="${m}"><span>${remLbl(m)}</span></label>`).join("");}
 function getRem(box,x,def){const set=new Set([...document.querySelectorAll("#"+box+" input:checked")].map(i=>Number(i.value)));parseRem($(x).value).forEach(n=>set.add(n));const a=[...set].sort((p,q)=>p-q).slice(0,5);return a.length?a:def;}
 function setRem(box,x,arr){remChips(box);document.querySelectorAll("#"+box+" input").forEach(i=>i.checked=arr.includes(Number(i.value)));$(x).value=arr.filter(m=>!REM_P.includes(m)).join(", ");}
-function errText(e){const c=e&&e.code;return c==="no_mcp"||c==="not_granted"||c==="capability_disabled"||c==="capability_removed"?"এখানে Google Calendar সংযোগ নেই":c==="server_not_connected"?"উপরে \"Google দিয়ে সংযোগ\" চাপো":c==="needs_reauth"?"উপরে \"আবার সংযোগ\" চাপো":c==="selection_required"?"কোন Google Calendar সেটা বেছে নাও":c==="not_in_manifest"||c==="consent_required"?"Google Calendar-এর অনুমতি দেওয়া হয়নি":"সিঙ্ক হয়নি, আবার চেষ্টা করো";}
+function errText(e){const c=e&&e.code;return c==="no_mcp"||c==="not_granted"||c==="capability_disabled"||c==="capability_removed"?"এখানে Google Calendar সংযোগ নেই":c==="server_not_connected"?"উপরে \"Google দিয়ে সংযোগ\" চাপো":c==="cal_off"?"Calendar রিমাইন্ডার বন্ধ (ঐচ্ছিক)":c==="sync_later"?"এই ডিভাইসে সেভ · সিঙ্ক পরে হবে":c==="needs_reauth"?"উপরে \"আবার সংযোগ\" চাপো":c==="selection_required"?"কোন Google Calendar সেটা বেছে নাও":c==="not_in_manifest"||c==="consent_required"?"Google Calendar-এর অনুমতি দেওয়া হয়নি":"সিঙ্ক হয়নি, আবার চেষ্টা করো";}
 async function syncOne(o){const inp={summary:o.title,location:o.location||"",description:o.note||"",timeZone:TZ,overrideReminders:(o.rem||[30]).slice(0,5).map(m=>({method:"popup",minutes:m}))};
   if(o.time){const [h,m]=o.time.split(":").map(Number);inp.startTime=o.start+"T"+o.time+":00";inp.endTime=(o.end||o.start)+"T"+String(Math.min(h+2,23)).padStart(2,"0")+":"+String(m).padStart(2,"0")+":00";if(!o.end&&h>=22)inp.endTime=o.start+"T23:59:00";}
   else{inp.allDay=true;inp.startTime=o.start+"T00:00:00";inp.endTime=addDays(o.end||o.start,1)+"T00:00:00";}
@@ -1158,7 +1158,7 @@ async function dbMigrate(){try{if(localStorage.getItem("am-dbmig"))return null;c
   if(mcp){syncNow({first:true});}else{setSync(false,"এই ডিভাইসে সেভ হচ্ছে");maybeSetup();setView(view);renderRemind();startAd();}
 })();
 </script>
-<script src="features.js?v=1"></script>
+<script src="features.js?v=2"></script><script src="chat.js?v=1"></script>
 <script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});</script>
 <style>#gbar .gbtn[hidden]{display:none}#instbtn{position:fixed;right:14px;bottom:96px;z-index:60;display:none;align-items:center;gap:8px;border:0;border-radius:99px;padding:11px 16px;font:inherit;font-weight:700;background:linear-gradient(135deg,#f3dc9c,#c9a24f);color:#1b1405;box-shadow:0 8px 22px rgba(0,0,0,.35);cursor:pointer}#instbtn.show{display:inline-flex}</style>
 <button id="instbtn" type="button">📲 অ্যাপ ইনস্টল করো</button>
