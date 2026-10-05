@@ -144,17 +144,19 @@
     "Never invent references; if unsure, say so. Where the four madhhabs differ, briefly show the main views (note the Hanafi view since many users are from South Asia). "+
     "Keep answers concise, practical, gentle, with a suggestion for action. For personal, family, divorce, inheritance shares, finance contracts, medical or legal matters, or anything serious, remind the user to confirm with a qualified local mufti. "+
     "Do not issue takfir, do not discuss sectarian attacks, stay respectful. You are an AI and not a human mufti.";
-  var MODELS=["gemini-3.5-flash","gemini-3.5-flash-lite"];
+  // flash-lite answers in a few seconds; the bigger model is the backup (it thinks long and can stall on slow phone networks)
+  var MODELS=["gemini-3.5-flash-lite","gemini-3.5-flash"];
   var ai=null,aiErr=null,mroot=null,busy=false;
   function loadAI(){if(ai)return Promise.resolve(ai);var Vn="12.19.0";
     return Promise.all([import("https://www.gstatic.com/firebasejs/"+Vn+"/firebase-app.js"),import("https://www.gstatic.com/firebasejs/"+Vn+"/firebase-ai.js")]).then(function(m){
       var A=m[0],AI=m[1],app=(A.getApps().filter(function(a){return a.name==="mufti";})[0])||A.initializeApp(window.AMALNAMA_FIREBASE,"mufti");
       ai={AI:AI,inst:AI.getAI(app,{backend:new AI.GoogleAIBackend()})};return ai;});}
   function ask(hist,q,onChunk){return loadAI().then(function(a){var i=0;
-      function attempt(){var model=a.AI.getGenerativeModel(a.inst,{model:MODELS[i],systemInstruction:SYS,generationConfig:{temperature:0.3,maxOutputTokens:1400}});
-        var chat=model.startChat({history:hist.slice(-12).map(function(h){return {role:h.r==="me"?"user":"model",parts:[{text:h.x}]};})});
-        return chat.sendMessageStream(q).then(function(res){var all="";return (async function(){for await(var c of res.stream){var tx=c.text();all+=tx;onChunk(all);}return all;})();})
-          .catch(function(e){var s=String(e&&e.message||e);if(i<MODELS.length-1&&/not found|404|unsupported|is not supported|deprecat/i.test(s)){i++;return attempt();}throw e;});}
+      function attempt(){var model=a.AI.getGenerativeModel(a.inst,{model:MODELS[i],systemInstruction:SYS,generationConfig:{temperature:0.3,maxOutputTokens:4096}},{timeout:60000});
+        var chat=model.startChat({history:hist.slice(-10).map(function(h){return {role:h.r==="me"?"user":"model",parts:[{text:String(h.x).slice(0,4000)}]};})});
+        return chat.sendMessageStream(q).then(function(res){var all="";return (async function(){for await(var c of res.stream){var tx="";try{tx=c.text();}catch(e){}all+=tx;if(all)onChunk(all);}return all;})();})
+          .then(function(all){if(!String(all||"").trim())throw new Error("empty answer");return all;})
+          .catch(function(e){console.warn("Mufti AI",MODELS[i],e);if(i<MODELS.length-1){i++;onChunk("…");return attempt();}throw e;});}
       return attempt();});}
   var OFF=[[/নামাজ|সালাত|salah|prayer|solat/i,B("পাঁচ ওয়াক্ত নামাজ প্রত্যেক প্রাপ্তবয়স্ক মুসলিমের ওপর ফরজ। সময়মতো আদায়ই আল্লাহর কাছে সবচেয়ে প্রিয় আমলগুলোর একটি।\n\nরেফারেন্স:\n• সূরা নিসা ৪:১০৩\n• বুখারী ৫২৭","The five daily prayers are obligatory on every adult Muslim; praying on time is among the deeds most beloved to Allah.\n\nReferences:\n• An-Nisa 4:103\n• Bukhari 527","","","","")],
     [/যাকাত|zakat|zakah/i,B("নিসাব পরিমাণ সম্পদ এক চান্দ্র বছর থাকলে ২.৫% যাকাত দিতে হয়। শরিয়াহ › যাকাত ক্যালকুলেটরে হিসাব করো।\n\nরেফারেন্স:\n• সূরা তাওবা ৯:৬০, ১০৩\n• আবু দাউদ ১৫৭৩","Zakat of 2.5% is due on wealth at or above the nisab held for one lunar year. Use Shariah › Zakat calculator.\n\nReferences:\n• At-Tawbah 9:60, 103\n• Abu Dawud 1573","","","","")],

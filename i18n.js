@@ -6,6 +6,26 @@
   try{var s=localStorage.getItem("am-lang");if(s&&LANGS[s]){L=s;chosen=true;}}catch(e){}
   if(!chosen){var nl=(navigator.languages||[navigator.language||""]).map(function(x){return String(x).slice(0,2).toLowerCase();});
     for(var i=0;i<nl.length;i++){if(nl[i]==="id"){L="ms";break;}if(LANGS[nl[i]]&&nl[i]!=="en"){L=nl[i];break;}}}
+  // ---- Hijri (Umm al-Qura) date with our own month names: some phones' browsers print Gregorian month names
+  // ("24 April 1448 BC") for the Islamic calendar, so only the numbers are taken from the browser.
+  var HM={bn:["মুহাররম","সফর","রবিউল আউয়াল","রবিউস সানি","জমাদিউল আউয়াল","জমাদিউস সানি","রজব","শাবান","রমজান","শাওয়াল","জিলকদ","জিলহজ"],
+    en:["Muharram","Safar","Rabi al-Awwal","Rabi al-Thani","Jumada al-Ula","Jumada al-Akhirah","Rajab","Sha'ban","Ramadan","Shawwal","Dhu al-Qa'dah","Dhu al-Hijjah"],
+    ms:["Muharam","Safar","Rabiulawal","Rabiulakhir","Jamadilawal","Jamadilakhir","Rejab","Syaaban","Ramadan","Syawal","Zulkaedah","Zulhijah"],
+    ar:["محرم","صفر","ربيع الأول","ربيع الآخر","جمادى الأولى","جمادى الآخرة","رجب","شعبان","رمضان","شوال","ذو القعدة","ذو الحجة"],
+    ur:["محرم","صفر","ربیع الاول","ربیع الثانی","جمادی الاول","جمادی الثانی","رجب","شعبان","رمضان","شوال","ذوالقعدہ","ذوالحجہ"],
+    sw:["Muharram","Safar","Rabiul Awwal","Rabiul Akhir","Jumadal Ula","Jumadal Akhira","Rajab","Shaaban","Ramadhani","Shawwal","Dhul Qaada","Dhul Hijja"]};
+  var HE={bn:"হিজরি",en:"AH",ms:"H",ar:"هـ",ur:"ہجری",sw:"AH"},HPF0=null;
+  // tabular (Kuwaiti) fallback for browsers without the Islamic calendar
+  function tabular(d){var jd=Math.floor(d.getTime()/86400000)+2440588,l=jd-1948440+10632,n=Math.floor((l-1)/10631);l=l-10631*n+354;
+    var j=Math.floor((10985-l)/5316)*Math.floor(50*l/17719)+Math.floor(l/5670)*Math.floor(43*l/15238);l=l-Math.floor((30-j)/15)*Math.floor(17719*j/50)-Math.floor(j/16)*Math.floor(15238*j/43)+29;
+    var m=Math.floor(24*l/709),dd=l-Math.floor(709*m/24),y=30*n+j-30;return {d:dd,m:m,y:y};}
+  window.AM_hijriParts=function(d,tz){d=d||new Date();try{if(!HPF0||HPF0.tz!==(tz||"")){HPF0=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",tz?{day:"numeric",month:"numeric",year:"numeric",timeZone:tz}:{day:"numeric",month:"numeric",year:"numeric"});HPF0.tz=tz||"";}
+      var p=HPF0.formatToParts(d),g=function(k){return +((p.find(function(x){return x.type===k;})||{}).value||0);};var r={d:g("day"),m:g("month"),y:g("year")};
+      if(r.y>1300&&r.y<1700&&r.m>=1&&r.m<=12&&r.d>=1&&r.d<=30)return r;}catch(e){}
+    return tabular(d);};
+  window.AM_hijri=function(d,lang,tz){var l=lang||L,h=window.AM_hijriParts(d,tz);var mn=(HM[l]||HM.en)[h.m-1]||"";
+    var dg=function(x){x=String(x);return l==="bn"?x.replace(/[0-9]/g,function(c){return "০১২৩৪৫৬৭৮৯"[c];}):x;};
+    return l==="ar"||l==="ur"?dg(h.d)+" "+mn+" "+dg(h.y)+" "+HE[l]:dg(h.d)+" "+mn+" "+dg(h.y)+" "+HE[l];};
   window.AM_LANGS=LANGS;window.AM_LANG=L;window.AM_LANG_CHOSEN=chosen;
   window.AM_DICT=window.AM_DICT||{};
   var root=document.documentElement;root.lang=L;if(LANGS[L].rtl)root.dir="rtl";
@@ -37,7 +57,7 @@
     if(L==="bn"||!build()){root.classList.remove("i18n-pending");return;}
     // dates in the chosen language
     try{var loc={en:"en-GB",ms:"ms-MY",ar:"ar-SA-u-nu-latn",ur:"ur-PK-u-nu-latn",sw:"sw-TZ"}[L];
-      window.hijri=function(s){try{var p=s.split("-").map(Number);return new Intl.DateTimeFormat(loc+(loc.indexOf("-u-")>0?"-ca-islamic-umalqura":"-u-ca-islamic-umalqura"),{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(Date.UTC(p[0],p[1]-1,p[2])));}catch(e){return "";}};}catch(e){}
+      window.hijri=function(s){try{var p=s.split("-").map(Number);return window.AM_hijri(new Date(Date.UTC(p[0],p[1]-1,p[2],12)),L,"UTC");}catch(e){return "";}};}catch(e){}
     ["alert","confirm","prompt"].forEach(function(f){var o=window[f];window[f]=function(m){var a=[].slice.call(arguments);a[0]=window.AM_tr(m);return o.apply(window,a);};});
     document.title=tr(document.title);
     try{var hs=document.querySelector("#dates .hj");if(hs&&typeof TODAY!=="undefined")hs.textContent=window.hijri(TODAY);}catch(e){}

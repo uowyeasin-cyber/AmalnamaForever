@@ -10,3 +10,5 @@ window.AMALNAMA_FIREBASE = {
   messagingSenderId: "132063455220",
   appId: "1:132063455220:web:dbf4260f3546efb3b67ba1"
 };
+// Calls & messages ring even when the app is closed (Web Push, sent by the small "amalnama-push" service on Vercel)
+window.AMALNAMA_PUSH = { url: "https://amalnama-push.vercel.app/api/ring", key: "BPLYUeh5esUz2pbZdFdbxaMJ2SGLdl9jbtLGflAR0ioVXuwzBob1wqE3DAkp6eFHElOOuhB1WkC6NFHISEFsTKI" };

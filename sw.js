@@ -1,4 +1,4 @@
-const C="amalnama-v10",R="amalnama-rt-v3",A=["./","./index.html","./config.js","./gshim.js","./i18n.js?v=2","./features.js?v=8","./chat.js?v=8","./v4.css?v=8","./v5.css?v=8","./v4-core.js?v=8","./v4-quran.js?v=8","./v4-amal.js?v=8","./v4-finance.js?v=8","./v4-extra.js?v=8","./v5.js?v=8","./manifest.webmanifest","./icon-192.png","./icon-512.png","./favicon.ico"];
+const C="amalnama-v11",R="amalnama-rt-v3",A=["./","./index.html","./config.js","./gshim.js","./i18n.js?v=3","./features.js?v=9","./chat.js?v=9","./v4.css?v=9","./v5.css?v=9","./v4-core.js?v=9","./v4-quran.js?v=9","./v4-amal.js?v=9","./v4-finance.js?v=9","./v4-extra.js?v=9","./v5.js?v=9","./manifest.webmanifest","./icon-192.png","./icon-512.png","./favicon.ico"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A.map(u=>new Request(u,{cache:"reload"})))));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C&&x!==R).map(x=>caches.delete(x)))));self.clients.claim();});
 const put=(n,req,res)=>{if(res&&res.status===200){const cp=res.clone();caches.open(n).then(c=>c.put(req,cp)).catch(()=>{});}return res;};
@@ -19,5 +19,22 @@ self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;const u=new
  if((u.host==="cdn.jsdelivr.net"&&u.pathname.indexOf("/hadith-api@")>0)||u.host==="i.ytimg.com"||u.host==="api.alquran.cloud"||(u.host==="api.quran.com"&&u.pathname.indexOf("/verses/indopak")>0)){ // Quran text: offline after first read
    e.respondWith(caches.open(R).then(c=>c.match(e.request).then(hit=>{const net=fetch(e.request).then(res=>put(R,e.request,res));return hit?(net.catch(()=>{}),hit):net;})));return;}
 });
-self.addEventListener("notificationclick",e=>{e.notification.close();const url=(e.notification.data&&e.notification.data.url)||"./";
+// ---- calls & messages while the app is closed (Web Push)
+const ICON="icon-192.png";
+function anyVisible(){return self.clients.matchAll({type:"window",includeUncontrolled:true}).then(ws=>ws.some(w=>w.visibilityState==="visible"&&w.focused!==false));}
+self.addEventListener("push",e=>{let d={};try{d=e.data?e.data.json():{};}catch(x){}const base=self.registration.scope;
+  if(d.t==="end"){e.waitUntil(self.registration.getNotifications({tag:"call-"+d.id}).then(ns=>{ns.forEach(n=>n.close());
+      return self.registration.showNotification("📞 "+(d.name||"Amalnama"),{body:"মিসড কল · Missed call",tag:"missed-"+d.id,icon:ICON,badge:ICON,data:{url:base}});}));return;}
+  if(d.t==="call"||d.t==="gcall"){const v=d.kind==="video",g=d.t==="gcall";
+    const title=(v?"🎥 ":"📞 ")+(g?(d.name||"Group"):(d.name||"Amalnama"));
+    const body=(g?(d.from?d.from+" · ":"")+"গ্রুপ ":"")+(v?"ভিডিও কল আসছে · Incoming video call":"কল আসছে · Incoming call");
+    e.waitUntil(anyVisible().then(vis=>vis?null:self.registration.showNotification(title,{body,tag:"call-"+d.id,renotify:true,requireInteraction:true,silent:false,
+      vibrate:[700,300,700,300,700,300,700,300,700,300,700],icon:ICON,badge:ICON,
+      actions:[{action:"answer",title:"✅ ধরো · Answer"},{action:"decline",title:"✖ কেটে দাও · Decline"}],
+      data:{url:base+"#call="+(g?"r:":"c:")+encodeURIComponent(d.id)}})));return;}
+  if(d.t==="msg"){e.waitUntil(anyVisible().then(vis=>vis?null:self.registration.showNotification(d.title||"Amalnama",{body:d.body||"",tag:"chat-"+d.chat,renotify:true,icon:ICON,badge:ICON,
+      data:{url:base+"#chat="+encodeURIComponent(d.chat)}})));return;}
+});
+self.addEventListener("notificationclick",e=>{e.notification.close();if(e.action==="decline")return;let url=(e.notification.data&&e.notification.data.url)||"./";
+ if(e.action==="answer")url+="&a=1";
  e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(ws=>{for(const w of ws){if("focus" in w){if(url!=="./"&&"navigate" in w)w.navigate(url).catch(()=>{});return w.focus();}}return self.clients.openWindow(url);}));});

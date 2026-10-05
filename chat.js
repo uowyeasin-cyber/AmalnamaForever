@@ -85,6 +85,8 @@
     ongoing:["চলমান কল — যোগ দিতে চাপো","Call in progress — tap to join","Panggilan sedang berlangsung — ketik untuk sertai","مكالمة جارية — اضغط للانضمام","کال جاری ہے — شامل ہونے کے لیے دبائیں","Simu inaendelea — gusa kujiunga"],
     callFull:["কলে সর্বোচ্চ ৮ জন থাকতে পারে","A group call can have up to 8 people","Maksimum 8 orang","الحد الأقصى ٨ أشخاص","زیادہ سے زیادہ 8 افراد","Hadi watu 8"],
     gPrivate:["🔒 এই গ্রুপ শুধু সদস্যরা দেখতে পারে","🔒 Only members can see this group","🔒 Hanya ahli boleh melihat kumpulan ini","🔒 لا يرى هذه المجموعة إلا أعضاؤها","🔒 یہ گروپ صرف اراکین دیکھ سکتے ہیں","🔒 Wanachama pekee wanaweza kuona kikundi hiki"],
+    pushOn:["🔔 অ্যাপ বন্ধ থাকলেও কল ও মেসেজের রিং পেতে চালু করো","🔔 Get calls & messages even when the app is closed","🔔 Terima panggilan & mesej walaupun aplikasi ditutup","🔔 استقبل المكالمات والرسائل حتى والتطبيق مغلق","🔔 ایپ بند ہو تب بھی کالز اور پیغامات پائیں","🔔 Pokea simu na ujumbe hata programu ikiwa imefungwa"],
+    pushDone:["✓ অ্যাপ বন্ধ থাকলেও কল ও মেসেজ আসবে","✓ Calls & messages will reach you even when the app is closed","✓ Panggilan & mesej akan sampai walaupun aplikasi ditutup","✓ ستصلك المكالمات والرسائل حتى والتطبيق مغلق","✓ ایپ بند ہو تب بھی کالز اور پیغامات آئیں گے","✓ Simu na ujumbe vitakufikia hata programu ikiwa imefungwa"],
     waiting:["অন্যদের জন্য অপেক্ষা…","Waiting for others…","Menunggu yang lain…","بانتظار الآخرين…","دوسروں کا انتظار…","Inasubiri wengine…"]
   };
   var LI={bn:0,en:1,ms:2,ar:3,ur:4,sw:5}[L];if(LI==null)LI=1;
@@ -176,6 +178,31 @@
     else new Notification(title,{body:body,icon:"icon-192.png",tag:tag});}catch(e){}}
   function askNotify(){try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission();}catch(e){}}
 
+  // ---------- Web Push: ring this phone even when the app is closed ----------
+  var PUSH=window.AMALNAMA_PUSH||null,pushOk=false;
+  function b64u(s){var p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/")),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+  function pushSupported(){return !!(PUSH&&PUSH.key&&"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window);}
+  function ensurePush(){if(!pushSupported()||!me||Notification.permission!=="granted")return Promise.resolve(false);
+    return navigator.serviceWorker.ready.then(function(reg){return reg.pushManager.getSubscription().then(function(sub){return sub||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(PUSH.key)});});})
+      .then(function(sub){var js=JSON.stringify(sub.toJSON?sub.toJSON():sub);var ref=q("push").doc(me.uid);
+        return ref.get().then(function(d){var subs=(d.exists&&d.data().subs)||[];if(subs.indexOf(js)>=0){pushOk=true;return true;}
+          var ep=JSON.parse(js).endpoint;subs=subs.filter(function(x){try{return JSON.parse(x).endpoint!==ep;}catch(e){return false;}});subs.push(js);
+          return ref.set({subs:subs.slice(-5),updatedAt:FV.serverTimestamp()}).then(function(){pushOk=true;return true;});});})
+      .catch(function(e){console.warn("push",e);return false;});}
+  function pushRing(body){if(!PUSH||!PUSH.url||!me||!me.getIdToken)return;me.getIdToken().then(function(tk){return fetch(PUSH.url,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+tk},body:JSON.stringify(body)});}).catch(function(){});}
+  function enablePush(btn){try{Notification.requestPermission().then(function(p){if(p==="granted")ensurePush().then(function(ok){if(btn){btn.textContent=ok?t("pushDone"):t("error");btn.disabled=true;}});});}catch(e){}}
+  // a call / chat notification was tapped: what should open once the community is ready
+  var intent=null;
+  function readIntent(){try{var hm0=/[#&](call|chat)=([^&]+)(&a=1)?/.exec(location.hash||"");if(hm0){intent={k:hm0[1],v:decodeURIComponent(hm0[2]),answer:!!hm0[3]};history.replaceState(history.state,"",location.pathname+location.search);return true;}}catch(e){}return false;}
+  readIntent();window.addEventListener("hashchange",function(){if(readIntent()&&me&&db)runIntent();});
+  window.AMCHAT_INTENT=function(){return intent;};
+  function runIntent(){if(!intent)return;var it=intent;
+    if(it.k==="chat"){intent=null;setTimeout(function(){var c=chatById(it.v);if(c&&c.group)openGChat(it.v);else if(it.v.indexOf("_")>0)openChat(ctxOther(it.v));},1500);return;}
+    if(it.k==="call"&&it.v.indexOf("r:")===0){intent=null;var rid=it.v.slice(2);setTimeout(function(){if(it.answer)joinRoom(rid);else if(rooms[rid])gIncoming(rooms[rid]);},1500);return;}
+    // one-to-one: the incoming-call listener shows the call; answer it straight away if "Answer" was tapped
+    if(it.k==="call"){var cid0=it.v.replace(/^c:/,"");intent=null;if(it.answer&&callObj&&callObj.acc&&callObj.ref.id===cid0&&!callObj.acc.b.disabled){callObj.acc.b.click();return;}autoAnswer=it.answer?cid0:null;}}
+  var autoAnswer=null;
+
   // ---------- start / stop (called by the community module) ----------
   function start(c){stop();ctx=c;db=c.db;FV=c.FV;me=c.me;onUnread=c.onUnread;
     // my profile: create it from the join form / Google account the first time
@@ -203,7 +230,8 @@
       refreshOpenHeader();if(room)roomSync();},function(e){console.warn(e);}));
     var hb=setInterval(beat,3*60000);unsubs.push(function(){clearInterval(hb);});
     var vis=function(){if(!document.hidden)beat();};document.addEventListener("visibilitychange",vis);unsubs.push(function(){document.removeEventListener("visibilitychange",vis);});
-    askNotify();}
+    if(typeof Notification!=="undefined"&&Notification.permission==="granted")setTimeout(ensurePush,2500);
+    runIntent();}
   var lastBeat=0;function beat(){if(!me||Date.now()-lastBeat<60000)return Promise.resolve();lastBeat=Date.now();return q("profiles").doc(me.uid).update({lastSeen:FV.serverTimestamp()}).catch(function(){});}
   function stop(){unsubs.splice(0).forEach(function(f){try{f();}catch(e){}});chats=[];profs={};rooms={};closeOv();if(callObj)hang("ended");if(room)leaveRoom();if(gRing)gRing.close();ctx=null;listEl=null;curView=null;}
   function unread(){var n=chats.filter(isUnread).length;if(onUnread)onUnread(n);return n;}
@@ -218,7 +246,9 @@
         el("button",{class:"xbtn acc",type:"button",title:t("newChat"),onclick:function(e){e.stopPropagation();contacts();}},"✎ "+t("newChat"))));
     var srch=el("input",{class:"xin",placeholder:t("search"),style:"margin-top:10px"});
     var list=el("div",{class:"wa-list"});
-    box.appendChild(top);box.appendChild(srch);box.appendChild(list);
+    box.appendChild(top);
+    if(pushSupported()&&Notification.permission!=="granted"&&Notification.permission!=="denied"){var pb=el("button",{class:"xbtn acc",type:"button",style:"width:100%;justify-content:center;margin-top:10px;padding:11px"},t("pushOn"));pb.onclick=function(){enablePush(pb);};box.appendChild(pb);}
+    box.appendChild(srch);box.appendChild(list);
     box.appendChild(el("p",{class:"xnote"},"ℹ️ "+t("expires")+" · "+t("openNote")));
     function draw(){var f=srch.value.trim().toLowerCase();list.innerHTML="";
       var g=el("button",{class:"wa-item",type:"button",onclick:function(){openGroup();}},el("div",{class:"wa-av"},IC("users",22)),el("div",{class:"mid"},el("div",{class:"nm"},t("group")),el("div",{class:"lm"},t("groupSub"))));
@@ -324,7 +354,8 @@
 
   function sendMsg(cid,m){var ref=q("chats").doc(cid);m.uid=me.uid;m.createdAt=FV.serverTimestamp();
     var mref=m._id?ref.collection("messages").doc(m._id):ref.collection("messages").doc();delete m._id;
-    return mref.set(m).then(function(){var u={updatedAt:FV.serverTimestamp(),last:{uid:me.uid,type:m.type,text:(m.text||"").slice(0,120),at:FV.serverTimestamp(),call:m.call||null}};u["read."+me.uid]=FV.serverTimestamp();u["typing."+me.uid]=null;return ref.update(u);});}
+    return mref.set(m).then(function(){var u={updatedAt:FV.serverTimestamp(),last:{uid:me.uid,type:m.type,text:(m.text||"").slice(0,120),at:FV.serverTimestamp(),call:m.call||null}};u["read."+me.uid]=FV.serverTimestamp();u["typing."+me.uid]=null;
+      return ref.update(u).then(function(){if(m.type!=="sys"&&m.type!=="call")pushRing({chat:cid});});});}
 
   // ---------- media ----------
   function blobToDataURL(b){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result);};r.onerror=rej;r.readAsDataURL(b);});}
@@ -478,7 +509,7 @@
       var pc=c.pc=newPC(c);st.getTracks().forEach(function(tr){pc.addTrack(tr,st);});
       return pc.createOffer().then(function(of){return pc.setLocalDescription(of).then(function(){
         return ref.set({from:me.uid,to:ouid,type:kind,status:"ringing",offer:{type:of.type,sdp:of.sdp},createdAt:FV.serverTimestamp(),chat:cid});});})
-      .then(function(){if(callObj!==c)return;c.ready();ring(true,false);controls(c);c.ui.st.textContent=t("calling");listenIce(c);
+      .then(function(){if(callObj!==c)return;pushRing({call:ref.id});c.ready();ring(true,false);controls(c);c.ui.st.textContent=t("calling");listenIce(c);
         c.uns.push(ref.onSnapshot(function(s){var d=s.data();if(!d||callObj!==c)return;
           if(d.answer&&!c.answered){c.answered=true;c.ui.st.textContent=t("connecting");ring(false);pc.setRemoteDescription(new RTCSessionDescription(d.answer)).then(c.flushIce).catch(console.error);}
           if(d.status==="declined"||d.status==="busy"){c.ui.st.textContent=d.status==="busy"?t("busy"):t("declined");hang(d.status,true);}
@@ -494,7 +525,7 @@
         return pc.setRemoteDescription(new RTCSessionDescription(d.offer)).then(function(){c.flushIce();return pc.createAnswer();}).then(function(an){return pc.setLocalDescription(an).then(function(){
           return ref.update({answer:{type:an.type,sdp:an.sdp},status:"accepted",acceptedAt:FV.serverTimestamp()});});}).then(function(){controls(c);listenIce(c);});})
       .catch(function(e){console.error(e);alert(t("noMedia"));ref.update({status:"declined"}).catch(function(){});hang("declined",true);});});
-    ctl.appendChild(acc.wrap);
+    c.acc=acc;ctl.appendChild(acc.wrap);if(autoAnswer===id){autoAnswer=null;setTimeout(function(){acc.b.click();},300);}
     c.uns.push(ref.onSnapshot(function(s){var x=s.data();if(callObj!==c)return;if(!x||x.status==="ended"||x.status==="missed"||x.status==="cancel"){hang("ended",true);}},function(){}));
     c.timeout=setTimeout(function(){if(callObj===c&&!c.pc)hang("missed",true);},50000);}
   function hang(why,remote){var c=callObj;if(!c)return;callObj=null;ring(false);clearTimeout(c.timeout);clearInterval(c.tick);
@@ -502,6 +533,7 @@
     try{c.stream&&c.stream.getTracks().forEach(function(x){x.stop();});}catch(e){}try{c.pc&&c.pc.close();}catch(e){}
     var dur=c.on?Math.round((Date.now()-c.on)/1000):0;
     if(!remote)c.ref.update({status:why==="cancel"?"cancel":why==="missed"?"missed":"ended",endedAt:FV.serverTimestamp()}).catch(function(){});
+    if(c.caller&&!c.answered&&(why==="missed"||why==="cancel"))pushRing({call:c.ref.id,end:true});
     if(c.caller){var st=why==="missed"||why==="cancel"?"missed":why==="declined"||why==="busy"?"declined":"done";
       sendMsg(c.cid,{type:"call",text:"",call:{kind:c.kind,status:st,dur:dur}}).catch(function(e){console.warn(e);});
       // tidy the signalling data a little later
@@ -603,7 +635,7 @@
     var cref=q("chats").doc(gid),ref=q("rooms").doc(),st=null;
     getMedia(kind).then(function(s){st=s;return cref.get();}).then(function(cs){var c=cs.data();
         return ref.set({chat:gid,type:kind,by:me.uid,members:c.members,in:[me.uid],active:true,createdAt:FV.serverTimestamp(),name:gname(c)}).then(function(){
-          sendMsg(gid,{type:"call",text:"",call:{kind:kind,room:ref.id,status:"started"}}).catch(function(){});enterRoom(ref,kind,st,gname(c));});})
+          sendMsg(gid,{type:"call",text:"",call:{kind:kind,room:ref.id,status:"started"}}).catch(function(){});pushRing({room:ref.id});enterRoom(ref,kind,st,gname(c));});})
       .catch(function(e){console.error(e);if(st)st.getTracks().forEach(function(x){x.stop();});alert(e&&e.name&&/NotAllowed|NotFound|NotReadable/.test(e.name)?t("noMedia"):t("callFail"));});}
   function joinRoom(rid){if(me&&me.isAnonymous){if(ctx&&ctx.needGoogle)ctx.needGoogle();return;}if(callObj||room)return;if(gRing)gRing.close();
     var ref=q("rooms").doc(rid),st=null;
@@ -665,7 +697,8 @@
     Object.keys(r.peers).forEach(function(u){var P=r.peers[u];clearTimeout(P.to);(P.uns||[]).forEach(function(f){try{f();}catch(e){}});try{P.pc.close();}catch(e){}});
     try{r.stream.getTracks().forEach(function(x){x.stop();});}catch(e){}r.w.remove();
     db.runTransaction(function(tx){return tx.get(r.ref).then(function(s){if(!s.exists)return;var inn=(s.data().in||[]).filter(function(u){return u!==me.uid;});
-      var u={in:inn};if(!inn.length){u.active=false;u.endedAt=FV.serverTimestamp();}tx.update(r.ref,u);});}).catch(function(e){console.warn(e);});
+      var u={in:inn};if(!inn.length){u.active=false;u.endedAt=FV.serverTimestamp();}tx.update(r.ref,u);});}).catch(function(e){console.warn("leave",e);
+      r.ref.update({in:FV.arrayRemove(me.uid)}).then(function(){return r.ref.get();}).then(function(s){if(s.exists&&!(s.data().in||[]).length)return r.ref.update({active:false,endedAt:FV.serverTimestamp()});}).catch(function(){});});
     r.ref.collection("peers").where("from","==",me.uid).get().then(function(s){s.docs.forEach(function(d){d.ref.delete().catch(function(){});});}).catch(function(){});}
   function gIncoming(d){if(gRing)return;var c=chatById(d.chat)||{name:d.name};
     var w=el("div",{class:"wa-call","data-noi18n":""});var top=el("div",{class:"top"},gAvatar(c,"xl"),el("b",null,gname(c)),el("span",null,t(d.type==="video"?"incomingVideo":"incoming")+" · "+t("gCall")),

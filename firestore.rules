@@ -157,6 +157,14 @@ service cloud.firestore {
       }
     }
 
+    // Web-push addresses of a person's phones/computers, so calls and messages can ring when the app is closed
+    match /push/{uid} {
+      allow read: if approved();
+      allow write: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['subs','updatedAt'])
+        && request.resource.data.subs is list && request.resource.data.subs.size() <= 5;
+    }
+
     // Group voice / video calls: a "room" per call; every pair of people connects directly (mesh, up to 8)
     function roomPath(rid) { return /databases/$(database)/documents/rooms/$(rid); }
     function inRoom(rid) { return signedIn() && request.auth.uid in get(roomPath(rid)).data.members; }

@@ -328,6 +328,84 @@
   var prev2=window.setView;
   window.setView=function(v){prev2(v);curV=v;try{if(v==="comm"&&window.AMX&&AMX.commSub&&AMX.commSub()!=="videos"&&dockEl)dockEl.dataset.k="";V5.dock();}catch(e){}};
   setTimeout(function(){try{V5.dock();}catch(e){}},700);
+
+  // =====================================================================
+  // NAVIGATION MEMORY · back button walks back through screens; a refresh reopens the same screen
+  // =====================================================================
+  var navPop=false,lastNav=null,SPACES=["today","amal","finance","comm","shariah","more"];
+  function validView(v){return !!v&&/^[a-z]+$/.test(v)&&(SPACES.indexOf(v)>=0||!!document.getElementById("v-"+v));}
+  var prev3=window.setView;
+  window.setView=function(v){prev3(v);try{if(!validView(v))return;var url=location.pathname+location.search+"#"+v;
+      if(!navPop&&v!==lastNav){if(lastNav===null||(history.state&&history.state.amv===v))history.replaceState({amv:v},"",url);else history.pushState({amv:v},"",url);}
+      lastNav=v;sessionStorage.setItem("am-view",v);}catch(e){}};
+  window.addEventListener("popstate",function(e){var st=e.state;if(!st||!st.amv||st.amv===lastNav)return;navPop=true;try{window.setView(st.amv);}catch(x){}navPop=false;});
+  setTimeout(function(){try{var h=(location.hash||"").slice(1),sv=sessionStorage.getItem("am-view");var want=validView(h)?h:validView(sv)?sv:null;if(want&&want!==lastNav)window.setView(want);}catch(e){}},450);
+  // replay the short "live" pulse on the floating buttons each time a screen opens
+  var prev4=window.setView;window.setView=function(v){prev4(v);try{var b=document.body;b.classList.remove("v9p");void b.offsetWidth;b.classList.add("v9p");}catch(e){}};
+
+  // =====================================================================
+  // FIRST-RUN SETUP · three friendly steps instead of a long form (name → prayer times → your day)
+  // =====================================================================
+  function needSetup(){try{if(!window.AM_LANG_CHOSEN)return false;var st=JSON.parse(localStorage.getItem("am-settings")||"{}");if(st.setupDone)return false;
+      if(typeof routine!=="undefined"&&routine&&Object.keys(routine).length)return false;return !!document.getElementById("setupform");}catch(e){return false;}}
+  function wizard(){if(document.getElementById("v9wiz"))return;var ov=el("div",{id:"v9wiz",role:"dialog","aria-modal":"true","data-noi18n":""});document.body.appendChild(ov);document.body.style.overflow="hidden";
+    var S={name:"",uni:"",dept:"",city:"",country:"",times:null,label:"",quran:true,study:true,sleep:true,plan:true,remind:true};
+    try{var old=JSON.parse(localStorage.getItem("am-settings")||"{}");S.name=old.name||"";S.city=old.city||"";}catch(e){}
+    var step=0;
+    function dots(){var d=el("div",{class:"dots"});for(var i=0;i<3;i++)d.appendChild(el("i",{class:i===step?"on":i<step?"done":""}));return d;}
+    function field(lab,inp){return el("label",{class:"fl"},el("span",null,lab),inp);}
+    function inp(v,ph,max){var i=el("input",{type:"text",maxlength:String(max||60),placeholder:ph||"",value:v||""});return i;}
+    function draw(){ov.innerHTML="";var card=el("div",{class:"wz"});ov.appendChild(card);
+      card.appendChild(el("div",{class:"top"},el("img",{src:"icon-192.png",alt:""}),dots(),el("button",{type:"button",class:"skip",onclick:finishLater},t(B("পরে","Later","Nanti","لاحقًا","بعد میں","Baadaye")))));
+      if(step===0){var n=inp(S.name,t(B("যেমন: Rahim","e.g. Rahim","cth: Rahim","مثال: رحيم","مثلاً: رحیم","mf: Rahim")),40),u=inp(S.uni,"UOWM, DU, BUET…"),dp=inp(S.dept,"CSE, BBA…");
+        card.appendChild(el("h1",null,t(B("আসসালামু আলাইকুম 👋","Assalamu alaikum 👋","Assalamualaikum 👋","السلام عليكم 👋","السلام علیکم 👋","Assalamu alaikum 👋"))));
+        card.appendChild(el("p",{class:"sub"},t(B("৩০ সেকেন্ডে তোমার Amalnama সাজিয়ে নাও। সব পরে বদলানো যাবে।","Set up your Amalnama in 30 seconds. You can change everything later.","Sediakan Amalnama dalam 30 saat.","جهّز عملنامه في ٣٠ ثانية.","۳۰ سیکنڈ میں Amalnama تیار کریں۔","Andaa Amalnama kwa sekunde 30."))));
+        card.appendChild(field(t(B("তোমার নাম","Your name","Nama anda","اسمك","آپ کا نام","Jina lako")),n));
+        var more=el("details",{class:"more"},el("summary",null,t(B("ছাত্র/ছাত্রী? বিশ্ববিদ্যালয় যোগ করো (ঐচ্ছিক)","Student? Add your university (optional)","Pelajar? Tambah universiti (pilihan)","طالب؟ أضف جامعتك (اختياري)","طالب علم؟ یونیورسٹی شامل کریں (اختیاری)","Mwanafunzi? Ongeza chuo (hiari)"))),
+          field(t(B("বিশ্ববিদ্যালয় / প্রতিষ্ঠান","University / institute","Universiti","الجامعة","یونیورسٹی","Chuo")),u),field(t(B("ডিপার্টমেন্ট / প্রোগ্রাম","Department / programme","Jabatan / program","القسم","شعبہ","Idara")),dp));
+        if(S.uni||S.dept)more.open=true;card.appendChild(more);
+        card.appendChild(el("button",{type:"button",class:"go",onclick:function(){S.name=n.value.trim();S.uni=u.value.trim();S.dept=dp.value.trim();step=1;draw();}},t(B("এগিয়ে যাও","Continue","Teruskan","متابعة","آگے بڑھیں","Endelea"))+" →"));
+        setTimeout(function(){n.focus();},200);}
+      else if(step===1){card.appendChild(el("h1",null,"🕌 "+t(B("নামাজের সময়","Prayer times","Waktu solat","مواقيت الصلاة","نماز کے اوقات","Nyakati za swala"))));
+        card.appendChild(el("p",{class:"sub"},t(B("তোমার এলাকার সঠিক সময়ে আযান, রিমাইন্ডার আর পরের নামাজের কাউন্টডাউন পাবে।","Get azan, reminders and a countdown at the right times for where you are.","Azan, peringatan dan kiraan detik ikut lokasi anda.","أذان وتذكيرات وعدّ تنازلي حسب موقعك.","آپ کے علاقے کے مطابق اذان اور یاد دہانی۔","Adhana na vikumbusho kwa eneo lako."))));
+        var msg=el("p",{class:"msg"});var box=el("div",{class:"times"});
+        function show(api){S.times=api.t;S.label=api.label||"";box.innerHTML="";[["fajr",B("ফজর","Fajr","Subuh","الفجر","فجر","Alfajiri")],["dhuhr",B("যোহর","Dhuhr","Zohor","الظهر","ظہر","Adhuhuri")],["asr",B("আসর","Asr","Asar","العصر","عصر","Alasiri")],["maghrib",B("মাগরিব","Maghrib","Maghrib","المغرب","مغرب","Magharibi")],["isha",B("এশা","Isha","Isyak","العشاء","عشاء","Isha")]].forEach(function(p){
+            box.appendChild(el("div",null,el("small",null,t(p[1])),el("b",null,num(api.t[p[0]]||"—"))));});msg.textContent="✓ "+(api.label||"");msg.className="msg ok";nx.disabled=false;}
+        var gps=el("button",{type:"button",class:"gps",onclick:function(){if(!navigator.geolocation){msg.textContent=t(B("এই ফোনে লোকেশন নেই — শহর লেখো","Location isn't available — type your city","Lokasi tiada — taip bandar","الموقع غير متاح — اكتب مدينتك","لوکیشن دستیاب نہیں — شہر لکھیں","Mahali hapapatikani — andika mji"));return;}
+            gps.disabled=true;msg.className="msg";msg.textContent=t(B("লোকেশন খোঁজা হচ্ছে…","Finding your location…","Mencari lokasi…","جارٍ تحديد الموقع…","لوکیشن تلاش…","Inatafuta mahali…"));
+            navigator.geolocation.getCurrentPosition(function(pos){var lat=+pos.coords.latitude.toFixed(4),lng=+pos.coords.longitude.toFixed(4);
+              (window.AMX&&AMX.azanUse?AMX.azanUse({lat:lat,lng:lng,label:t(B("আমার লোকেশন","My location","Lokasi saya","موقعي","میری لوکیشن","Mahali pangu"))}):Promise.reject()).then(show).catch(function(){msg.textContent=t(B("সময় আনা যায়নি — ইন্টারনেট দেখো বা শহর লেখো","Couldn't get times — check the internet or type your city","Gagal — taip bandar","تعذر — اكتب المدينة","نہیں ملا — شہر لکھیں","Imeshindikana — andika mji"));}).then(function(){gps.disabled=false;});},
+              function(){gps.disabled=false;msg.textContent=t(B("লোকেশনের অনুমতি পাওয়া যায়নি — নিচে শহর লেখো","Location permission was declined — type your city below","Kebenaran lokasi ditolak — taip bandar","رُفض إذن الموقع — اكتب مدينتك","اجازت نہیں ملی — شہر لکھیں","Ruhusa imekataliwa — andika mji"));},{timeout:15000,maximumAge:600000});}},
+          "📍 "+t(B("আমার লোকেশন দিয়ে সময় নাও","Use my location","Guna lokasi saya","استخدم موقعي","میری لوکیشن استعمال کریں","Tumia mahali pangu")));
+        card.appendChild(gps);card.appendChild(el("div",{class:"or"},t(B("অথবা","or","atau","أو","یا","au"))));
+        var ci=inp(S.city,t(B("শহর — যেমন: Dhaka, Kuala Lumpur","City — e.g. Dhaka, Kuala Lumpur","Bandar — cth: Kuala Lumpur","المدينة — مثال: مكة","شہر — مثلاً: کراچی","Mji — mf: Nairobi")),40),co=inp(S.country,t(B("দেশ (ঐচ্ছিক)","Country (optional)","Negara (pilihan)","الدولة (اختياري)","ملک (اختیاری)","Nchi (hiari)")),40);
+        var fb=el("button",{type:"button",class:"ghost",onclick:function(){var c=ci.value.trim();if(!c){ci.focus();return;}S.city=c;S.country=co.value.trim();fb.disabled=true;msg.className="msg";msg.textContent="…";
+            (window.AMX&&AMX.azanUse?AMX.azanUse({city:c,country:S.country}):Promise.reject()).then(show).catch(function(){msg.textContent=t(B("এই শহর পাওয়া যায়নি — বানান বা দেশ দেখো","City not found — check spelling or add the country","Bandar tidak dijumpai","لم يُعثر على المدينة","شہر نہیں ملا","Mji haukupatikana"));}).then(function(){fb.disabled=false;});}},t(B("সময় আনো","Get times","Dapatkan waktu","احصل على المواقيت","اوقات لائیں","Pata nyakati")));
+        card.appendChild(el("div",{class:"row2"},ci,co));card.appendChild(fb);card.appendChild(msg);card.appendChild(box);
+        var nx=el("button",{type:"button",class:"go",disabled:!S.times,onclick:function(){step=2;draw();}},t(B("এগিয়ে যাও","Continue","Teruskan","متابعة","آگے بڑھیں","Endelea"))+" →");
+        card.appendChild(nx);card.appendChild(el("button",{type:"button",class:"link",onclick:function(){step=2;draw();}},t(B("এখন না, পরে সেট করবো","Not now, I'll set it later","Bukan sekarang","ليس الآن","ابھی نہیں","Si sasa"))));
+        if(S.times)show({t:S.times,label:S.label});}
+      else{card.appendChild(el("h1",null,"✨ "+t(B("তোমার দিন","Your day","Hari anda","يومك","آپ کا دن","Siku yako"))));
+        card.appendChild(el("p",{class:"sub"},t(B("কোনগুলো দিয়ে শুরু করবে? চাপ দিয়ে বেছে নাও।","What would you like to start with? Tap to choose.","Pilih untuk bermula.","اختر ما تبدأ به.","کس سے شروع کریں؟","Chagua kuanza."))));
+        var opts=[["remind","🔔",B("নামাজের ১০ মিনিট আগে মনে করিয়ে দাও","Remind me 10 min before each prayer","Ingatkan 10 minit sebelum solat","ذكّرني قبل الصلاة بعشر دقائق","نماز سے 10 منٹ پہلے یاد دلائیں","Nikumbushe dakika 10 kabla ya swala")],
+          ["quran","📖",B("ফজরের পর কুরআন তিলাওয়াত","Quran after Fajr","Al-Quran selepas Subuh","القرآن بعد الفجر","فجر کے بعد قرآن","Qur'ani baada ya Alfajiri")],
+          ["study","📚",B("রাতে পড়াশোনা ৮–১০টা","Study 8–10 pm","Belajar 8–10 malam","مذاكرة ٨–١٠ مساءً","رات 8–10 پڑھائی","Kusoma saa 2–4 usiku")],
+          ["sleep","🌙",B("রাত ১১টায় ঘুম","Sleep at 11 pm","Tidur 11 malam","النوم ١١ مساءً","رات 11 بجے سونا","Kulala saa 5 usiku")],
+          ["plan","🗓",B("রবিবার সাপ্তাহিক পরিকল্পনা","Weekly plan on Sunday","Rancangan mingguan Ahad","خطة أسبوعية يوم الأحد","اتوار کو ہفتہ وار منصوبہ","Mpango wa wiki Jumapili")]];
+        var list=el("div",{class:"opts"});opts.forEach(function(o){var b=el("button",{type:"button","aria-pressed":String(!!S[o[0]]),onclick:function(){S[o[0]]=!S[o[0]];b.setAttribute("aria-pressed",String(S[o[0]]));}},el("span",{class:"e"},o[1]),el("span",{class:"tx"},t(o[2])),el("span",{class:"ck"},"✓"));list.appendChild(b);});
+        card.appendChild(list);
+        var go=el("button",{type:"button",class:"go",onclick:function(){go.disabled=true;go.textContent="…";finish();}},t(B("শুরু করো","Start","Mula","ابدأ","شروع کریں","Anza"))+" ✨");card.appendChild(go);}
+      if(step>0)card.appendChild(el("button",{type:"button",class:"back",onclick:function(){step--;draw();}},"‹ "+t(B("পেছনে","Back","Kembali","رجوع","واپس","Rudi"))));}
+    function setVal(id,v){var e=document.getElementById(id);if(e!=null&&v!=null)e.value=v;}
+    function finish(){setVal("s-name",S.name);setVal("s-city",S.city||"");setVal("s-uni",S.uni);setVal("s-dept",S.dept);
+      if(S.times){setVal("s-fajr",S.times.fajr);setVal("s-zohor",S.times.dhuhr);setVal("s-asar",S.times.asr);setVal("s-maghrib",S.times.maghrib);setVal("s-isyak",S.times.isha);}
+      ["quran","study","sleep","plan"].forEach(function(k){var c=document.getElementById("s-"+k);if(c)c.checked=!!S[k];});setVal("s-remsalat",S.remind?"10, 0":"0");
+      try{document.getElementById("setupform").requestSubmit();}catch(e){var f=document.getElementById("setupform");f.dispatchEvent(new Event("submit",{cancelable:true}));}
+      setTimeout(function(){ov.remove();document.body.style.overflow="";},6000);}
+    function finishLater(){ov.remove();document.body.style.overflow="";try{sessionStorage.setItem("am-wiz-later","1");}catch(e){}}
+    draw();}
+  setTimeout(function(){try{if(needSetup()&&sessionStorage.getItem("am-wiz-later")!=="1"){var s=document.getElementById("setup");if(s)s.style.display="none";wizard();}}catch(e){}},300);
+  V5.setup=wizard;
   // keep page themes (Instagram white / WhatsApp / YouTube dark) in step with the open screen
   var prev=window.setView;
   window.setView=function(v){prev(v);try{if(v==="comm"){var hd=document.getElementById("v4subhead");if(hd)hd.remove();}if(window.AMX&&AMX.v5theme)AMX.v5theme();else if(v!=="comm")["ig","wa","yt"].forEach(function(k){document.body.classList.remove("v5-"+k);});if(v==="videos")document.body.classList.add("v5-yt");if(v==="today")npMount();if(v==="more")shareItem();}catch(e){}};

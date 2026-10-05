@@ -83,7 +83,7 @@
   // ---- time helpers (follow the device timezone automatically)
   function tz(){try{return (typeof TZ!=="undefined"&&TZ)||Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(e){return "UTC";}}
   function ymd(d){return new Intl.DateTimeFormat("en-CA",{timeZone:tz(),year:"numeric",month:"2-digit",day:"2-digit"}).format(d||new Date());}
-  function hijri(d,opt){try{return new Intl.DateTimeFormat((L==="bn"?"bn":L)+"-u-ca-islamic-umalqura",opt||{day:"numeric",month:"long",year:"numeric",timeZone:tz()}).format(d||new Date());}catch(e){return "";}}
+  function hijri(d){try{return window.AM_hijri?window.AM_hijri(d||new Date(),L,tz()):"";}catch(e){return "";}}
   var HPF=null,HPZ="",HPC={};
   function hparts(d){try{var z=tz(),key=z+"|"+d.getTime();if(HPC[key])return HPC[key];if(!HPF||HPZ!==z){HPF=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"numeric",year:"numeric",timeZone:z});HPZ=z;}var p=HPF.formatToParts(d);
     var g=function(k){return +((p.find(function(x){return x.type===k;})||{}).value||0);};return (HPC[key]={d:g("day"),m:g("month"),y:g("year")});}catch(e){return null;}}
@@ -135,7 +135,7 @@
   V4.emblem=emblem;
 
   // ---- splash: plays every time the app is opened (and when it comes back after a while in the background)
-  (function(){var skip=false;try{skip=sessionStorage.getItem("am-splash")==="skip";}catch(e){}if(skip){var pr=document.getElementById("v0pre");if(pr)pr.remove();return;}
+  (function(){var skip=false;try{skip=sessionStorage.getItem("am-splash")==="skip"||sessionStorage.getItem("am-splashed")==="1";sessionStorage.setItem("am-splashed","1");}catch(e){}if(skip){var pr=document.getElementById("v0pre");if(pr)pr.remove();return;}
     function play(){if(document.getElementById("v4splash"))return;
       var sp=el("div",{id:"v4splash","aria-hidden":"true"},
         el("div",{class:"c"},emblem("em","sp"),el("div",{class:"wm"},"Amalnama"),el("div",{class:"ar"},"عملنامه")),
@@ -222,7 +222,7 @@
     curSpace=sp;paintNav();subHead(v);
     if(sp!=="today"||TODAYV.indexOf(v)>0)try{window.scrollTo({top:0});}catch(e){}
     if(v==="today"){eventCard();note();dayBadge();}
-    try{if(history.replaceState)history.replaceState(null,"",v==="today"?location.pathname+location.search:"#"+v);}catch(e){}};
+    /* the address bar and back button are handled in v5.js (navigation memory) */};
   // titles + back for the existing Quran / Azan / Community views
   function subHead(v){var map={quran:[["কুরআন","Quran","Al-Quran","القرآن","قرآن","Qur'ani"],"amal"],azan:[["আযান ও নামাজের সময়","Azan & prayer times","Azan & waktu solat","الأذان ومواقيت الصلاة","اذان اور نماز کے اوقات","Adhana na nyakati za swala"],"amal"],comm:[["কমিউনিটি","Community","Komuniti","المجتمع","کمیونٹی","Jumuiya"],null]};
     var hd=document.getElementById("v4subhead");if(hd)hd.remove();var m=map[v];if(!m)return;var s=document.getElementById("v-"+v);if(!s)return;
@@ -243,7 +243,7 @@
 
   // ---- 3D Mufti avatar: cream tupi cap, white beard, brown vest, cream kurta, plain face (no eyes, nose or mouth)
   function muftiAvatar(p){var g=function(id){return "url(#"+p+"-"+id+")";};
-    function anim(tag,a){return sv(tag,a);}
+    function anim(tag,a){return p==="nb"?null:sv(tag,a);} // the floating button stays still (smooth scrolling); its "live" glow is pure CSS
     return sv("svg",{viewBox:"0 0 120 120","aria-hidden":"true"},
       sv("defs",null,
         sv("radialGradient",{id:p+"-bg",cx:"50%",cy:"38%",r:"72%"},sv("stop",{offset:0,"stop-color":"#22685E"}),sv("stop",{offset:1,"stop-color":"#071F22"})),

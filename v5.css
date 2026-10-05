@@ -332,3 +332,51 @@ body.v5-ig .v6fab .live,body.v5-ig .v6fab .dot{border-color:#fff}
 .v5np{margin-bottom:14px!important}
 #v-today .card.overview{margin-bottom:14px}
 #v-today #groups{margin-top:0}
+/* v9 · smoothness: only compositor-friendly (transform/opacity) animations, no live blur */
+#v4nav .bar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(8,31,34,.97)!important}
+.tabs{backdrop-filter:none!important;background:var(--surface)!important}
+@keyframes v4live{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes v6live{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.86}}
+.v6fab{will-change:translate}
+.v6fab::before,.v6fab::after{will-change:transform,opacity}
+#v4mufti::before,#v4mufti::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(232,201,138,.55);opacity:0;animation:v6ring 2.8s ease-out infinite;pointer-events:none;will-change:transform,opacity}
+#v4mufti::after{animation-delay:1.4s}
+@media (prefers-reduced-motion:reduce){#v4mufti::before,#v4mufti::after{animation:none}}
+/* v9 · "live" pulses run for a few seconds whenever a screen opens, then rest — no endless redraws, so scrolling stays smooth */
+.v6fab{animation:none!important}
+.v6fab::before,.v6fab::after,#v4mufti::before,#v4mufti::after{animation:none!important}
+body.v9p .v6fab::before,body.v9p #v4mufti::before{animation:v6ring 2.6s ease-out 0s 3!important}
+body.v9p .v6fab::after,body.v9p #v4mufti::after{animation:v6ring 2.6s ease-out 1.3s 3!important}
+.v4live,#sync i,.v6fab .live,html.g-wait #sync i{animation-iteration-count:4!important}
+.ad.hot,.ad2.hot{animation-iteration-count:3!important}
+@media (prefers-reduced-motion:reduce){body.v9p .v6fab::before,body.v9p .v6fab::after,body.v9p #v4mufti::before,body.v9p #v4mufti::after{animation:none!important}}
+.hero .v4em .estar{animation-iteration-count:3!important}
+/* v9 · first-run setup */
+#v9wiz{position:fixed;inset:0;z-index:250;background:radial-gradient(110% 70% at 50% 0%,#17473F 0%,#0A2427 55%,#040F11 100%);overflow-y:auto;display:flex;justify-content:center;padding:calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));color:#FBF3DE;font-family:var(--fb,"Anek Bangla",sans-serif)}
+#v9wiz .wz{width:100%;max-width:460px;display:flex;flex-direction:column;gap:14px;animation:v9in .45s ease both}
+@keyframes v9in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+#v9wiz .top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+#v9wiz .top img{width:44px;height:44px;border-radius:13px;box-shadow:0 0 0 1px rgba(232,201,138,.6)}
+#v9wiz .dots{flex:1;display:flex;gap:6px;justify-content:center}#v9wiz .dots i{width:26px;height:5px;border-radius:5px;background:rgba(255,255,255,.15)}#v9wiz .dots i.on{background:linear-gradient(90deg,#F7E2A6,#C9A050)}#v9wiz .dots i.done{background:#3ECF9E}
+#v9wiz .skip,#v9wiz .link,#v9wiz .back{border:0;background:none;color:#BFD3CC;font:inherit;font-size:.86rem;cursor:pointer;padding:8px}
+#v9wiz .back{align-self:flex-start}#v9wiz .link{align-self:center}
+#v9wiz h1{font-family:"Tiro Bangla","Marcellus",serif;font-weight:400;font-size:1.9rem;margin:6px 0 0;color:#F7E2A6;line-height:1.25}
+#v9wiz .sub{margin:-4px 0 6px;color:#C9DAD4;line-height:1.6}
+#v9wiz .fl{display:grid;gap:6px;font-size:.86rem;color:#CFE0DA}
+#v9wiz input{font:inherit;font-size:1.05rem;color:#FBF3DE;background:rgba(255,255,255,.06);border:1px solid rgba(232,201,138,.35);border-radius:16px;padding:14px 16px;width:100%;box-sizing:border-box;min-width:0}
+#v9wiz input:focus{outline:none;border-color:#F7E2A6;box-shadow:0 0 0 3px rgba(247,226,166,.18)}
+#v9wiz .more summary{cursor:pointer;color:#E8C98A;font-size:.9rem;padding:4px 0}#v9wiz .more[open]{display:grid;gap:10px}
+#v9wiz .go{margin-top:6px;border:0;border-radius:18px;padding:16px;font:inherit;font-weight:700;font-size:1.05rem;color:#1A1406;background:linear-gradient(135deg,#F7E2A6,#C9A050);box-shadow:0 10px 24px rgba(0,0,0,.35);cursor:pointer}
+#v9wiz .go:disabled{opacity:.45;cursor:default}
+#v9wiz .gps{border:1px solid rgba(62,207,158,.6);background:rgba(62,207,158,.12);color:#DFF7EE;border-radius:18px;padding:15px;font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+#v9wiz .ghost{border:1px solid rgba(232,201,138,.45);background:rgba(232,201,138,.08);color:#F7E2A6;border-radius:16px;padding:12px;font:inherit;font-weight:600;cursor:pointer}
+#v9wiz .or{text-align:center;color:#8FAAA2;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+#v9wiz .row2{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+#v9wiz .msg{margin:0;font-size:.86rem;color:#E8C98A;min-height:1.2em}#v9wiz .msg.ok{color:#5EE0B5}
+#v9wiz .times{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}#v9wiz .times:empty{display:none}
+#v9wiz .times div{text-align:center;padding:10px 2px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(232,201,138,.22)}#v9wiz .times small{display:block;font-size:.7rem;color:#BFD3CC}#v9wiz .times b{font-size:.98rem;color:#F7E2A6}
+#v9wiz .opts{display:grid;gap:8px}
+#v9wiz .opts button{display:flex;align-items:center;gap:12px;text-align:start;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#E9F1EE;font:inherit;cursor:pointer}
+#v9wiz .opts .e{font-size:1.3rem}#v9wiz .opts .tx{flex:1}#v9wiz .opts .ck{width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,.25);display:grid;place-items:center;color:transparent;font-size:.8rem}
+#v9wiz .opts button[aria-pressed="true"]{border-color:rgba(62,207,158,.6);background:rgba(62,207,158,.1)}#v9wiz .opts button[aria-pressed="true"] .ck{background:#3ECF9E;border-color:#3ECF9E;color:#05301a}

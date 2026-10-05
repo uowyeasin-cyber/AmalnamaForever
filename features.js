@@ -103,6 +103,8 @@
     var o={};P.forEach(function(p){var it=r&&r[RID[p]];if(it&&it.start)o[p]=it.start;});return o;}
   function times(){var base=(C.src==="api"&&C.api&&C.api.t)?C.api.t:routineTimes();if(C.src==="manual"){var o={};for(var k in base)o[k]=base[k];P.forEach(function(p){if(C.man&&C.man[p])o[p]=C.man[p];});return o;}return base;}
   X.azanTimes=times;X.nowMin=function(){return nowMin();};
+  // used by the first-run setup: take prayer times from GPS or a city
+  X.azanUse=function(o){o=o||{};if(o.city!=null){C.city=o.city;C.country=o.country||"";}C.src="api";save();return fetchTimes(o.lat!=null?o:null);};
   // ---- fetch from AlAdhan
   function fetchTimes(opts){var d=today().split("-"),ds=d[2]+"-"+d[1]+"-"+d[0];
     var q="?school="+encodeURIComponent(C.school||"0")+(C.method?"&method="+encodeURIComponent(C.method):"");
@@ -224,9 +226,9 @@
   var V="12.19.0",SDK=["app","auth","firestore"].map(function(n){return "https://www.gstatic.com/firebasejs/"+V+"/firebase-"+n+"-compat.js";});
   var fb=null,auth=null,db=null,FV=null,me=null,member=null,isAdmin=false,cfg={},sub="videos",guestName="";
   var unsub=[],root=null,body=null,state="",lastPending=-1;
-  function loadScript(u){return new Promise(function(res,rej){var s=document.createElement("script");s.src=u;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+  function loadScript(u){return new Promise(function(res,rej){var s=document.createElement("script");s.src=u;s.async=false;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
   function init(){if(fb)return Promise.resolve();
-    return SDK.reduce(function(p,u){return p.then(function(){return loadScript(u);});},Promise.resolve()).then(function(){
+    return Promise.all(SDK.map(loadScript)).then(function(){ // downloaded together, run in order
       fb=window.firebase;if(!fb.apps.length)fb.initializeApp(window.AMALNAMA_FIREBASE);auth=fb.auth();db=fb.firestore();FV=fb.firestore.FieldValue;
       try{if(localStorage.getItem("am-emu")==="1"&&/^(localhost|127\.0\.0\.1)$/.test(location.hostname)){auth.useEmulator("http://127.0.0.1:9099");db.useEmulator("127.0.0.1",8085);}}catch(e){}
       auth.onAuthStateChanged(onUser);
@@ -545,5 +547,5 @@
   function drawStats(){}
   X.register("comm",{open:function(r){root=r;if(!fb){render();init().catch(function(e){state="err";render(e);});}else render();}});
   // returning users: connect quietly so admins see new join requests on the tab badge
-  try{if(localStorage.getItem("am-comm")==="1")setTimeout(function(){root=root||document.getElementById("v-comm");init().catch(function(){});},4000);}catch(e){}
+  try{if(localStorage.getItem("am-comm")==="1")setTimeout(function(){var urgent=window.AMCHAT_INTENT&&AMCHAT_INTENT();var go=function(){root=root||document.getElementById("v-comm");init().catch(function(){});};if(urgent)go();else if(window.requestIdleCallback)requestIdleCallback(go,{timeout:4000});else go();},window.AMCHAT_INTENT&&AMCHAT_INTENT()?50:2500);}catch(e){}
 })();
