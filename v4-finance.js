@@ -47,12 +47,10 @@
         el("div",{style:"text-align:center"},V.ring(spendP,64,3.2,"#E8836B"),el("div",{style:"font-size:.7rem;color:#F2B5A4"},t(B("খরচ","Spent","Belanja","إنفاق","خرچ","Matumizi"))))),
       el("div",{style:"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"},
         el("div",{style:"padding:10px;border-radius:14px;background:rgba(0,0,0,.2)"},el("div",{style:"font-size:.75rem;color:#9FE3CF"},t(B("আয়","Income","Pendapatan","الدخل","آمدنی","Mapato"))),el("div",{style:"font-weight:700"},money(s.inc))),
-        el("div",{style:"padding:10px;border-radius:14px;background:rgba(0,0,0,.2)"},el("div",{style:"font-size:.75rem;color:#F2B5A4"},t(B("ব্যয়","Expense","Perbelanjaan","المصروف","خرچ","Matumizi"))),el("div",{style:"font-weight:700"},money(s.out)))),
-      el("div",{class:"v4row",style:"margin-top:10px;gap:8px"},el("button",{class:"v4btn gold",type:"button",style:"flex:1",onclick:function(){addTx();}},ic("plus",18),t(B("লেনদেন যোগ","Add transaction","Tambah transaksi","إضافة معاملة","لین دین شامل کریں","Ongeza muamala"))),
-        el("button",{class:"v4btn",type:"button",onclick:audit},t(B("অডিট রিপোর্ট","Audit report","Laporan audit","تقرير التدقيق","آڈٹ رپورٹ","Ripoti ya ukaguzi"))))));
+        el("div",{style:"padding:10px;border-radius:14px;background:rgba(0,0,0,.2)"},el("div",{style:"font-size:.75rem;color:#F2B5A4"},t(B("ব্যয়","Expense","Perbelanjaan","المصروف","خرچ","Matumizi"))),el("div",{style:"font-weight:700"},money(s.out))))));
     // where it went: donut + rings
     var cats=Object.keys(s.cat).map(function(k){return [k,s.cat[k]];}).sort(function(a,b){return b[1]-a[1];});
-    var wc=el("section",{class:"v4card"},el("h2",null,t(B("কোথায় খরচ হলো","Where the money went","Ke mana wang pergi","أين ذهب المال","پیسہ کہاں گیا","Pesa zilienda wapi"))));
+    var wc=el("section",{class:"v4card"},el("div",{class:"v4row",style:"justify-content:space-between;gap:8px"},el("h2",{style:"margin:0"},t(B("কোথায় খরচ হলো","Where the money went","Ke mana wang pergi","أين ذهب المال","پیسہ کہاں گیا","Pesa zilienda wapi"))),el("button",{type:"button",class:"v5fbtn",onclick:function(){addTx();}},ic("plus",16),t(B("লেনদেন যোগ","Add transaction","Tambah transaksi","إضافة معاملة","لین دین شامل کریں","Ongeza muamala")))));
     if(!cats.length)wc.appendChild(el("p",{class:"v4muted"},t(B("এই সময়ে কোনো খরচ যোগ হয়নি।","No expenses in this period yet.","Tiada perbelanjaan lagi.","لا مصروفات بعد.","ابھی کوئی خرچ نہیں۔","Hakuna matumizi bado."))));
     else{var donut=V.sv("svg",{viewBox:"0 0 36 36",width:132,height:132,"aria-hidden":"true",style:"transform:rotate(-90deg)"},V.sv("circle",{cx:18,cy:18,r:15.9,fill:"none",stroke:"rgba(255,255,255,.08)","stroke-width":4}));
       var acc=0;cats.forEach(function(c,i){var p=c[1]/s.out*100;donut.appendChild(V.sv("circle",{cx:18,cy:18,r:15.9,fill:"none",stroke:COL[i%COL.length],"stroke-width":4,pathLength:100,"stroke-dasharray":Math.max(p-1,0.5)+" 100","stroke-dashoffset":String(-acc)}));acc+=p;});
@@ -64,7 +62,7 @@
     root.appendChild(upcoming(seg));
     // plans
     var segName=t(SEG.filter(function(x){return x[0]===seg;})[0][1]);
-    var pc=el("section",{class:"v4card"},el("div",{class:"v4row",style:"justify-content:space-between"},el("div",null,el("h2",null,segName+" "+t(B("আর্থিক পরিকল্পনা","financial plan","pelan kewangan","الخطة المالية","مالی منصوبہ","mpango wa fedha"))),el("div",{class:"v4muted"},t(B("এই মাসের লক্ষ্য ও বাজেট","This month's goals & budgets","Matlamat bulan ini","أهداف الشهر","اس ماہ کے اہداف","Malengo ya mwezi")))),
+    var pc=el("section",{class:"v4card",style:"background:linear-gradient(160deg,#0F3134,#0A2326);border:1px solid rgba(232,201,138,.3)"},el("div",{class:"v4row",style:"justify-content:space-between"},el("div",null,el("h2",null,segName+" "+t(B("আর্থিক পরিকল্পনা","financial plan","pelan kewangan","الخطة المالية","مالی منصوبہ","mpango wa fedha"))),el("div",{class:"v4muted"},t(B("এই মাসের লক্ষ্য ও বাজেট","This month's goals & budgets","Matlamat bulan ini","أهداف الشهر","اس ماہ کے اہداف","Malengo ya mwezi")))),
       el("button",{class:"v4btn",type:"button",onclick:function(){addPlan(seg);}},ic("plus",16),t(B("পরিকল্পনা","Plan","Pelan","خطة","منصوبہ","Mpango")))));
     var plans=f.plans[seg];
     if(!plans.length)pc.appendChild(el("p",{class:"v4muted"},t(B("এখনো কোনো পরিকল্পনা নেই। বাজেট বা সঞ্চয়ের লক্ষ্য যোগ করো — অগ্রগতি বৃত্তে % দেখাবে।","No plans yet. Add a budget or savings goal — progress shows as a % circle.","Tiada pelan lagi.","لا خطط بعد.","ابھی کوئی منصوبہ نہیں۔","Hakuna mipango bado."))));
@@ -77,7 +75,7 @@
       pc.appendChild(g);}
     root.appendChild(pc);
     // recent transactions
-    var rc=el("section",{class:"v4card"},el("h2",null,t(B("সাম্প্রতিক লেনদেন","Recent transactions","Transaksi terkini","آخر المعاملات","حالیہ لین دین","Miamala ya karibuni"))));
+    var rc=el("section",{class:"v4card"},el("div",{class:"v4row",style:"justify-content:space-between;gap:8px"},el("h2",{style:"margin:0"},t(B("সাম্প্রতিক লেনদেন","Recent transactions","Transaksi terkini","آخر المعاملات","حالیہ لین دین","Miamala ya karibuni"))),el("button",{type:"button",class:"v5fpill",onclick:audit},t(B("অডিট রিপোর্ট","Audit report","Laporan audit","تقرير التدقيق","آڈٹ رپورٹ","Ripoti ya ukaguzi")))));
     var tl=f.tx.filter(function(x){return x.seg===seg;}).sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,12);
     if(!tl.length)rc.appendChild(el("p",{class:"v4muted"},t(B("“লেনদেন যোগ” চেপে প্রথম আয় বা খরচ লেখো।","Tap “Add transaction” to record your first income or expense.","Tekan “Tambah transaksi”.","اضغط “إضافة معاملة”.","“لین دین شامل کریں” دبائیں۔","Gusa “Ongeza muamala”."))));
     tl.forEach(function(x){var pos=x.amt>0;rc.appendChild(el("div",{class:"v4row",style:"min-height:52px;border-bottom:1px solid rgba(255,255,255,.05)"},

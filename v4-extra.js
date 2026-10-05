@@ -32,7 +32,7 @@
     // admin (only uowyeasin@gmail.com — enforced again by Firestore rules)
     var em="";try{em=(localStorage.getItem("am-gemail")||"").toLowerCase();}catch(e){}
     var adm=el("div",{id:"v4adm"});r.appendChild(adm);
-    function showAdm(){adm.innerHTML="";adm.appendChild(el("div",{class:"v4list",style:"margin-top:8px"},item("shield",t(B("অ্যাডমিন ড্যাশবোর্ড","Admin dashboard","Papan pemuka admin","لوحة المشرف","ایڈمن ڈیش بورڈ","Dashibodi ya admin")),t(B("সদস্য, অ্যাক্টিভিটি, যোগদানের অনুরোধ","Members, activity, join requests","Ahli, aktiviti, permintaan","الأعضاء، النشاط، الطلبات","اراکین، سرگرمی، درخواستیں","Wanachama, shughuli, maombi")),function(){window.setView("comm");setTimeout(function(){var b=document.getElementById("cm-admtab");if(b)b.click();},400);})));}
+    function showAdm(){adm.innerHTML="";adm.appendChild(el("div",{class:"v4list",style:"margin-top:8px"},item("shield",t(B("অ্যাডমিন ড্যাশবোর্ড","Admin dashboard","Papan pemuka admin","لوحة المشرف","ایڈمن ڈیش بورڈ","Dashibodi ya admin")),t(B("সদস্য, অ্যাক্টিভিটি, যোগদানের অনুরোধ","Members, activity, join requests","Ahli, aktiviti, permintaan","الأعضاء، النشاط، الطلبات","اراکین، سرگرمی، درخواستیں","Wanachama, shughuli, maombi")),function(){if(window.AMX.v5open)window.AMX.v5open("admin");window.setView("comm");})));}
     if(em===ADMIN||window.AMX.isAdmin)showAdm();
     r.appendChild(el("p",{class:"v4muted",style:"text-align:center;margin-top:18px"},"Amalnama · "+t(B("নতুন ভার্সন","New version","Versi baharu","إصدار جديد","نیا ورژن","Toleo jipya"))+" 4.0"));}});
   function notifSub(){if(!("Notification" in window))return t(B("এই ব্রাউজারে নেই","Not supported here","Tidak disokong","غير مدعوم","دستیاب نہیں","Haitumiki"));

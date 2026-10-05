@@ -1,7 +1,7 @@
 <!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#061719"><script src="i18n.js?v=1"></script></head><body style="margin:0"><title>Amalnama</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="description" content="Amalnama — ইবাদত, ক্লাস, পড়াশোনা ও To-Do-র দৈনিক আমলনামা, Google Calendar রিমাইন্ডার ও ল্যাপটপ-মোবাইল সিঙ্কসহ"><meta property="og:title" content="Amalnama"><meta property="og:description" content="দৈনিক আমলনামা · রুটিন · Google Calendar রিমাইন্ডার"><meta property="og:image" content="icon-512.png"><script src="config.js"></script><script src="gshim.js"></script><script src="https://accounts.google.com/gsi/client" async defer></script><style>#gbar{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin:0 0 12px;padding:12px 14px;border-radius:14px;border:1px solid var(--gold);background:var(--gold-soft);font-size:.9rem}#gbar.on{border-color:var(--line);background:var(--accent-soft);font-size:.82rem;padding:8px 12px}#gbar .gbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;padding:9px 14px;border-radius:11px;cursor:pointer}#gbar.on .gbtn{font-weight:400;padding:5px 10px;font-size:.78rem}</style><meta name="apple-mobile-web-app-title" content="Amalnama"><meta name="application-name" content="Amalnama">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Anek+Bangla:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Anek+Bangla:wght@400;500;600;700&family=Tiro+Bangla&family=Marcellus&family=Hind+Siliguri:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 :root{
   --bg:#f4eee1;--bg2:#ece3cf;--surface:#fffcf4;--sunk:#efe6d3;--ink:#172723;--muted:#676656;--line:#e0d3b6;
@@ -228,7 +228,7 @@ button.sync{border:0;font:inherit;font-size:.72rem;cursor:pointer}
 .remind{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border:1px solid color-mix(in oklab,var(--gold) 40%,transparent);border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:.92rem}
 @media (max-width:440px){.stat .n{font-size:1.1rem}.cat{grid-template-columns:5.5em 1fr 3em}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-</style><link rel="stylesheet" href="v4.css?v=4">
+</style><link rel="stylesheet" href="v4.css?v=5"><link rel="stylesheet" href="v5.css?v=5">
 
 <div class="wrap">
   <header class="hero">
@@ -574,22 +574,27 @@ function renderToday(){
   const sm=document.createElement("small");sm.textContent=nice(sel)+(saved?" · জমা দেওয়া হয়েছে":"");dl.append(sm);
   $("next").disabled=sel>=TODAY;
   const g=$("groups");g.innerHTML="";
+  const SD={ibadat:["#3ECF9E","rgba(62,207,158,.14)","rgba(62,207,158,.4)","M8 21V10.5l3-4 3 4V21M7 21h8M11 6.5V3M17.5 9a4 4 0 0 1 0 6"],
+    class:["#8CC2F0","rgba(111,168,220,.16)","rgba(140,194,240,.4)","M3 9l9-5 9 5-9 5zM7 11.5V16c1.5 1.6 3.2 2.4 5 2.4s3.5-.8 5-2.4v-4.5"],
+    study:["#F7E2A6","rgba(232,201,138,.14)","rgba(232,201,138,.45)","M12 8C10 6.5 7 6 4 6.5v9.5c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V6.5C17 6 14 6.5 12 8zM12 8v9.5"],
+    life:["#7FD6DE","rgba(92,198,208,.14)","rgba(127,214,222,.4)","M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"],
+    todo:["#D9C4F4","rgba(184,146,230,.16)","rgba(217,196,244,.4)","M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"]};
+  const CAL='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.5h17M9 14.5l2 2 4-4"/></svg>';
   for(const k of Object.keys(CATS)){
-    const list=tasks.filter(t=>t.cat===k);
-    if(!list.length&&k!=="todo")continue;
-    const box=document.createElement("div");box.className="group";
+    const list=tasks.filter(t=>t.cat===k),d=SD[k];
+    const box=document.createElement("section");box.className="v5sec";box.style.setProperty("--sc",d[0]);
     const gdn=list.filter(t=>set.has(t.id)).length,gp=list.length?Math.round(gdn/list.length*100):0;
-    box.innerHTML=`<div class="ghead" style="align-items:center;gap:10px"><span class="v4gr"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3.4"/><circle cx="18" cy="18" r="15.9" fill="none" stroke="${CATS[k].c}" stroke-width="3.4" stroke-linecap="round" pathLength="100" stroke-dasharray="${gp} 100"/></svg><b>${bn(gp)}%</b></span><h3 style="flex:1">${CATS[k].n}</h3><span class="ar" lang="ar">${CATS[k].ar}</span><button class="gbtn" data-cat="${k}" aria-label="${k==="todo"?"To-Do যোগ করো":CATS[k].n+" যোগ / সাজাও"}">+</button></div>`;
-    box.querySelector(".gbtn").onclick=()=>{if(k==="todo"){psel=sel;setView("plan");}else openRoutine(k);};
-    const ul=document.createElement("ul");ul.className="list";
-    if(!list.length){ul.innerHTML=`<li class="empty">এই দিনের জন্য কোনো To-Do নেই। <button class="linkbtn" data-plan="1">কাজ যোগ করো</button></li>`;ul.querySelector("[data-plan]").onclick=()=>{psel=sel;setView("plan");};}
-    list.forEach(t=>{const li=document.createElement("li");const on=set.has(t.id);
-      li.innerHTML=`<label class="item${on?" done":""}"><input type="checkbox"${on?" checked":""}><span class="lbl"></span><span class="tm">${t.t||""}</span></label>`;
-      li.querySelector(".lbl").textContent=t.label;
-      if(t.prio==="h"){const p=document.createElement("span");p.className="prio";p.textContent="উচ্চ";li.querySelector(".lbl").append(p);}
-      li.querySelector("input").onchange=e=>{
-        const s=new Set(checkedSet(sel));e.target.checked?s.add(t.id):s.delete(t.id);draft[sel]=s;
-        if(t.cat==="todo"){const it=todoList(sel).find(i=>"todo-"+i.id===t.id);if(it){it.done=e.target.checked;saveTodo(sel);}}
+    box.innerHTML=`<div class="v5sh"><span class="v5st" style="background:${d[1]};border-color:${d[2]}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d[3]}"/></svg></span><div class="v5sn"><h3>${CATS[k].n}</h3><div>${bn(gdn)}/${bn(list.length)} সম্পন্ন</div></div><span class="v5sr" role="img" aria-label="${bn(gp)}%"><svg width="42" height="42" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="3.6"/><circle cx="18" cy="18" r="15.9" fill="none" stroke="${d[0]}" stroke-width="3.6" stroke-linecap="round" pathLength="100" stroke-dasharray="${gp} 100"${gp?"":" stroke-opacity=\"0\""} transform="rotate(-90 18 18)"/></svg><b>${bn(gp)}%</b></span><button type="button" class="v5add" aria-label="${CATS[k].n} যোগ করো"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>`;
+    box.querySelector(".v5add").onclick=()=>{if(k==="todo"){psel=sel;setView("plan");}else openRoutine(k);};
+    const ul=document.createElement("ul");ul.className="v5items";
+    if(!list.length){const li=document.createElement("li");li.className="v5empty";li.innerHTML=`<button type="button">+ ${k==="todo"?"আজকের কাজ":CATS[k].n} যোগ করো</button>`;li.querySelector("button").onclick=box.querySelector(".v5add").onclick;ul.append(li);}
+    list.forEach(t=>{const li=document.createElement("li");const on=set.has(t.id);li.className=on?"on":"";
+      li.innerHTML=`<button type="button" class="v5ck" aria-pressed="${on}"><span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#061719" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button><span class="v5it"></span><span class="v5tm">${t.t||""}</span><span class="v5cal" title="Calendar">${CAL}</span>`;
+      const lb=li.querySelector(".v5it");lb.textContent=t.label;li.querySelector(".v5ck").setAttribute("aria-label",t.label);
+      if(t.prio==="h"){const p=document.createElement("span");p.className="prio";p.textContent="উচ্চ";lb.append(p);}
+      li.querySelector(".v5ck").onclick=()=>{const nv=!set.has(t.id);
+        const s=new Set(checkedSet(sel));nv?s.add(t.id):s.delete(t.id);draft[sel]=s;
+        if(t.cat==="todo"){const it=todoList(sel).find(i=>"todo-"+i.id===t.id);if(it){it.done=nv;saveTodo(sel);}}
         renderToday();};
       ul.append(li);});
     box.append(ul);g.append(box);
@@ -1162,7 +1167,7 @@ async function dbMigrate(){try{if(localStorage.getItem("am-dbmig"))return null;c
   if(mcp){syncNow({first:true});}else{setSync(false,"এই ডিভাইসে সেভ হচ্ছে");maybeSetup();setView(view);renderRemind();startAd();}
 })();
 </script>
-<script src="features.js?v=4"></script><script src="chat.js?v=4"></script><script src="v4-core.js?v=4"></script><script src="v4-quran.js?v=4"></script><script src="v4-amal.js?v=4"></script><script src="v4-finance.js?v=4"></script><script src="v4-extra.js?v=4"></script><script>try{window.V4&&V4.boot();}catch(e){console.error(e);}</script>
+<script src="features.js?v=5"></script><script src="chat.js?v=5"></script><script src="v4-core.js?v=5"></script><script src="v4-quran.js?v=5"></script><script src="v4-amal.js?v=5"></script><script src="v4-finance.js?v=5"></script><script src="v4-extra.js?v=5"></script><script src="v5.js?v=5"></script><script>try{window.V4&&V4.boot();}catch(e){console.error(e);}</script>
 <script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});</script>
 <style>#gbar .gbtn[hidden]{display:none}#instbtn{position:fixed;left:14px;bottom:calc(98px + env(safe-area-inset-bottom,0px));z-index:60;display:none;align-items:center;gap:8px;border:0;border-radius:99px;padding:11px 16px;font:inherit;font-weight:700;background:linear-gradient(135deg,#f3dc9c,#c9a24f);color:#1b1405;box-shadow:0 8px 22px rgba(0,0,0,.35);cursor:pointer}#instbtn.show{display:inline-flex}</style>
 <button id="instbtn" type="button">📲 অ্যাপ ইনস্টল করো</button>
