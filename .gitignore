@@ -18,3 +18,4 @@ vapid*.json
 Thumbs.db
 .vscode/
 .idea/
+!.env.example
