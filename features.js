@@ -76,7 +76,7 @@
   var orig=window.setView;
   window.setView=function(v){orig(v);document.body.classList.toggle("xview",NEW.some(function(p){return p[0]===v;}));NEW.forEach(function(p){var s=document.getElementById("v-"+p[0]);s.hidden=p[0]!==v;});
     if(mods[v]&&mods[v].open)try{mods[v].open(document.getElementById("v-"+v));}catch(e){console.error(e);}
-    var tb=document.getElementById("tab-"+v);if(tb&&tb.scrollIntoView)try{tb.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}};
+    if(!window.V4){var tb=document.getElementById("tab-"+v);if(tb&&tb.scrollIntoView)try{tb.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}}};
   window.AMX.badge=function(v,n){var b=document.getElementById("tab-"+v);if(!b)return;var d=b.querySelector(".dot");
     if(!n){if(d)d.remove();return;}if(!d){d=el("span",{class:"dot"});b.appendChild(d);}d.textContent=n>9?"9+":String(n);};
   // open a tab from the URL hash (e.g. install shortcut ...#quran)

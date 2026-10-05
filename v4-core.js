@@ -84,8 +84,9 @@
   function tz(){try{return (typeof TZ!=="undefined"&&TZ)||Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(e){return "UTC";}}
   function ymd(d){return new Intl.DateTimeFormat("en-CA",{timeZone:tz(),year:"numeric",month:"2-digit",day:"2-digit"}).format(d||new Date());}
   function hijri(d,opt){try{return new Intl.DateTimeFormat((L==="bn"?"bn":L)+"-u-ca-islamic-umalqura",opt||{day:"numeric",month:"long",year:"numeric",timeZone:tz()}).format(d||new Date());}catch(e){return "";}}
-  function hparts(d){try{var p=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"numeric",year:"numeric",timeZone:tz()}).formatToParts(d);
-    var g=function(k){return +((p.find(function(x){return x.type===k;})||{}).value||0);};return {d:g("day"),m:g("month"),y:g("year")};}catch(e){return null;}}
+  var HPF=null,HPZ="",HPC={};
+  function hparts(d){try{var z=tz(),key=z+"|"+d.getTime();if(HPC[key])return HPC[key];if(!HPF||HPZ!==z){HPF=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"numeric",year:"numeric",timeZone:z});HPZ=z;}var p=HPF.formatToParts(d);
+    var g=function(k){return +((p.find(function(x){return x.type===k;})||{}).value||0);};return (HPC[key]={d:g("day"),m:g("month"),y:g("year")});}catch(e){return null;}}
 
   // ---- Islamic important days (local, from the Umm al-Qura calendar)
   var IDAYS=[
@@ -102,11 +103,12 @@
     [12,10,["ঈদুল আযহা","Eid al-Adha","Hari Raya Aidiladha","عيد الأضحى","عید الاضحیٰ","Idd el-Hajj"]]
   ];
   var WHITE=["আইয়ামে বীয (১৩-১৫) · রোজা","Ayyam al-Bid (13–15) · fast","Hari Putih (13–15) · puasa","الأيام البيض · صيام","ایامِ بیض · روزہ","Ayyam al-Bid · funga"];
-  function islamicDays(n){var out=[],d=new Date();d.setHours(12,0,0,0);
+  var IDC={};
+  function islamicDays(n){var d=new Date();d.setHours(12,0,0,0);var ck=d.getTime()+"|"+(n||400)+"|"+L;if(IDC[ck])return IDC[ck];var out=[];
     for(var i=0;i<(n||400)&&out.length<40;i++){var x=new Date(d.getTime()+i*864e5),h=hparts(x);if(!h)break;
       IDAYS.forEach(function(it){if(it[0]===h.m&&it[1]===h.d)out.push({date:x,in:i,name:t(it[2]),h:h});});
       if(h.d===13&&!(h.m===12))out.push({date:x,in:i,name:t(WHITE),h:h,minor:1});}
-    return out;}
+    IDC={};IDC[ck]=out;return out;}
 
   window.V4={t:t,num:num,el:el,sv:sv,ic:ic,icon:icon,I:I,V:function(){return V;},save:save,merge:merge,ring:ring,sheet:sheet,toast:toast,head:head,seg:seg,
     L:L,LI:LI,RTL:RTL,tz:tz,ymd:ymd,hijri:hijri,hparts:hparts,islamicDays:islamicDays};
@@ -140,9 +142,9 @@
         el("div",{class:"sal"},el("div",{class:"a"},"السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ"),el("div",{class:"dots"},el("i"),el("i"),el("i"))));
       document.body.appendChild(sp);var pre=document.getElementById("v0pre");if(pre)setTimeout(function(){pre.remove();},60);
       function out(){sp.classList.add("out");setTimeout(function(){sp.remove();},700);}
-      sp.addEventListener("click",out);setTimeout(out,3300);}
+      sp.addEventListener("click",out);setTimeout(out,2900);}
     play();
-    var hiddenAt=0;document.addEventListener("visibilitychange",function(){if(document.hidden)hiddenAt=Date.now();else if(hiddenAt&&Date.now()-hiddenAt>120000){hiddenAt=0;play();}});})();
+    var hiddenAt=0;document.addEventListener("visibilitychange",function(){if(document.hidden)hiddenAt=Date.now();else if(hiddenAt&&Date.now()-hiddenAt>1800000){hiddenAt=0;play();}});})();
 
   // ---- hero: new emblem, Islamic day, Today's note, live dot
   function upgradeHero(){var h=document.querySelector(".hero .inner");if(!h||h.querySelector(".v4em"))return;

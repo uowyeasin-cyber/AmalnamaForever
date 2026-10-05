@@ -328,3 +328,7 @@ body.v4m #v6dock{display:none}
 body.v5-ig .v6fab .live,body.v5-ig .v6fab .dot{border-color:#fff}
 @media (prefers-reduced-motion:reduce){.v6fab,.v6fab::before,.v6fab::after,.v6fab .live{animation:none}}
 .v4bubble.ai:has(p,ul,ol){white-space:normal}.v4bubble.ai p:last-child{margin-bottom:0}
+/* v8 · breathing room between Today blocks */
+.v5np{margin-bottom:14px!important}
+#v-today .card.overview{margin-bottom:14px}
+#v-today #groups{margin-top:0}

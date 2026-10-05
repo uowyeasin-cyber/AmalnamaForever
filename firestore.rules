@@ -98,8 +98,33 @@ service cloud.firestore {
     function inChat(cid) { return signedIn() && exists(chatPath(cid)) && request.auth.uid in get(chatPath(cid)).data.members; }
     function isMedia(t) { return t in ['image','video','audio','file']; }
     function expired(d) { return d.createdAt < request.time - duration.value(30, 'd'); }
+    function isGroup(d) { return d.get('group', false) == true; }
     match /chats/{cid} {
       allow read: if signedIn() && (resource == null || request.auth.uid in resource.data.members);
+      // WhatsApp-style groups: anyone approved can make one; the creator is its first admin
+      allow create: if approved()
+        && request.resource.data.keys().hasOnly(['members','updatedAt','last','read','typing','cleared','group','name','photo','admins','createdBy'])
+        && request.resource.data.group == true
+        && !cid.matches('.*_.*')
+        && request.resource.data.members is list && request.resource.data.members.size() >= 2 && request.resource.data.members.size() <= 64
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.admins == [request.auth.uid]
+        && request.resource.data.createdBy == request.auth.uid
+        && txt(request.resource.data.name, 50)
+        && request.resource.data.get('photo', '') is string && request.resource.data.get('photo', '').size() <= 200000;
+      // group admins manage name, photo, members and admins
+      allow update: if approved() && isGroup(resource.data) && request.auth.uid in resource.data.admins
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','photo','members','admins','updatedAt','last','read','typing','cleared'])
+        && request.resource.data.members is list && request.resource.data.members.size() <= 64
+        && request.resource.data.admins is list && request.resource.data.admins.size() >= 1
+        && request.resource.data.members.hasAll(request.resource.data.admins)
+        && txt(request.resource.data.name, 50)
+        && request.resource.data.get('photo', '') is string && request.resource.data.get('photo', '').size() <= 200000;
+      // any member may leave a group
+      allow update: if signedIn() && isGroup(resource.data) && request.auth.uid in resource.data.members
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members','updatedAt'])
+        && request.resource.data.members == resource.data.members.removeAll([request.auth.uid]);
+      allow delete: if signedIn() && isGroup(resource.data) && request.auth.uid in resource.data.admins;
       allow create: if approved()
         && request.resource.data.keys().hasOnly(['members','updatedAt','last','read','typing','cleared'])
         && request.resource.data.members is list && request.resource.data.members.size() == 2
@@ -116,7 +141,7 @@ service cloud.firestore {
         allow create: if approved() && inChat(cid) && own()
           && request.resource.data.keys().hasOnly(['uid','type','text','media','createdAt','call','reply'])
           && request.resource.data.createdAt == request.time
-          && request.resource.data.type in ['text','image','video','audio','file','call']
+          && request.resource.data.type in ['text','image','video','audio','file','call','sys']
           && request.resource.data.get('text', '') is string && request.resource.data.get('text', '').size() <= 4000
           && (request.resource.data.type != 'text' || txt(request.resource.data.text, 4000));
         allow delete: if inChat(cid) && (resource.data.uid == request.auth.uid || (isMedia(resource.data.type) && expired(resource.data)));
@@ -129,6 +154,40 @@ service cloud.firestore {
           && request.resource.data.d is string && request.resource.data.d.size() <= 800000
           && request.resource.data.createdAt == request.time;
         allow delete: if inChat(cid) && (resource == null || resource.data.uid == request.auth.uid || expired(resource.data));
+      }
+    }
+
+    // Group voice / video calls: a "room" per call; every pair of people connects directly (mesh, up to 8)
+    function roomPath(rid) { return /databases/$(database)/documents/rooms/$(rid); }
+    function inRoom(rid) { return signedIn() && request.auth.uid in get(roomPath(rid)).data.members; }
+    match /rooms/{rid} {
+      allow read: if signedIn() && (resource == null || request.auth.uid in resource.data.members);
+      allow create: if approved() && realAccount() && request.resource.data.by == request.auth.uid
+        && request.resource.data.keys().hasOnly(['chat','type','by','members','in','active','createdAt','name'])
+        && request.resource.data.type in ['audio','video']
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.active == true
+        && request.resource.data.in == [request.auth.uid]
+        && request.resource.data.members == get(chatPath(request.resource.data.chat)).data.members
+        && request.auth.uid in request.resource.data.members;
+      allow update: if realAccount() && request.auth.uid in resource.data.members
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['in','active','endedAt'])
+        && request.resource.data.in.toSet().difference(resource.data.in.toSet()).hasOnly([request.auth.uid])
+        && resource.data.in.toSet().difference(request.resource.data.in.toSet()).hasOnly([request.auth.uid])
+        && request.resource.data.in.size() <= 8;
+      allow delete: if signedIn() && request.auth.uid in resource.data.members;
+      match /peers/{pid} {
+        allow read, delete: if inRoom(rid);
+        allow create: if realAccount() && inRoom(rid) && request.resource.data.from == request.auth.uid
+          && request.resource.data.keys().hasOnly(['from','to','offer','createdAt'])
+          && request.resource.data.to in get(roomPath(rid)).data.members;
+        allow update: if signedIn() && request.auth.uid == resource.data.to
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answer']);
+        match /ice/{iid} {
+          allow read, delete: if inRoom(rid);
+          allow create: if inRoom(rid) && request.resource.data.by == request.auth.uid
+            && request.resource.data.keys().hasOnly(['by','c','t']);
+        }
       }
     }
 

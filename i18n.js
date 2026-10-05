@@ -18,9 +18,11 @@
   function build(){var d=window.AM_DICT[L];if(!d)return false;UI=d.ui;
     var ks=Object.keys(UI).filter(function(k){return k.length>=2;}).sort(function(a,b){return b.length-a.length;});
     RE=new RegExp(ks.map(function(k){return k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}).join("|"),"g");return true;}
+  // a Bangla letter (not a digit) — dictionary words are only swapped when they stand alone, never inside another word
+  var BL=/[\u0980-\u09E5\u09F0-\u09FF]/;
   var BD=/[০-৯]/g;
   function tr(s){if(!s||!/[ঀ-৿]/.test(s))return s;
-    var t=s.trim();if(UI[t]!=null)s=s.replace(t,UI[t]);else s=s.replace(RE,function(m){return UI[m];});
+    var t=s.trim();if(UI[t]!=null)s=s.replace(t,UI[t]);else s=s.replace(RE,function(m,o,str){var b=str.charAt(o-1),a=str.charAt(o+m.length);if((b&&BL.test(b)&&BL.test(m.charAt(0)))||(a&&BL.test(a)&&BL.test(m.charAt(m.length-1))))return m;return UI[m];});
     return s.replace(BD,function(d){return "০১২৩৪৫৬৭৮৯".indexOf(d);}).replace(/।/g,L==="ur"?"۔":".");}
   window.AM_tr=function(s){return (L==="bn"||!UI)?s:tr(String(s));};
   function skip(el){for(var e=el;e&&e!==document.body;e=e.parentNode){if(e.nodeType===1&&(e.hasAttribute("data-noi18n")||/^(SCRIPT|STYLE|TEXTAREA)$/.test(e.tagName)||e.isContentEditable))return true;}return false;}
