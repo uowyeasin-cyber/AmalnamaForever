@@ -229,7 +229,7 @@ button.sync{border:0;font:inherit;font-size:.72rem;cursor:pointer}
 @media (max-width:440px){.stat .n{font-size:1.1rem}.cat{grid-template-columns:5.5em 1fr 3em}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .acchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.acchips:empty{display:none}.acchips button{font:inherit;font-size:.8rem;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}.acchips button.on{border-color:var(--gold);background:var(--gold-soft)}
-</style><link rel="stylesheet" href="v4.css?v=9"><link rel="stylesheet" href="v5.css?v=9">
+</style><link rel="stylesheet" href="v4.css?v=10"><link rel="stylesheet" href="v5.css?v=10">
 
 <div class="wrap">
   <header class="hero">
@@ -1210,7 +1210,7 @@ async function dbMigrate(){try{if(localStorage.getItem("am-dbmig"))return null;c
   if(mcp){syncNow({first:true});setTimeout(()=>calBackfill(),9000);}else{setSync(false,"এই ডিভাইসে সেভ হচ্ছে");maybeSetup();setView(view);renderRemind();startAd();}
 })();
 </script>
-<script src="features.js?v=9"></script><script src="chat.js?v=9"></script><script src="v4-core.js?v=9"></script><script src="v4-quran.js?v=9"></script><script src="v4-amal.js?v=9"></script><script src="v4-finance.js?v=9"></script><script src="v4-extra.js?v=9"></script><script src="v5.js?v=9"></script><script>try{window.V4&&V4.boot();}catch(e){console.error(e);}</script>
+<script src="features.js?v=10"></script><script src="chat.js?v=10"></script><script src="v4-core.js?v=10"></script><script src="v4-quran.js?v=10"></script><script src="v4-amal.js?v=10"></script><script src="v4-finance.js?v=10"></script><script src="v4-extra.js?v=10"></script><script src="v5.js?v=10"></script><script>try{window.V4&&V4.boot();}catch(e){console.error(e);}</script>
 <script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});</script>
 <style>#gbar .gbtn[hidden]{display:none}#instbtn{position:fixed;left:14px;bottom:calc(98px + env(safe-area-inset-bottom,0px));z-index:60;display:none;align-items:center;gap:8px;border:0;border-radius:99px;padding:11px 16px;font:inherit;font-weight:700;background:linear-gradient(135deg,#f3dc9c,#c9a24f);color:#1b1405;box-shadow:0 8px 22px rgba(0,0,0,.35);cursor:pointer}#instbtn.show{display:inline-flex}</style>
 <button id="instbtn" type="button">📲 অ্যাপ ইনস্টল করো</button>
