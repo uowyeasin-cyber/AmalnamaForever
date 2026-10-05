@@ -83,114 +83,14 @@
   var hv=(location.hash||"").slice(1);if(hv&&NEW.some(function(p){return p[0]===hv;}))setTimeout(function(){window.setView(hv);},300);
 })();
 
-/* ================= QURAN ================= */
-(function(){
-  var X=window.AMX;if(!X)return;var T=X.T,el=X.el,num=X.num,L=X.LANG;
-  var API="https://api.alquran.cloud/v1/";
-  var ED={bn:"bn.bengali",en:"en.sahih",ms:"ms.basmeih",ur:"ur.jalandhry",sw:"sw.barwani",ar:"ar.muyassar"}[L]||"en.sahih";
-  var RTLTR=(L==="ar"||L==="ur");
-  var AR=function(n){return String(n).replace(/\d/g,function(d){return "٠١٢٣٤٥٦٧٨٩"[d];});};
-  var BISM=/^﻿?بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ\s*/;
-  var S={list:null,cur:null,data:null,idx:-1,mode:"",showTr:true,size:1,auto:true};
-  try{var st=JSON.parse(localStorage.getItem("am-quran")||"{}");if(st.size)S.size=st.size;if(st.showTr===false)S.showTr=false;if(st.auto===false)S.auto=false;S.last=st.last;S.bm=st.bm||[];}catch(e){S.bm=[];}
-  function save(){try{localStorage.setItem("am-quran",JSON.stringify({size:S.size,showTr:S.showTr,auto:S.auto,last:S.last,bm:S.bm}));}catch(e){}}
-  var audio=new Audio();audio.preload="none";
-  var root=null;
-  function getJSON(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(j){if(j.code!==200)throw new Error(j.status);return j.data;});}
-  function loadList(){if(S.list)return Promise.resolve(S.list);
-    try{var c=JSON.parse(localStorage.getItem("am-q-list")||"null");if(c&&c.length===114){S.list=c;return Promise.resolve(c);}}catch(e){}
-    return getJSON(API+"surah").then(function(d){S.list=d.map(function(s){return {n:s.number,ar:s.name,en:s.englishName,tr:s.englishNameTranslation,c:s.numberOfAyahs,t:s.revelationType};});
-      try{localStorage.setItem("am-q-list",JSON.stringify(S.list));}catch(e){}return S.list;});}
-  function stopAudio(){audio.pause();S.mode="";S.idx=-1;mark();updBar();}
-  function loading(){root.innerHTML="";root.appendChild(el("div",{class:"card",style:"margin-top:0;text-align:center"},el("p",{class:"muted"},T("q.loading"))));}
-  function fail(retry){root.innerHTML="";root.appendChild(el("div",{class:"card",style:"margin-top:0;text-align:center"},el("p",{class:"xerr"},T("q.error")),el("button",{class:"xbtn",type:"button",onclick:retry},"⟳ "+T("q.retry"))));}
-
-  function renderList(){
-    loading();
-    loadList().then(function(list){
-      root.innerHTML="";
-      var q=el("input",{class:"xin",type:"search",placeholder:T("q.search"),"data-noi18n":""});
-      var box=el("div",{class:"q-list","data-noi18n":""});
-      var head=el("div",{class:"card",style:"margin-top:0"},
-        el("div",{class:"xhead"},el("h2",null,"📖 "+T("q.title")),el("span",{class:"q-arn"},"القرآن الكريم")),
-        S.last?el("button",{class:"xbtn gold",type:"button",style:"margin-top:10px;width:100%;justify-content:center",onclick:function(){openSurah(S.last.s,S.last.a);}},
-          "▶ "+T("q.continue")+" · "+(list[S.last.s-1]?list[S.last.s-1].en:"")+" "+num(S.last.s)+":"+num(S.last.a)):null,
-        el("div",{style:"margin-top:12px"},q));
-      root.appendChild(head);root.appendChild(box);
-      function draw(){var f=q.value.trim().toLowerCase().replace(/[-'\s]/g,"");box.innerHTML="";
-        list.filter(function(s){if(!f)return true;return String(s.n)===f||(s.en+s.tr).toLowerCase().replace(/[-'\s]/g,"").indexOf(f)>=0||s.ar.indexOf(q.value.trim())>=0;})
-        .forEach(function(s){box.appendChild(el("button",{class:"q-row",type:"button",onclick:function(){openSurah(s.n);}},
-          el("div",{class:"q-no"},el("span",null,num(s.n))),
-          el("div",null,el("div",{class:"q-en"},s.en),el("div",{class:"q-sub"},s.tr+" · "+(s.t==="Meccan"?T("q.meccan"):T("q.medinan"))+" · "+num(s.c)+" "+T("q.ayahs"))),
-          el("div",{class:"q-arn"},s.ar.replace(/^سُورَةُ\s*/,""))));});}
-      q.addEventListener("input",draw);draw();
-    }).catch(function(){fail(renderList);});
-  }
-
-  function openSurah(n,goto){
-    S.cur=n;stopAudio();loading();window.scrollTo({top:0});
-    Promise.all([loadList(),getJSON(API+"surah/"+n+"/editions/quran-uthmani,"+ED)]).then(function(r){
-      var meta=r[0][n-1],eds=r[1],ar=eds[0].ayahs,tr=eds[1]?eds[1].ayahs:[];
-      S.data={n:n,meta:meta,ayahs:ar.map(function(a,i){var t=a.text;if(n!==1&&n!==9&&i===0)t=t.replace(BISM,"");else t=t.replace(/^﻿/,"");
-        return {g:a.number,k:a.numberInSurah,ar:t,tr:tr[i]?tr[i].text:""};})};
-      draw(goto);
-    }).catch(function(){fail(function(){openSurah(n,goto);});});
-  }
-
-  var listEl=null,bar=null;
-  function draw(goto){
-    var d=S.data,m=d.meta;root.innerHTML="";
-    var playAll=el("button",{class:"xbtn acc sm",type:"button",onclick:function(){if(S.mode==="surah"&&!audio.paused){audio.pause();updBar();return;}
-      if(S.mode==="surah"&&audio.paused&&audio.src){audio.play();updBar();return;}S.mode="surah";S.idx=-1;mark();audio.src="https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/"+d.n+".mp3";audio.play().catch(function(){});updBar();}});
-    var stopB=el("button",{class:"xbtn sm",type:"button",onclick:stopAudio},"■ "+T("q.stop"));
-    var trC=el("input",{type:"checkbox"});trC.checked=S.showTr;trC.onchange=function(){S.showTr=trC.checked;save();listEl.classList.toggle("q-hide",!S.showTr);};
-    var auC=el("input",{type:"checkbox"});auC.checked=S.auto;auC.onchange=function(){S.auto=auC.checked;save();};
-    var sz=el("input",{type:"range",min:"0.8",max:"1.8",step:"0.1",value:String(S.size),style:"width:110px"});sz.oninput=function(){S.size=+sz.value;listEl.style.setProperty("--qs",S.size);save();};
-    bar=el("div",{class:"q-top"},
-      el("div",{class:"xhead"},el("button",{class:"xbtn sm",type:"button",onclick:function(){stopAudio();renderList();}},(document.dir==="rtl"?"→ ":"← ")+T("q.back")),
-        el("div",{class:"xrow"},playAll,stopB)),
-      el("div",{class:"xrow",style:"margin-top:8px;font-size:.8rem;color:var(--muted);gap:14px"},
-        el("label",{class:"xrow",style:"gap:6px"},trC,T("q.showTr")),el("label",{class:"xrow",style:"gap:6px"},auC,T("q.autoNext")),el("label",{class:"xrow",style:"gap:6px"},"A",sz,"A+")));
-    root.appendChild(bar);
-    root.appendChild(el("div",{class:"q-title"},el("div",{class:"ar"},m.ar),el("div",{class:"q-en"},num(m.n)+". "+m.en+" · "+m.tr),
-      el("div",{class:"q-sub"},(m.t==="Meccan"?T("q.meccan"):T("q.medinan"))+" · "+num(m.c)+" "+T("q.ayahs"))));
-    if(d.n!==1&&d.n!==9)root.appendChild(el("div",{class:"q-bism"},"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ"));
-    listEl=el("div",{class:"card"+(S.showTr?"":" q-hide"),style:"padding:6px 14px","data-noi18n":""});listEl.style.setProperty("--qs",S.size);
-    d.ayahs.forEach(function(a,i){
-      var bm=S.bm.indexOf(d.n+":"+a.k)>=0;
-      var bmB=el("button",{class:"xbtn sm",type:"button",title:T("q.bookmark")},bm?"🔖":"📑");
-      bmB.onclick=function(){var key=d.n+":"+a.k,j=S.bm.indexOf(key);if(j>=0)S.bm.splice(j,1);else S.bm.push(key);S.last={s:d.n,a:a.k};save();bmB.textContent=j>=0?"📑":"🔖";};
-      listEl.appendChild(el("div",{class:"q-ayah",id:"qa-"+a.k},
-        el("div",{class:"q-at",lang:"ar"},a.ar,el("span",{class:"q-mk"},"﴿"+AR(a.k)+"﴾")),
-        a.tr?el("div",{class:"q-tr",dir:RTLTR?"rtl":null},a.tr):null,
-        el("div",{class:"q-act"},el("span",{class:"n"},num(d.n)+":"+num(a.k)),
-          el("button",{class:"xbtn sm",type:"button",onclick:function(){playAyah(i);}},"▶ "+T("q.play")),bmB)));});
-    root.appendChild(listEl);
-    root.appendChild(el("p",{class:"q-src"},T("q.reciter")+" · "+T("q.source")));
-    updBar();
-    if(goto>1){var t=document.getElementById("qa-"+goto);if(t)setTimeout(function(){t.scrollIntoView({block:"start"});},60);}
-    S.last={s:d.n,a:goto||1};save();
-  }
-  function playAyah(i){var d=S.data;if(!d||i<0||i>=d.ayahs.length){stopAudio();return;}
-    S.mode="ayah";S.idx=i;audio.src="https://cdn.islamic.network/quran/audio/128/ar.alafasy/"+d.ayahs[i].g+".mp3";audio.play().catch(function(){});
-    S.last={s:d.n,a:d.ayahs[i].k};save();mark(true);updBar();}
-  function mark(scroll){if(!listEl)return;var on=listEl.querySelector(".q-ayah.on");if(on)on.classList.remove("on");
-    if(S.mode==="ayah"&&S.idx>=0){var e=document.getElementById("qa-"+S.data.ayahs[S.idx].k);if(e){e.classList.add("on");if(scroll)e.scrollIntoView({block:"center",behavior:"smooth"});}}}
-  function updBar(){if(!bar)return;var b=bar.querySelector(".xbtn.acc");if(!b)return;
-    b.textContent=(S.mode==="surah"&&!audio.paused)?"⏸ "+T("q.pause"):"▶ "+T("q.playAll");}
-  audio.addEventListener("ended",function(){if(S.mode==="ayah"&&S.auto)playAyah(S.idx+1);else{S.mode=S.mode==="surah"?"":S.mode;updBar();}});
-  audio.addEventListener("play",updBar);audio.addEventListener("pause",updBar);
-  X.register("quran",{open:function(r){root=r;if(!root.dataset.init){root.dataset.init="1";renderList();}}});
-  X.quranAudio=audio;
-})();
-
+/* QURAN: moved to v4-quran.js (Uthmani + Nurani, qari choice, surah after surah) */
 /* ================= AZAN ================= */
 (function(){
   var X=window.AMX;if(!X)return;var T=X.T,el=X.el,num=X.num,L=X.LANG;
   var P=["fajr","dhuhr","asr","maghrib","isha"],RID={fajr:"fajr",dhuhr:"zohor",asr:"asar",maghrib:"maghrib",isha:"isyak"};
   var API={fajr:"Fajr",sunrise:"Sunrise",dhuhr:"Dhuhr",asr:"Asr",maghrib:"Maghrib",isha:"Isha"};
   var tz=(typeof TZ!=="undefined"&&TZ)||Intl.DateTimeFormat().resolvedOptions().timeZone;
-  var C={on:true,notify:false,vol:0.85,src:"routine",city:"",country:"",method:"",school:"0",api:null,pr:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true},played:{d:"",l:[]}};
+  var C={on:true,notify:false,vol:0.85,voice:"a9",soft:true,man:{},src:"routine",city:"",country:"",method:"",school:"0",api:null,pr:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true},played:{d:"",l:[]}};
   try{var s=JSON.parse(localStorage.getItem("am-azan")||"null");if(s)for(var k in s)C[k]=s[k];}catch(e){}
   if(!C.city){try{var ss=JSON.parse(localStorage.getItem("am-settings")||"{}");if(ss.city)C.city=ss.city;}catch(e){}}
   function save(){try{localStorage.setItem("am-azan",JSON.stringify(C));}catch(e){}}
@@ -201,7 +101,8 @@
   function fmt(hm){var m=toMin(hm);if(m==null)return "—";var h=Math.floor(m/60),mm=m%60,ap=h<12?"AM":"PM";h=h%12||12;return num(h+":"+String(mm).padStart(2,"0"))+" "+ap;}
   function routineTimes(){var r=null;try{r=(typeof routine!=="undefined"&&routine)||JSON.parse(localStorage.getItem("rc-routine-v1")||"{}");}catch(e){r={};}
     var o={};P.forEach(function(p){var it=r&&r[RID[p]];if(it&&it.start)o[p]=it.start;});return o;}
-  function times(){if(C.src==="api"&&C.api&&C.api.t)return C.api.t;return routineTimes();}
+  function times(){var base=(C.src==="api"&&C.api&&C.api.t)?C.api.t:routineTimes();if(C.src==="manual"){var o={};for(var k in base)o[k]=base[k];P.forEach(function(p){if(C.man&&C.man[p])o[p]=C.man[p];});return o;}return base;}
+  X.azanTimes=times;X.nowMin=function(){return nowMin();};
   // ---- fetch from AlAdhan
   function fetchTimes(opts){var d=today().split("-"),ds=d[2]+"-"+d[1]+"-"+d[0];
     var q="?school="+encodeURIComponent(C.school||"0")+(C.method?"&method="+encodeURIComponent(C.method):"");
@@ -214,14 +115,20 @@
   function refreshDaily(){if(C.src==="api"&&C.api&&C.api.d!==today()&&navigator.onLine!==false){
     (C.api.lat!=null?fetchTimes({lat:C.api.lat,lng:C.api.lng,label:C.api.label}):fetchTimes()).then(function(){if(root&&!root.hidden)render();}).catch(function(){});}}
   // ---- audio
-  var au=new Audio();au.crossOrigin="anonymous";au.src="https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b0/Beautiful_adhan.ogg/Beautiful_adhan.ogg.mp3";au.preload="none";var unlocked=false;
+  var VOICES=[["a9","Mishary Rashid Alafasy","https://cdn.aladhan.com/audio/adhans/a9.mp3"],["a7","Mishary Alafasy (2)","https://cdn.aladhan.com/audio/adhans/a7.mp3"],["a4","Mishary Alafasy · Dubai","https://cdn.aladhan.com/audio/adhans/a4.mp3"],
+    ["a1","Ahmad al-Nafees","https://cdn.aladhan.com/audio/adhans/a1.mp3"],["a2","Hafiz Mustafa Özcan (Türkiye)","https://cdn.aladhan.com/audio/adhans/a2.mp3"],["a11","Mansour Al-Zahrani","https://cdn.aladhan.com/audio/adhans/a11-mansour-al-zahrani.mp3"],
+    ["wm","Beautiful Adhan (Wikimedia)","https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b0/Beautiful_adhan.ogg/Beautiful_adhan.ogg.mp3"]];
+  function vurl(){var v=VOICES.filter(function(x){return x[0]===C.voice;})[0]||VOICES[0];return v[2];}
+  var au=new Audio();au.src=vurl();au.preload="none";var unlocked=false,fadeT=null;
   function unlock(){if(unlocked)return;unlocked=true;try{au.muted=true;var p=au.play();if(p&&p.then)p.then(function(){au.pause();au.currentTime=0;au.muted=false;}).catch(function(){au.muted=false;unlocked=false;});}catch(e){au.muted=false;}}
   // iOS needs the audio element to be started once by a tap; other browsers allow it after any interaction
   var IOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
   if(IOS&&C.on)["pointerdown","touchstart"].forEach(function(ev){document.addEventListener(ev,unlock,{passive:true,capture:true});});
   function bar(txt){var b=document.getElementById("azbar");if(b)b.remove();if(!txt)return;
     b=el("div",{id:"azbar",role:"status"},el("span",null,"🕌 "+txt),el("button",{class:"xbtn sm",type:"button",onclick:function(){stop();}},"■ "+T("a.stop")));document.body.appendChild(b);}
-  function play(name){au.volume=Math.max(0,Math.min(1,+C.vol||0.85));au.currentTime=0;var pr=au.play();
+  function play(name){var target=Math.max(0,Math.min(1,+C.vol||0.85));if(au.src.indexOf(vurl())<0)au.src=vurl();au.currentTime=0;clearInterval(fadeT);
+    if(C.soft){au.volume=Math.min(0.08,target);var t0=Date.now();fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/9000);au.volume=Math.max(0,Math.min(1,0.08+(target-0.08)*k*k));if(k>=1)clearInterval(fadeT);},200);}else au.volume=target;
+    var pr=au.play();
     bar(T("a.itsTime")+" "+name);
     if(pr&&pr.catch)pr.catch(function(){var b=document.getElementById("azbar");if(b){b.firstChild.textContent="🔔 "+T("a.itsTime")+" "+name+" — "+T("a.tapToAllow");b.onclick=function(){au.play().catch(function(){});};}});}
   function stop(){au.pause();au.currentTime=0;bar("");}
@@ -254,7 +161,7 @@
     if(root)root.querySelectorAll(".az-p").forEach(function(r){r.classList.toggle("nx",r.dataset.p===b.p);});}
   function sw(label,checked,onch){var c=el("input",{type:"checkbox"});c.checked=!!checked;c.onchange=function(){onch(c.checked,c);};return el("label",{class:"xsw"},el("span",null,label),c);}
   function render(){
-    if(C.src!=="api"&&!Object.keys(routineTimes()).length)C.src="api";
+    if(C.src==="routine"&&!Object.keys(routineTimes()).length)C.src="api";
     root.innerHTML="";var t=times();
     nextEl=el("div",{class:"az-next"});
     var list=el("div",{class:"card"},el("h2",{style:"margin-bottom:6px"},"🕌 "+T("a.title")));
@@ -262,7 +169,7 @@
       var row=el("div",{class:"az-p","data-p":p},el("b",null,T("p."+p)),el("span",{class:"t"},fmt(t[p])),c);
       list.appendChild(row);
       if(p==="fajr"&&C.src==="api"&&C.api&&C.api.t&&C.api.t.sunrise)list.appendChild(el("div",{class:"az-p","data-p":"sunrise",style:"opacity:.7"},el("b",null,"☀ "+T("p.sunrise")),el("span",{class:"t"},fmt(C.api.t.sunrise)),el("span")));});
-    list.appendChild(el("p",{class:"xnote"},C.src==="api"&&C.api?T("a.fromApi")+" "+C.api.label+(C.api.meth?" · "+C.api.meth:""):T("a.fromRoutine")));
+    list.appendChild(el("p",{class:"xnote"},C.src==="manual"?(({bn:"তোমার ঠিক করা সময়",en:"Your own times",ms:"Masa anda",ar:"أوقاتك",ur:"آپ کے اوقات",sw:"Nyakati zako"})[L]||""):C.src==="api"&&C.api?T("a.fromApi")+" "+C.api.label+(C.api.meth?" · "+C.api.meth:""):T("a.fromRoutine")));
     var vol=el("input",{type:"range",min:"0",max:"1",step:"0.05",value:String(C.vol),style:"width:140px"});vol.oninput=function(){C.vol=+vol.value;au.volume=C.vol;save();};
     var testB=el("button",{class:"xbtn acc",type:"button",onclick:function(){if(!au.paused){stop();testB.textContent="▶ "+T("a.test");}else{play(T("a.test"));testB.textContent="■ "+T("a.stop");}}},"▶ "+T("a.test"));
     au.addEventListener("pause",function(){testB.textContent="▶ "+T("a.test");});
@@ -270,6 +177,9 @@
       sw(T("a.enable"),C.on,function(v){C.on=v;save();}),
       sw(T("a.notify"),C.notify,function(v,c){C.notify=v;save();if(v&&"Notification" in window&&Notification.permission==="default")Notification.requestPermission().then(function(p){if(p!=="granted"){C.notify=false;c.checked=false;save();}});}),
       el("div",{class:"xsw"},el("span",null,T("a.volume")),vol),
+      (function(){var sel=el("select",{class:"xin",style:"max-width:60%","data-noi18n":""});VOICES.forEach(function(v){var o=el("option",{value:v[0]},v[1]);if(v[0]===C.voice)o.selected=true;sel.appendChild(o);});
+        sel.onchange=function(){C.voice=sel.value;save();stop();au.src=vurl();};return el("div",{class:"xsw"},el("span",null,({bn:"মুয়াজ্জিন / কণ্ঠ",en:"Muezzin / voice",ms:"Muazzin / suara",ar:"المؤذن / الصوت",ur:"مؤذن / آواز",sw:"Muadhini / sauti"})[L]||"Muezzin"),sel);})(),
+      sw(({bn:"নরম শুরু (ধীরে ধীরে আওয়াজ বাড়বে)",en:"Soft start (volume rises gently)",ms:"Mula lembut (suara naik perlahan)",ar:"بداية هادئة (يرتفع الصوت تدريجيًا)",ur:"نرم آغاز (آواز آہستہ بڑھے)",sw:"Anza polepole (sauti inapanda taratibu)"})[L]||"Soft start",C.soft,function(v){C.soft=v;save();}),
       el("div",{class:"xrow",style:"margin-top:8px"},testB));
     // source
     var city=el("input",{class:"xin",value:C.city||"",placeholder:"Kuala Lumpur","data-noi18n":""}),country=el("input",{class:"xin",value:C.country||"",placeholder:"Malaysia","data-noi18n":""});
@@ -277,7 +187,7 @@
       .forEach(function(o){var op=el("option",{value:o[0]},o[1]);if(String(C.method)===o[0])op.selected=true;meth.appendChild(op);});
     var school=el("select",{class:"xin"});[["0","Asr: Shafi'i / Maliki / Hanbali"],["1","Asr: Hanafi"]].forEach(function(o){var op=el("option",{value:o[0]},o[1]);if(String(C.school)===o[0])op.selected=true;school.appendChild(op);});
     var st=el("p",{class:"xnote"});
-    var srcR=el("input",{type:"radio",name:"azsrc"}),srcA=el("input",{type:"radio",name:"azsrc"});srcR.checked=C.src!=="api";srcA.checked=C.src==="api";
+    var srcR=el("input",{type:"radio",name:"azsrc"}),srcA=el("input",{type:"radio",name:"azsrc"}),srcM=el("input",{type:"radio",name:"azsrc"});srcR.checked=C.src==="routine";srcA.checked=C.src==="api";srcM.checked=C.src==="manual";srcM.onchange=function(){C.src="manual";save();render();};
     srcR.onchange=function(){C.src="routine";save();render();};srcA.onchange=function(){C.src="api";save();if(!C.api)st.textContent="";render();};
     function got(){st.textContent="✓ "+T("a.saved");C.src="api";save();render();}
     var getB=el("button",{class:"xbtn acc",type:"button",onclick:function(){C.city=city.value.trim();C.country=country.value.trim();C.method=meth.value;C.school=school.value;save();
@@ -289,13 +199,15 @@
     var srcCard=el("div",{class:"card"},
       el("label",{class:"xsw"},el("span",null,T("a.fromRoutine")),srcR),
       el("label",{class:"xsw"},el("span",null,T("a.auto")),srcA),
+      el("label",{class:"xsw"},el("span",null,({bn:"নিজে সময় ঠিক করো",en:"Set the times myself",ms:"Tetapkan masa sendiri",ar:"أحدد الأوقات بنفسي",ur:"اوقات خود مقرر کریں",sw:"Weka nyakati mwenyewe"})[L]||"Manual"),srcM),
+      C.src==="manual"?el("div",{class:"xgrid",style:"grid-template-columns:repeat(5,1fr);margin-top:6px"},P.map(function(p){var i=el("input",{class:"xin",type:"time",value:(C.man&&C.man[p])||t[p]||""});i.onchange=function(){C.man=C.man||{};C.man[p]=i.value;save();render();};return el("label",{class:"xlab"},T("p."+p),i);})):null,
       C.src==="api"?el("div",{style:"display:grid;gap:8px;margin-top:6px"},
         el("div",{class:"xgrid"},el("label",null,T("a.city"),city),el("label",null,T("a.country"),country)),
         el("label",{class:"xlab"},T("a.method"),meth),el("label",{class:"xlab"},"Asr",school),
         el("div",{class:"xrow"},getB,locB),C.api?applyB:null,st):null);
     root.appendChild(nextEl);root.appendChild(list);root.appendChild(opts);root.appendChild(srcCard);
     root.appendChild(el("p",{class:"xnote"},"ℹ️ "+T("a.note")));
-    root.appendChild(el("p",{class:"xnote",style:"font-size:.72rem"},T("a.credit")+" · Prayer times: AlAdhan.com"));
+    root.appendChild(el("p",{class:"xnote",style:"font-size:.72rem"},"Adhan audio: AlAdhan.com, Wikimedia Commons · Prayer times: AlAdhan.com"));
     updNext();}
   function applyRoutine(btn){if(!C.api||typeof saveR!=="function")return;var t=C.api.t,n=0,jobs=[];
     var plus=function(hm,m){var x=toMin(hm)+m;return String(Math.floor(x/60)%24).padStart(2,"0")+":"+String(x%60).padStart(2,"0");};
@@ -325,7 +237,7 @@
     AMCHAT.start({db:db,FV:FV,me:me,isAdmin:isAdmin,getCfg:function(){return cfg;},myName:myName,myPhoto:function(){return (me&&me.photoURL)||"";},
       onUnread:function(n){chatUnread=n;setAdminBadge(lastPending);},
       onName:function(n){if(member)db.collection("members").doc(me.uid).update({name:n}).catch(function(){});}});}
-  function onUser(u){clear();me=u;member=null;isAdmin=!!(u&&u.email&&ADMINS.indexOf(u.email.toLowerCase())>=0);
+  function onUser(u){clear();me=u;member=null;isAdmin=!!(u&&u.email&&ADMINS.indexOf(u.email.toLowerCase())>=0);X.isAdmin=isAdmin;
     try{if(u)localStorage.setItem("am-comm","1");else localStorage.removeItem("am-comm");}catch(e){}
     if(!u){state="out";render();return;}
     unsub.push(db.collection("config").doc("community").onSnapshot(function(s){cfg=s.exists?s.data():{};if(state==="in"&&sub==="chat")renderSub();if(state!=="in")render();},function(){}));
@@ -457,7 +369,10 @@
     },function(e){box.textContent=T("c.error");console.error(e);}));}
   // ---- admin
   var allMembers=[];
-  function watchAdmin(){unsub.push(db.collection("members").onSnapshot(function(s){allMembers=s.docs.map(function(d){return d.data({serverTimestamps:"estimate"});});
+  var profs={},postsBy={};
+  function watchAdmin(){unsub.push(db.collection("profiles").onSnapshot(function(s){profs={};s.docs.forEach(function(d){profs[d.id]=d.data({serverTimestamps:"estimate"});});if(sub==="admin"&&body)renderAdminLists();},function(){}));
+    unsub.push(db.collection("posts").orderBy("createdAt","desc").limit(300).onSnapshot(function(s){postsBy={};s.docs.forEach(function(d){var u=d.data().uid;postsBy[u]=(postsBy[u]||0)+1;});if(sub==="admin"&&body)renderAdminLists();},function(){}));
+    unsub.push(db.collection("members").onSnapshot(function(s){allMembers=s.docs.map(function(d){return d.data({serverTimestamps:"estimate"});});
       var pend=allMembers.filter(function(m){return m.status==="pending";}).length;
       if(lastPending>=0&&pend>lastPending&&"Notification" in window&&Notification.permission==="granted"){try{new Notification("👥 Amalnama",{body:num(pend)+" "+T("ad.newReq"),icon:"icon-192.png",tag:"am-join"});}catch(e){}}
       lastPending=pend;setAdminBadge(pend);if(sub==="admin"&&body)renderAdminLists();},function(e){console.error(e);}));}
@@ -498,7 +413,9 @@
           btns.appendChild(el("button",{class:"xbtn sm",type:"button",onclick:function(){del();}},T("ad.remove")));}
         card.appendChild(el("div",{class:"cm-mem"},av(m.photo,m.name),el("div",{class:"info"},el("div",{style:"font-weight:600"},m.name||"—"),
           el("div",{class:"q-sub"},m.email+(m.country?" · "+m.country:"")+(m.lang?" · "+m.lang:"")),m.intro?el("div",{class:"q-sub",style:"white-space:normal"},"“"+m.intro+"”"):null,
-          el("div",{class:"q-sub"},T("ad.requested")+": "+ago(m.requestedAt))),btns));});
+          el("div",{class:"q-sub"},T("ad.requested")+": "+ago(m.requestedAt)),
+          (function(){var pf=profs[m.uid],ls=pf&&pf.lastSeen,on=ls&&ts(ls)>Date.now()-4*60000,AL={bn:["সক্রিয়","অনলাইন","শেষ দেখা","পোস্ট"],en:["Activity","online","last seen","posts"],ms:["Aktiviti","dalam talian","kali terakhir","hantaran"],ar:["النشاط","متصل","آخر ظهور","منشورات"],ur:["سرگرمی","آن لائن","آخری بار","پوسٹس"],sw:["Shughuli","mtandaoni","alionekana","machapisho"]}[L]||["Activity","online","last seen","posts"];
+            return el("div",{class:"q-sub",style:"color:"+(on?"#22C55E":"var(--muted)")},"● "+AL[0]+": "+(on?AL[1]:ls?AL[2]+" "+ago(ls):"—")+" · "+num(postsBy[m.uid]||0)+" "+AL[3]);})()),btns));});
       admLists.appendChild(card);});}
   X.register("comm",{open:function(r){root=r;if(!fb){render();init().catch(function(e){state="err";render(e);});}else render();}});
   // returning users: connect quietly so admins see new join requests on the tab badge

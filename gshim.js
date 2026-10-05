@@ -34,10 +34,14 @@
     setTimeout(function(){if(silentBusy){silentBusy=false;done(false);}},20000);return true;}
   function activeTap(){return !navigator.userActivation||navigator.userActivation.isActive;}
   function ensure(){if(ready())return Promise.resolve(true);if(!was())return Promise.resolve(false);
-    return new Promise(function(res){pend.push(res);if(activeTap())silent();
+    return new Promise(function(res){pend.push(res);if(activeTap()){if(silentFail)soft();else silent();}
       setTimeout(function(){var i=pend.indexOf(res);if(i>=0){pend.splice(i,1);res(false);}},25000);});}
   // renew on the first tap after the token is close to expiry
-  ["pointerup","keydown"].forEach(function(ev){document.addEventListener(ev,function(){if(was()&&!silentFail&&(!tok||Date.now()>exp-5*60000))silent();},true);});
+  var lastSoft=0;
+  function soft(){if(ready()||silentBusy||!was()||!initTC())return;if(Date.now()-lastSoft<10*60000)return;lastSoft=Date.now();silentBusy=true;
+    var o={prompt:"",scope:scopes()};if(hintEmail())o.login_hint=hintEmail();try{tc.requestAccessToken(o);}catch(e){silentBusy=false;}
+    setTimeout(function(){if(silentBusy){silentBusy=false;done(false);}},30000);}
+  ["pointerup","keydown"].forEach(function(ev){document.addEventListener(ev,function(){if(!was()||(tok&&Date.now()<exp-5*60000))return;if(silentFail)soft();else silent();},true);});
   function enableCal(){if(!confirm("Calendar রিমাইন্ডারের অনুমতি Google এখনো যাচাই করছে, তাই একটা সতর্ক পেজ আসবে। চালিয়ে যেতে Advanced → Go to uowyeasin-cyber.github.io চাপো। চালু করবে?"))return;try{localStorage.setItem("am-gcal","1");}catch(e){}
     if(!initTC())return;var o={prompt:"consent",scope:scopes()};if(hintEmail())o.login_hint=hintEmail();silentFail=false;tc.requestAccessToken(o);}
   function signOut(){try{if(tok)google.accounts.oauth2.revoke(tok,function(){});}catch(e){}tok=null;keep();try{localStorage.removeItem("am-gconnected");localStorage.removeItem("am-gemail");localStorage.removeItem("am-gcal");}catch(e){}ui();}
@@ -77,7 +81,7 @@
       trash_file:function(i){return api("PATCH","https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(i.fileId),{trashed:true});}}};
   var mcpShim={callTool:async function(s,t,i){var f=tools[s]&&tools[s][t];if(!f)throw err("not_in_manifest");if(s==="Google Calendar"&&!calOn())throw err("cal_off");return {payload:await f(i||{})};}};
   window.claude={use:async function(k){return k==="mcp"?mcpShim:null;}};
-  window.amGoogle={connect:connect,signOut:signOut,ready:ready,ensure:ensure,connected:was,enableCalendar:enableCal,calendarOn:calOn};
+  window.amGoogle={soft:function(){lastSoft=0;soft();},connect:connect,signOut:signOut,ready:ready,ensure:ensure,connected:was,enableCalendar:enableCal,calendarOn:calOn};
   // ---- connect bar UI
   function onBar(txt,btn){var bar=document.getElementById("gbar");var cb=bar.querySelector(".gcal");
     if(calOn()){txt.innerHTML="<b>Google সংযুক্ত</b> · Calendar রিমাইন্ডার ও ল্যাপটপ-মোবাইল সিঙ্ক চালু";if(cb)cb.remove();}
@@ -86,12 +90,12 @@
   function ui(state){
     var bar=document.getElementById("gbar");if(!bar)return;
     var txt=bar.querySelector(".gtxt"),btn=bar.querySelector(".gbtn:not(.gcal)");
-    if(ready()){bar.classList.add("on");onBar(txt,btn);return;}
+    if(ready()){bar.classList.add("on");onBar(txt,btn);document.documentElement.classList.remove("g-wait");return;}
     bar.classList.remove("on");var gc=bar.querySelector(".gcal");if(gc)gc.remove();
     if(!CID()){txt.innerHTML="<b>Google সংযোগ এখনো সেট করা হয়নি।</b> config.js-এ Client ID বসাও। ততক্ষণ ডেটা এই ডিভাইসে সেভ হবে।";btn.hidden=true;return;}
     btn.hidden=false;
-    if(was()&&!silentFail){bar.classList.add("on");onBar(txt,btn);return;}
-    var again=was();
+    if(was()){bar.classList.add("on");onBar(txt,btn);document.documentElement.classList.toggle("g-wait",silentFail);return;}
+    var again=false;
     txt.innerHTML=again?"<b>আবার সংযোগ করো</b> · সিঙ্ক আর Calendar চালু রাখতে এক ক্লিক":"<b>Google দিয়ে সংযোগ করো</b> · ল্যাপটপ-মোবাইল সিঙ্ক আর ব্যাকআপের জন্য";
     btn.innerHTML='<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>'+(again?"আবার সংযোগ":"Google দিয়ে সংযোগ")+'</span>';
     btn.onclick=function(){connect();};}
