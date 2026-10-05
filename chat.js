@@ -421,7 +421,7 @@
     ctl.appendChild(btn("✆",t("end"),"red",function(){hang("ended");}).wrap);}
   function connected(c){if(c.on)return;c.on=Date.now();ring(false);c.ui.st.textContent="00:00";
     c.tick=setInterval(function(){var s=Math.floor((Date.now()-c.on)/1000);c.ui.st.textContent=num(String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"));},1000);}
-  function startCall(ouid,kind){if(callObj)return;if(!window.RTCPeerConnection||!navigator.mediaDevices){alert(t("callFail"));return;}
+  function startCall(ouid,kind){if(callObj)return;if(me&&me.isAnonymous){if(ctx&&ctx.needGoogle)ctx.needGoogle();return;}if(!window.RTCPeerConnection||!navigator.mediaDevices){alert(t("callFail"));return;}
     var cid=cidFor(me.uid,ouid);var ref=q("calls").doc();var c=callObj={ref:ref,peer:ouid,kind:kind,caller:true,uns:[],cid:cid,facing:"user"};
     c.ui=callUI({peer:ouid,kind:kind,status:t("calling")});c.ui.ctl.appendChild(btn("✆",t("end"),"red",function(){hang(c.on?"ended":"cancel");}).wrap);
     getMedia(kind).then(function(st){if(callObj!==c){st.getTracks().forEach(function(x){x.stop();});return;}c.stream=st;if(kind==="video")c.ui.lv.srcObject=st;c.ui.lv.hidden=false;

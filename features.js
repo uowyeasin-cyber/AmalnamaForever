@@ -222,7 +222,7 @@
   var X=window.AMX;if(!X)return;var T=X.T,el=X.el,num=X.num,L=X.LANG;
   var ADMINS=["uowyeasin@gmail.com"];
   var V="12.19.0",SDK=["app","auth","firestore"].map(function(n){return "https://www.gstatic.com/firebasejs/"+V+"/firebase-"+n+"-compat.js";});
-  var fb=null,auth=null,db=null,FV=null,me=null,member=null,isAdmin=false,cfg={},sub="feed";
+  var fb=null,auth=null,db=null,FV=null,me=null,member=null,isAdmin=false,cfg={},sub="videos",guestName="";
   var unsub=[],root=null,body=null,state="",lastPending=-1;
   function loadScript(u){return new Promise(function(res,rej){var s=document.createElement("script");s.src=u;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
   function init(){if(fb)return Promise.resolve();
@@ -234,7 +234,7 @@
   function clear(){unsub.splice(0).forEach(function(f){try{f();}catch(e){}});if(window.AMCHAT)AMCHAT.stop();chatOn=false;chatUnread=0;}
   var chatOn=false,chatUnread=0;
   function enterChat(){if(chatOn||!window.AMCHAT||!me)return;chatOn=true;
-    AMCHAT.start({db:db,FV:FV,me:me,isAdmin:isAdmin,getCfg:function(){return cfg;},myName:myName,myPhoto:function(){return (me&&me.photoURL)||"";},
+    AMCHAT.start({db:db,FV:FV,me:me,isAdmin:isAdmin,needGoogle:function(){needGoogle();},getCfg:function(){return cfg;},myName:myName,myPhoto:function(){return (me&&me.photoURL)||"";},
       onUnread:function(n){chatUnread=n;setAdminBadge(lastPending);},
       onName:function(n){if(member)db.collection("members").doc(me.uid).update({name:n}).catch(function(){});}});}
   function onUser(u){clear();me=u;member=null;isAdmin=!!(u&&u.email&&ADMINS.indexOf(u.email.toLowerCase())>=0);X.isAdmin=isAdmin;
@@ -245,6 +245,7 @@
     state="load";render();
     unsub.push(db.collection("members").doc(u.uid).onSnapshot(function(s){member=s.exists?s.data():null;
       var ns=!member?"join":member.status==="approved"?"in":member.status==="blocked"?"blocked":"pending";
+      if(ns==="join"&&guestName&&u.isAnonymous){var gn=guestName;guestName="";db.collection("members").doc(u.uid).set({uid:u.uid,name:gn,email:"",photo:"",status:"pending",requestedAt:FV.serverTimestamp(),country:"",lang:L,intro:""}).catch(oops);}
       if(ns!==state){state=ns;render();}if(ns==="in")enterChat();else if(chatOn){AMCHAT.stop();chatOn=false;chatUnread=0;}},function(e){state="err";render(e);}));}
   // ---- sign in
   function signIn(btn){btn&&(btn.disabled=true);var err=el("p",{class:"xerr"});
@@ -303,11 +304,18 @@
   function avRing(name,photo,uid,size,ring){var a=av(photo,name,uid);a.classList.add("v5av");var w=el("span",{class:"v5ring",style:"width:"+size+"px;height:"+size+"px;background:"+(ring||"#DBDBDB")},a);return w;}
   function isActive(uid,hrs){var pp=window.AMCHAT&&AMCHAT.profile(uid);var d=pp&&ts(pp.lastSeen);return !!(d&&Date.now()-d.getTime()<(hrs||24)*3600000);}
   // ---- main render
-  function render(e){if(!root)return;dropC();subUnsub.splice(0).forEach(function(f){try{f();}catch(x){}});root.innerHTML="";root.setAttribute("data-noi18n","");root.classList.add("v5c");
+  function render(e){if(!root)return;
+    if(sub==="videos"&&!e&&vidBox&&vidBox.isConnected&&root.contains(vidBox)){setBodyTheme();return;}
+    dropC();subUnsub.splice(0).forEach(function(f){try{f();}catch(x){}});root.innerHTML="";root.setAttribute("data-noi18n","");root.classList.add("v5c");
     var th=sub==="chat"&&state==="in"?"wa":sub==="videos"?"yt":"ig";root.setAttribute("data-th",th);setBodyTheme();
     var wrap=el("div",{class:"v5bleed"});root.appendChild(wrap);
+    if(sub==="videos"){vidBox=el("div");wrap.appendChild(vidBox);
+      var corner=function(k,lbl,d){return function(){var b=el("button",{type:"button","aria-label":W(lbl),title:W(lbl),class:"v5yt-cn",onclick:function(){sub=k;render();}},svg(d,{s:23}));
+        if(k==="chat"&&chatUnread)b.appendChild(el("span",{class:"dot"},num(chatUnread)));if(k==="chat")b.id="cm-chattab";return b;};};
+      if(window.V5&&V5.videos)V5.videos(vidBox,{extra:[corner("feed",Bq("পোস্ট","Posts","Hantaran","المنشورات","پوسٹس","Machapisho"),[P.sq,"M8 9h8M8 13h8M8 17h5"]),corner("chat",Bq("মেসেজ","Messages","Mesej","الرسائل","پیغامات","Ujumbe"),P.cmt)]});
+      return;}
     // header
-    var hd=el("header",{class:"v5c-hd"},el("span",{class:"wm"},"Amalnama"),el("span",{style:"flex:1"}));
+    var hd=el("header",{class:"v5c-hd"},el("button",{type:"button",class:"ib","aria-label":W(Bq("মিডিয়ায় ফিরে যাও","Back to Media","Kembali ke Media","العودة إلى الوسائط","میڈیا پر واپس","Rudi Media")),onclick:function(){sub="videos";render();}},svg(L==="ar"||L==="ur"?"M9 6l6 6-6 6":"M15 6l-6 6 6 6",{s:22,w:"2.2"})),el("span",{class:"wm"},"Amalnama"),el("span",{style:"flex:1"}));
     if(state==="in"){
       hd.appendChild(el("button",{type:"button",class:"ib","aria-label":W(Bq("নতুন পোস্ট","New post","Hantaran baharu","منشور جديد","نئی پوسٹ","Chapisho jipya")),onclick:compose},svg([P.sq,P.plus],{s:25})));
       hd.appendChild(el("button",{type:"button",class:"ib","aria-label":W(Bq("নোটিফিকেশন","Activity","Aktiviti","النشاط","سرگرمی","Shughuli")),onclick:activity},svg(P.heart,{s:25})));
@@ -317,11 +325,10 @@
         if(lastPending>0)ab.appendChild(el("span",{class:"dot"},num(lastPending)));hd.appendChild(ab);}}
     wrap.appendChild(hd);
     if(sub!=="admin"){var tabs=el("nav",{class:"v5c-tabs"});
-      [["feed",Bq("পোস্ট","Posts","Hantaran","المنشورات","پوسٹس","Machapisho")],["chat",Bq("চ্যাট","Chats","Sembang","الدردشات","چیٹس","Mazungumzo")],["videos",Bq("ভিডিও","Videos","Video","فيديو","ویڈیو","Video")]].forEach(function(p){
+      [["feed",Bq("পোস্ট","Posts","Hantaran","المنشورات","پوسٹس","Machapisho")],["chat",Bq("মেসেজ","Messages","Mesej","الرسائل","پیغامات","Ujumbe")]].forEach(function(p){
         var b=el("button",{type:"button","aria-current":sub===p[0]?"page":null,onclick:function(){if(sub===p[0])return;sub=p[0];render();}},W(p[1]));tabs.appendChild(b);});
       wrap.appendChild(tabs);}
     body=el("div",{class:"v5c-body"});wrap.appendChild(body);
-    if(sub==="videos"){vidBox=el("div");body.appendChild(vidBox);if(window.V5&&V5.videos)V5.videos(vidBox);return;}
     if(state===""||state==="load"){body.appendChild(el("div",{class:"v5c-card"},el("p",{class:"mut"},T("q.loading"))));return;}
     if(state==="err"){body.appendChild(el("div",{class:"v5c-card"},el("p",{class:"xerr"},T("c.error")+(e&&e.code?" ("+e.code+")":""))));return;}
     if(state!=="in"){joinCard();return;}
@@ -332,7 +339,13 @@
     c.appendChild(el("div",{class:"tt"},W(Bq("কমিউনিটিতে যোগ দাও","Join the community","Sertai komuniti","انضم إلى المجتمع","کمیونٹی میں شامل ہوں","Jiunge na jumuiya"))));
     c.appendChild(el("div",{class:"st"},W(Bq("অ্যাডমিন অনুমতি দিলে পোস্ট, চ্যাট আর কল খুলে যাবে","Posts, chats and calls open once the admin approves","Hantaran, sembang dan panggilan dibuka selepas admin meluluskan","تُفتح المنشورات والدردشة بعد موافقة المشرف","ایڈمن کی منظوری کے بعد پوسٹس، چیٹ اور کال کھلیں گی","Machapisho na mazungumzo yatafunguka admin akikubali"))));
     if(cfg.welcome)c.appendChild(el("p",{class:"wl"},cfg.welcome));
-    if(state==="out"){var b=el("button",{class:"v5c-blue",type:"button"},T("c.signin"));b.onclick=function(){signIn(b);};
+    if(state==="out"){var gnm=el("input",{class:"v5c-in",maxlength:"40",placeholder:W(Bq("তোমার নাম","Your name","Nama anda","اسمك","آپ کا نام","Jina lako")),"aria-label":W(Bq("তোমার নাম","Your name","Nama anda","اسمك","آپ کا نام","Jina lako"))});
+      var gj=el("button",{class:"v5c-blue",type:"button"},W(Bq("যোগ দাও — লগইন লাগবে না","Join — no login needed","Sertai — tanpa log masuk","انضم — بدون تسجيل دخول","شامل ہوں — لاگ اِن ضروری نہیں","Jiunge — bila kuingia")));
+      gj.onclick=function(){var n=gnm.value.trim();if(!n){gnm.focus();return;}gj.disabled=true;guestName=n;init().then(function(){return auth.signInAnonymously();}).catch(function(e){gj.disabled=false;guestName="";
+        if(e&&/operation-not-allowed|admin-restricted/.test(e.code||""))alert(W(Bq("অ্যাডমিন এখনো অতিথি হিসেবে যোগ দেওয়া চালু করেননি। আপাতত Google দিয়ে যোগ দাও।","Guest joining isn't switched on yet. Please use Google for now.","Sertai sebagai tetamu belum diaktifkan.","الانضمام كضيف غير مفعل بعد.","مہمان کے طور پر شمولیت ابھی بند ہے۔","Kujiunga kama mgeni bado hakujawashwa.")));else oops(e);});};
+      c.appendChild(el("div",{class:"fm"},gnm,gj));
+      c.appendChild(el("p",{class:"nt"},W(Bq("চ্যাট আর মেসেজের জন্য শুধু নাম দিলেই হবে। পোস্ট দিতে বা কল করতে পরে Google দিয়ে লগইন করতে হবে।","Chat and messages only need your name. Posting and calls need a Google login later.","Sembang hanya perlukan nama. Hantaran dan panggilan perlukan Google.","الدردشة تحتاج اسمك فقط. النشر والمكالمات تحتاج Google.","چیٹ کے لیے صرف نام کافی ہے۔ پوسٹ اور کال کے لیے Google لاگ اِن۔","Mazungumzo yanahitaji jina tu. Machapisho na simu zinahitaji Google."))));
+      var b=el("button",{class:"v5c-link",type:"button"},T("c.signin"));b.onclick=function(){signIn(b);};
       var gw=el("div",{class:"gw"});c.appendChild(gw);gw.appendChild(b);gisButton(gw,b);c.appendChild(el("p",{class:"nt"},T("c.guidelines")));return;}
     if(state==="join"){var nm=el("input",{class:"v5c-in",maxlength:"60",value:(me.displayName||""),placeholder:T("c.name")}),co=el("input",{class:"v5c-in",maxlength:"40",placeholder:T("c.country")}),it=el("input",{class:"v5c-in",maxlength:"140",placeholder:T("c.introField")});
       var go=el("button",{class:"v5c-blue",type:"button"},W(Bq("যোগ দেওয়ার আবেদন পাঠাও","Send a join request","Hantar permohonan","أرسل طلب الانضمام","شمولیت کی درخواست بھیجیں","Tuma ombi la kujiunga")));
@@ -343,7 +356,7 @@
     if(state==="pending"){c.appendChild(el("button",{class:"v5c-blue wait",type:"button",disabled:true},W(Bq("আবেদন পাঠানো হয়েছে · অপেক্ষায়","Request sent · waiting","Permohonan dihantar · menunggu","تم إرسال الطلب · بانتظار","درخواست بھیج دی · انتظار","Ombi limetumwa · subiri"))));
       c.appendChild(el("button",{class:"v5c-link",type:"button",onclick:function(){db.collection("members").doc(me.uid).delete().catch(oops);}},T("c.cancelReq")));}
     if(state==="blocked")c.appendChild(el("p",{class:"xerr"},T("c.blocked")));
-    if(me)c.appendChild(el("button",{class:"v5c-link",type:"button",onclick:function(){clear();auth.signOut();}},T("c.signout")+" · "+me.email));}
+    if(me)c.appendChild(el("button",{class:"v5c-link",type:"button",onclick:function(){clear();auth.signOut();}},T("c.signout")+(me.email?" · "+me.email:"")));}
   // ---- stories row (members, ring = active in last 24 h)
   var storyEl=null;
   function stories(){storyEl=el("div",{class:"v5c-stories"});body.appendChild(storyEl);drawStories();}
@@ -422,7 +435,14 @@
       var q=.8,d=c.toDataURL("image/jpeg",q);while(d.length>850000&&q>.35){q-=.1;d=c.toDataURL("image/jpeg",q);}
       if(d.length>850000){var c2=document.createElement("canvas");c2.width=Math.round(c.width*.7);c2.height=Math.round(c.height*.7);c2.getContext("2d").drawImage(c,0,0,c2.width,c2.height);d=c2.toDataURL("image/jpeg",.7);}
       res(d);};im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("img"));};im.src=u;});}
-  function compose(ann){var bg=0,img="";var ta=el("textarea",{class:"v5c-ta",maxlength:"3000",rows:"4",placeholder:T("c.write")});
+  function needGoogle(why){var box=el("div",{class:"v5c-comp"},el("p",{style:"margin:0;line-height:1.6"},why||W(Bq("পোস্ট দিতে বা কল করতে Google দিয়ে একবার লগইন করো। তোমার চ্যাট আর নাম একই থাকবে।","To post or call, log in once with Google. Your chats and name stay the same.","Untuk menghantar atau memanggil, log masuk dengan Google sekali.","للنشر أو الاتصال سجّل الدخول بـ Google مرة واحدة.","پوسٹ یا کال کے لیے ایک بار Google سے لاگ اِن کریں۔","Ili kuchapisha au kupiga simu, ingia na Google mara moja."))));
+    var go=el("button",{class:"v5c-blue",type:"button"},T("c.signin"));box.appendChild(go);var sh=sheetV4(W(Bq("Google লগইন দরকার","Google login needed","Perlu log masuk Google","يلزم تسجيل الدخول","Google لاگ اِن ضروری","Inahitaji Google")),box);
+    go.onclick=function(){go.disabled=true;var pv=new fb.auth.GoogleAuthProvider();pv.setCustomParameters({prompt:"select_account"});
+      var u=auth.currentUser;(u&&u.isAnonymous?u.linkWithPopup(pv):auth.signInWithPopup(pv)).then(function(r){var nu=(r&&r.user)||auth.currentUser;me=nu;isAdmin=!!(nu&&nu.email&&ADMINS.indexOf(nu.email.toLowerCase())>=0);X.isAdmin=isAdmin;if(sh)sh.close();toast("✓ Google");render();})
+      .catch(function(e){if(e&&e.code==="auth/credential-already-in-use"&&e.credential){return auth.signInWithCredential(e.credential).then(function(){if(sh)sh.close();});}
+        go.disabled=false;if(e&&/popup-closed|cancelled-popup/.test(e.code||""))return;oops(e);});};}
+  X.v5needGoogle=function(){needGoogle();};
+  function compose(ann){if(me&&me.isAnonymous){needGoogle();return;}var bg=0,img="";var ta=el("textarea",{class:"v5c-ta",maxlength:"3000",rows:"4",placeholder:T("c.write")});
     var prev=el("div",{class:"v5c-prev"});var fi=el("input",{type:"file",accept:"image/*",hidden:true});
     var sw=el("div",{class:"v5c-sw",role:"radiogroup","aria-label":W(Bq("কার্ডের রং","Card colour","Warna kad","لون البطاقة","کارڈ کا رنگ","Rangi ya kadi"))});
     PAL.forEach(function(c,i){sw.appendChild(el("button",{type:"button",role:"radio","aria-checked":String(i===bg),"aria-label":String(i+1),style:"background:"+c[0]+";color:"+c[1],onclick:function(){bg=i;sw.querySelectorAll("button").forEach(function(b,j){b.setAttribute("aria-checked",String(j===i));});draw();}},"Aa"));});

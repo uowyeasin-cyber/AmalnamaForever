@@ -20,7 +20,7 @@
     amal:[["M12 8.5C10 7 7 6.4 3.5 6.8v9.4c3.5-.4 6.5.2 8.5 1.7 2-1.5 5-2.1 8.5-1.7V6.8C17 6.4 14 7 12 8.5z",".2"],["M12 8.5v9.4M5 18.8l7 3 7-3"],["M12 1.8l.8 1.7 1.8.2-1.3 1.2.4 1.8-1.7-.9-1.7.9.4-1.8-1.3-1.2 1.8-.2z","1"]],
     shariah:[["M2 13.5h5a2.5 2.5 0 0 1-5 0zM17 13.5h5a2.5 2.5 0 0 1-5 0z",".25"],["M12 4.5v15.5M8 20h8M4.5 7h15M2 13.5l2.5-6.5 2.5 6.5M17 13.5l2.5-6.5 2.5 6.5"]],
     finance:[["M2.8 6.5h18.4v13H2.8z",".18"],["M6.5 6.5l8.5-3.3 1.6 3.3"],["M14.5 11h6.7v4.6h-6.7z",".35"]],
-    comm:[["M9 4.6a3.4 3.4 0 1 1 0 6.8 3.4 3.4 0 0 1 0-6.8z",".22"],["M2.8 20a6.2 6.2 0 0 1 12.4 0z",".22"],["M15.8 4.9a3.2 3.2 0 0 1 0 6.2M17.6 13.7a6 6 0 0 1 3.6 6.3"]],
+    comm:[["M3 6.5a2.5 2.5 0 0 1 2.5-2.5h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z",".18"],["M10 9v6l5-3z","1"]],
     more:[["M4 4h6.5v6.5H4zM13.5 13.5H20V20h-6.5z",".22"],["M13.5 4H20v6.5h-6.5zM4 13.5h6.5V20H4z"]],
     back:[[RTL?"M9 6l6 6-6 6":"M15 6l-6 6 6 6"]],
     plus:[["M12 5v14M5 12h14"]],
@@ -132,15 +132,17 @@
     return s;}
   V4.emblem=emblem;
 
-  // ---- splash (once per app start)
-  (function(){var shown=false;try{shown=sessionStorage.getItem("am-splash")==="1";sessionStorage.setItem("am-splash","1");}catch(e){}
-    if(shown||matchMedia("(prefers-reduced-motion: reduce)").matches&&false)return;
-    var sp=el("div",{id:"v4splash","aria-hidden":"true"},
-      el("div",{class:"c"},emblem("em","sp"),el("div",{class:"wm"},"Amalnama"),el("div",{class:"ar"},"عملنامه")),
-      el("div",{class:"sal"},el("div",{class:"a"},"السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ"),el("div",{class:"dots"},el("i"),el("i"),el("i"))));
-    document.body.appendChild(sp);
-    function out(){sp.classList.add("out");setTimeout(function(){sp.remove();},700);}
-    sp.addEventListener("click",out);setTimeout(out,3300);})();
+  // ---- splash: plays every time the app is opened (and when it comes back after a while in the background)
+  (function(){var skip=false;try{skip=sessionStorage.getItem("am-splash")==="skip";}catch(e){}if(skip)return;
+    function play(){if(document.getElementById("v4splash"))return;
+      var sp=el("div",{id:"v4splash","aria-hidden":"true"},
+        el("div",{class:"c"},emblem("em","sp"),el("div",{class:"wm"},"Amalnama"),el("div",{class:"ar"},"عملنامه")),
+        el("div",{class:"sal"},el("div",{class:"a"},"السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ"),el("div",{class:"dots"},el("i"),el("i"),el("i"))));
+      document.body.appendChild(sp);
+      function out(){sp.classList.add("out");setTimeout(function(){sp.remove();},700);}
+      sp.addEventListener("click",out);setTimeout(out,3300);}
+    play();
+    var hiddenAt=0;document.addEventListener("visibilitychange",function(){if(document.hidden)hiddenAt=Date.now();else if(hiddenAt&&Date.now()-hiddenAt>120000){hiddenAt=0;play();}});})();
 
   // ---- hero: new emblem, Islamic day, Today's note, live dot
   function upgradeHero(){var h=document.querySelector(".hero .inner");if(!h||h.querySelector(".v4em"))return;
@@ -205,7 +207,7 @@
 
   // ---- new sections + spaces
   var TODAYV=["today","plan","routine","acad","events","week","month"];
-  var SPACE={amal:"amal",quran:"amal",azan:"amal",hadith:"amal",dua:"amal",shariah:"shariah",finance:"finance",comm:"comm",more:"more",pomodoro:"more",videos:"more",mufti:"mufti",admin:"more"};
+  var SPACE={amal:"amal",quran:"amal",azan:"amal",hadith:"amal",dua:"amal",shariah:"shariah",finance:"finance",comm:"comm",more:"more",pomodoro:"more",videos:"comm",mufti:"mufti",admin:"more",settings:"more",backup:"more",books:"shariah"};
   var MY=[];
   V4.section=function(k,mod){var s=document.getElementById("v-"+k);if(!s){s=el("section",{id:"v-"+k,class:"v4s",hidden:true});
       var all=document.querySelectorAll("section[id^='v-']");all[all.length-1].insertAdjacentElement("afterend",s);}
@@ -225,8 +227,7 @@
     hd=head(t(m[0]),null,m[1]);hd.id="v4subhead";s.parentNode.insertBefore(hd,s);}
 
   // ---- premium bottom nav + always-live Mufti
-  var NAV=[["today",["আজ","Today","Hari ini","اليوم","آج","Leo"]],["amal",["আমল","Amal","Amal","الأعمال","اعمال","Amali"]],["shariah",["শরিয়াহ","Shariah","Syariah","الشريعة","شریعت","Sharia"]],
-    ["finance",["হিসাব","Finance","Kewangan","الحساب","حساب","Fedha"]],["comm",["কমিউনিটি","Community","Komuniti","المجتمع","کمیونٹی","Jumuiya"]],["more",["আরও","More","Lagi","المزيد","مزید","Zaidi"]]];
+  var NAV=[["today",["আজ","Today","Hari ini","اليوم","آج","Leo"]],["amal",["আমল","Amal","Amal","الأعمال","اعمال","Amali"]],["finance",["হিসাব","Finance","Kewangan","الحساب","حساب","Fedha"]],["comm",["মিডিয়া","Media","Media","الوسائط","میڈیا","Media"]],["shariah",["শরিয়াহ","Shariah","Syariah","الشريعة","شریعت","Sharia"]],["more",["আরও","More","Lagi","المزيد","مزید","Zaidi"]]];
   var curSpace="today",navEl=null;
   function buildNav(){navEl=el("div",{id:"v4nav"});var bar=el("nav",{class:"bar","aria-label":"Main"});
     NAV.forEach(function(n){var b=el("button",{type:"button","data-s":n[0],onclick:function(){window.setView(n[0]==="today"?"today":n[0]);}},ic(n[0]),el("span",null,t(n[1])));bar.appendChild(b);});

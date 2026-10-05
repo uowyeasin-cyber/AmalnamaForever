@@ -1,4 +1,4 @@
-/* Amalnama v5 · design-matched screens: full Sihah Sittah hadith library, YouTube-style videos, screen themes */
+/* Amalnama v5 · design-matched screens: Sihah Sittah library, Media (YouTube-style, auto-refreshing), masail books reader, next-prayer dashboard, settings, share brochure */
 (function(){
   var V=window.V4;if(!V)return;var t=V.t,num=V.num,el=V.el,ic=V.ic;
   var B=function(bn,en,ms,ar,ur,sw){return [bn,en,ms,ar,ur,sw];};
@@ -154,17 +154,26 @@
   var vs={cat:"all",cur:null,seed:Math.random(),playing:false};
   function vslot(){var p="fajr";try{if(V.currentPrayer)p=V.currentPrayer()||"fajr";}catch(e){}return VR[p]?p:"fajr";}
   function vhist(){var v=V.V();v.vh=v.vh||{};return v.vh;}
-  function vshuffle(list){var h=vhist();return list.map(function(x,i){return {x:x,s:((Math.sin((i+1)*9301+vs.seed*49297)+1)/2)*3-(h[x[0]]||0)*1.5};}).sort(function(a,b){return b.s-a.s;}).map(function(o){return o.x;});}
-  function vplay(item,root){var h=vhist();h[item[0]]=(h[item[0]]||0)+1;V.save();vs.cur=item;vs.playing=true;vrender(root);try{root.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}}
+  // fresh videos: videos.json is rebuilt every few hours from trusted channels (GitHub Action)
+  var DYN=[],dynAt=0,dynLoading=null;
+  function vload(force,root){if(dynLoading&&!force)return dynLoading;
+    dynLoading=fetch("videos.json?t="+(force?Date.now():Math.floor(Date.now()/36e5)),{cache:force?"reload":"default"}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(d&&d.items){DYN=d.items.filter(function(x){return x&&x.id&&VC[x.cat];}).map(function(x){return [x.id,x.t,x.ch,x.cat,"",x.pub||""];});dynAt=Date.now();if(root&&root.isConnected)vrender(root,root._opts);}
+      return DYN;}).catch(function(){return DYN;});return dynLoading;}
+  function isNew(v){var d=v[5]&&Date.parse(v[5]);return d&&Date.now()-d<3*864e5;}
+  function vshuffle(list){var h=vhist();return list.map(function(x,i){var r=((Math.sin((i+1)*9301+vs.seed*49297)+1)/2)*3;var d=x[5]&&Date.parse(x[5]);var fresh=d?Math.max(0,3-(Date.now()-d)/864e5):0;return {x:x,s:r+fresh-(h[x[0]]||0)*1.5};}).sort(function(a,b){return b.s-a.s;}).map(function(o){return o.x;});}
+  function vrefresh(root){vs.seed=Math.random();vload(true,root).then(function(){vrender(root,root._opts);V.toast(t(B("নতুন ভিডিও সাজানো হলো","Fresh videos loaded","Video baharu dimuatkan","تم تحميل فيديوهات جديدة","نئی ویڈیوز آ گئیں","Video mpya zimepakiwa")));});}
+  function vplay(item,root){var h=vhist();h[item[0]]=(h[item[0]]||0)+1;V.save();vs.cur=item;vs.playing=true;vrender(root,root._opts);try{root.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}}
   function vthumb(id,cls){var im=el("img",{src:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",alt:"",loading:"lazy",class:cls||""});return im;}
-  function vrender(root){root.innerHTML="";root.classList.add("v5yt");
+  function vrender(root,opts){root._opts=opts||root._opts||{};opts=root._opts;root.innerHTML="";root.classList.add("v5yt");if(!dynAt)vload(false,root);
     var slot=vslot();var recs=VR[slot].map(function(x){return [x[0],x[1],x[2],"tilawat","",t(PNM[slot]),true];}).concat(VE.map(function(x){return [x[0],x[1],x[2],"tilawat","",t(B("প্রতি নামাজের পর","After every prayer","Selepas setiap solat","بعد كل صلاة","ہر نماز کے بعد","Baada ya kila swala")),false];}));
-    var list=vshuffle(VL);if(!vs.cur)vs.cur=recs[0];
+    var list=vshuffle(DYN.concat(VL));if(!vs.cur)vs.cur=recs[0];
     var cur=vs.cur;
     var hd=el("header",{class:"v5yt-hd"},
       el("span",{class:"logo"},V.sv("svg",{width:28,height:20,viewBox:"0 0 28 20","aria-hidden":"true"},V.sv("rect",{width:28,height:20,rx:6,fill:"#E3242B"}),V.sv("path",{d:"M11.5 6v8l6.5-4z",fill:"#fff"})),"Amalnama "+t(B("ভিডিও","Videos","Video","فيديو","ویڈیو","Video"))),
-      el("button",{type:"button","aria-label":t(B("নতুন ভিডিও","Refresh","Muat semula","تحديث","ریفریش","Onyesha upya")),onclick:function(){vs.seed=Math.random();vrender(root);V.toast(t(B("নতুন ভিডিও সাজানো হলো","Fresh picks loaded","Pilihan baharu","تم التحديث","نئی ویڈیوز","Mpya zimepakiwa")));}},ic("refresh",21)),
-      el("button",{type:"button","aria-label":t(B("খোঁজো","Search","Cari","بحث","تلاش","Tafuta")),onclick:function(){vsearch(root,list.concat(recs));}},V.icon([["M11 17.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4-4"]],22)));
+      el("button",{type:"button","aria-label":t(B("নতুন ভিডিও","Refresh","Muat semula","تحديث","ریفریش","Onyesha upya")),onclick:function(){vrefresh(root);}},ic("refresh",21)),
+      el("button",{type:"button","aria-label":t(B("খোঁজো","Search","Cari","بحث","تلاش","Tafuta")),onclick:function(){vsearch(root,list.concat(recs));}},V.icon([["M11 17.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4-4"]],22)),
+      (opts.extra||[]).map(function(f){return f();}));
     root.appendChild(hd);
     var pl=el("div",{class:"v5yt-player"});
     if(vs.playing){pl.appendChild(el("iframe",{src:"https://www.youtube-nocookie.com/embed/"+cur[0]+"?autoplay=1&rel=0&modestbranding=1&playsinline=1",title:cur[1],allow:"autoplay; encrypted-media; picture-in-picture; fullscreen",allowfullscreen:true,referrerpolicy:"strict-origin-when-cross-origin"}));}
@@ -183,7 +192,7 @@
     var lst=el("div",{class:"v5yt-list"});
     list.filter(function(v){return vs.cat==="all"||v[3]===vs.cat;}).forEach(function(v){if(v[0]===cur[0])return;
       lst.appendChild(el("button",{type:"button",onclick:function(){vplay(v,root);}},el("span",{class:"th"},vthumb(v[0]),v[4]?el("span",{class:"dur"},V.L==="bn"?v[4]:v[4].replace(/[০-৯]/g,function(d){return "০১২৩৪৫৬৭৮৯".indexOf(d);})):null),
-        el("span",{class:"tt"},el("b",null,v[1]),el("small",null,v[2]),el("small",null,t(VC[v[3]][0])))));});
+        el("span",{class:"tt"},el("b",null,v[1]),el("small",null,v[2]),el("small",null,t(VC[v[3]][0])+(v[5]?" · "+vago(v[5]):""),isNew(v)?el("i",{class:"nw"},t(B("নতুন","New","Baharu","جديد","نیا","Mpya"))):null))));});
     root.appendChild(lst);
     root.appendChild(el("p",{class:"v5yt-foot"},t(B("নিচে টেনে রিফ্রেশ করলে নতুন ভিডিও আসবে","Pull down to refresh for new videos","Tarik ke bawah untuk muat semula","اسحب للأسفل للتحديث","نئی ویڈیوز کے لیے نیچے کھینچیں","Vuta chini kuonyesha upya"))));
     vpull(root);}
@@ -195,13 +204,105 @@
   function vpull(root){if(root._pull)return;root._pull=1;var y0=null,dy=0,ind=null;
     root.addEventListener("touchstart",function(e){if(window.scrollY>2){y0=null;return;}y0=e.touches[0].clientY;dy=0;},{passive:true});
     root.addEventListener("touchmove",function(e){if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>10){if(!ind){ind=el("div",{class:"v5yt-pull"},ic("refresh",20));root.insertBefore(ind,root.firstChild);}ind.style.height=Math.min(60,dy/2)+"px";ind.style.opacity=Math.min(1,dy/120);}},{passive:true});
-    root.addEventListener("touchend",function(){if(y0==null)return;var go=dy>110;y0=null;if(ind){ind.remove();ind=null;}if(go){vs.seed=Math.random();vrender(root);V.toast(t(B("নতুন ভিডিও সাজানো হলো","Fresh picks loaded","Pilihan baharu","تم التحديث","نئی ویڈیوز","Mpya zimepakiwa")));}});}
-  window.V5=window.V5||{};V5.videos=function(root){vrender(root);};
+    root.addEventListener("touchend",function(){if(y0==null)return;var go=dy>110;y0=null;if(ind){ind.remove();ind=null;}if(go)vrefresh(root);});}
+  function vago(p){var d=Date.parse(p);if(!d)return "";var h=Math.floor((Date.now()-d)/36e5);if(h<1)return t(B("এইমাত্র","just now","baru","الآن","ابھی","sasa hivi"));if(h<24)return num(h)+t(B(" ঘণ্টা আগে","h ago"," jam lalu"," س"," گھنٹے پہلے"," saa"));return num(Math.floor(h/24))+t(B(" দিন আগে","d ago"," hari lalu"," يوم"," دن پہلے"," siku"));}
+  window.V5=window.V5||{};V5.videos=function(root,opts){vrender(root,opts);};
   V.section("videos",{open:function(r){r.innerHTML="";var w=el("div",{class:"v5bleed"});r.appendChild(w);
     w.appendChild(el("button",{class:"v5yt-back",type:"button","aria-label":t(B("ফিরে যাও","Back","Kembali","رجوع","واپس","Rudi")),onclick:function(){window.setView("more");}},ic("back",20)));
     var box=el("div");w.appendChild(box);vrender(box);}});
+  // =====================================================================
+  // MASAIL BOOKS · read inside the app (Internet Archive reader), editions per language
+  // =====================================================================
+  var LN={bn:"বাংলা",en:"English",ms:"Melayu/Indonesia",ar:"العربية",ur:"اردو",sw:"Kiswahili",hi:"हिन्दी"};
+  // [language, archive.org identifier, note]
+  var EDS=[
+    [["bn","BehestiZewareFull"],["ur","BahishtiZewarByShaykhAshrafAliThanvir.a"],["en","BahishtiZewar_201307"]],
+    [["ur","fatawaalamgiriurduvolume1","১/Vol 1"],["ur","fatawaalamgiriurduvolume2","২/Vol 2"],["ar","in.ernet.dli.2015.289015"],["hi","fatawa-alamgiri-vol-3-with-cover-page-compressed","Vol 3"]],
+    [["bn","20200723_20200723_1444","১/Vol 1"],["bn","20200723_20200723_1445","২/Vol 2"],["bn","20200723_20200723_1701","৩/Vol 3"],["bn","20200723_20200723_1458","৪/Vol 4"],["en","riyad-us-saliheen-pdf"],["ar","RIYADASSALIHIN_201610"],["ur","riaz-us-saliheen-jild-1"],["ms","riyadhus-shalihin-buku-2-imam-nawawi"]],
+    [["bn","20260721_20260721_0411","১/Vol 1"],["bn","quran-and-sahih-hadith-islamic-book-bangla-islamic-book"],["en","fiqh-us-sunnah-five-volumes"],["ms","Fiqih_Sunnah_Ebook_130"]],
+    [["en","SimpleFiqhTranslationOfAl-fiqhUlMuyassar"],["ur","al-fiqh-ul-muyassar-urdu"],["ar","AlFiqhUlMuyassar_201701"]],
+    [["bn","AsrafulHedyaBookAndSorheMuktasarulKoduri"],["ar","Mukhtasar-Al-Quduri"],["en","the-mukhtasar-al-quduri-imam-abul-husayn-ahmad-ibn-x-muh-1"],["ur","anwaar-ul-quduri-urdu-sharh-al-quduri-3volumes"]]];
+  var BT=[B("বেহেশতি জেওর","Bahishti Zewar","Bahishti Zewar","بهشتي زيور","بہشتی زیور","Bahishti Zewar"),B("ফাতাওয়ায়ে আলমগীরী","Fatawa Alamgiri","Fatawa Alamgiri","الفتاوى الهندية","فتاویٰ عالمگیری","Fatawa Alamgiri"),
+    B("রিয়াদুস সালেহীন","Riyad as-Salihin","Riyadus Salihin","رياض الصالحين","ریاض الصالحین","Riyadh as-Salihin"),B("ফিকহুস সুন্নাহ","Fiqh us-Sunnah","Fiqh as-Sunnah","فقه السنة","فقہ السنہ","Fiqh us-Sunnah"),
+    B("আল-ফিকহুল মুয়াস্সার","Al-Fiqh al-Muyassar","Al-Fiqh al-Muyassar","الفقه الميسر","الفقہ المیسر","Al-Fiqh al-Muyassar"),B("মুখতাসারুল কুদূরী","Mukhtasar al-Quduri","Mukhtasar al-Quduri","مختصر القدوري","مختصر القدوری","Mukhtasar al-Quduri")];
+  var BQ=["bahishti zewar OR behishti zewar OR behesti zeware","fatawa alamgiri OR fatawa hindiyya","riyad salihin OR riyadus saleheen OR riyadhus shalihin","fiqh us sunnah OR fiqih sunnah","fiqh muyassar","quduri"];
+  window.V5=window.V5||{};
+  V5.openBook=function(i){var eds=EDS[i]||[];var pref=eds.filter(function(e){return e[0]===V.L;})[0]||eds.filter(function(e){return e[0]==="en";})[0]||eds[0];
+    var ov=el("div",{class:"v5rd",role:"dialog","aria-modal":"true","aria-label":t(BT[i])});
+    var frame=el("div",{class:"fr"});
+    function open(id){frame.innerHTML="";frame.appendChild(el("div",{class:"ld"},el("span",{class:"sp"}),t(B("বই খুলছে…","Opening the book…","Membuka buku…","جارٍ فتح الكتاب…","کتاب کھل رہی ہے…","Kitabu kinafunguka…"))));
+      var f=el("iframe",{src:"https://archive.org/embed/"+encodeURIComponent(id),title:t(BT[i]),allow:"fullscreen",allowfullscreen:true,referrerpolicy:"no-referrer-when-downgrade"});
+      f.onload=function(){var l=frame.querySelector(".ld");if(l)l.remove();};frame.appendChild(f);
+      chips.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.id===id));});}
+    var chips=el("div",{class:"ch",role:"tablist"});
+    eds.forEach(function(e){chips.appendChild(el("button",{type:"button","data-id":e[1],onclick:function(){open(e[1]);}},(LN[e[0]]||e[0])+(e[2]?" · "+e[2]:"")));});
+    chips.appendChild(el("button",{type:"button",class:"more",onclick:function(){more();}},"+ "+t(B("আরও সংস্করণ","More editions","Edisi lain","طبعات أخرى","مزید ایڈیشن","Matoleo zaidi"))));
+    function close(){ov.remove();document.body.style.overflow="";document.removeEventListener("keydown",esc);}
+    function esc(e){if(e.key==="Escape")close();}
+    ov.appendChild(el("div",{class:"hd"},el("button",{type:"button",class:"v5sq","aria-label":t(B("বন্ধ করো","Close","Tutup","إغلاق","بند کریں","Funga")),onclick:close},ic("back",20)),
+      el("div",{style:"flex:1;min-width:0"},el("b",null,t(BT[i])),el("small",null,t(B("অ্যাপের ভেতরেই পড়ো · Internet Archive","Read inside the app · Internet Archive","Baca dalam aplikasi","اقرأ داخل التطبيق","ایپ کے اندر پڑھیں","Soma ndani ya programu"))))));
+    ov.appendChild(chips);ov.appendChild(frame);
+    document.body.appendChild(ov);document.body.style.overflow="hidden";document.addEventListener("keydown",esc);
+    function more(){frame.innerHTML="";var list=el("div",{class:"ml"});frame.appendChild(list);list.appendChild(el("div",{class:"ld"},el("span",{class:"sp"})));
+      var u="https://archive.org/advancedsearch.php?q="+encodeURIComponent("title:("+BQ[i]+") AND mediatype:texts")+"&fl[]=identifier&fl[]=title&fl[]=language&sort[]=downloads+desc&rows=30&output=json";
+      fetch(u).then(function(r){return r.json();}).then(function(d){list.innerHTML="";(d.response&&d.response.docs||[]).forEach(function(x){
+          list.appendChild(el("button",{type:"button",onclick:function(){open(x.identifier);}},ic("book",20),el("span",null,el("b",null,String(x.title||x.identifier)),el("small",null,[].concat(x.language||[]).join(", ")))));});
+        if(!list.children.length)list.appendChild(el("p",{class:"v4muted"},"—"));})
+      .catch(function(){list.innerHTML="";list.appendChild(el("p",{class:"v4muted"},t(B("ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।","Check your connection and try again.","Semak sambungan.","تحقق من الاتصال.","کنکشن دیکھیں۔","Angalia muunganisho."))));});}
+    if(pref)open(pref[1]);else more();};
+  // =====================================================================
+  // TODAY · next-prayer dashboard
+  // =====================================================================
+  var PR=["fajr","dhuhr","asr","maghrib","isha"];
+  var PRN={fajr:B("ফজর","Fajr","Subuh","الفجر","فجر","Alfajiri"),dhuhr:B("যোহর","Dhuhr","Zohor","الظهر","ظہر","Adhuhuri"),asr:B("আসর","Asr","Asar","العصر","عصر","Alasiri"),maghrib:B("মাগরিব","Maghrib","Maghrib","المغرب","مغرب","Magharibi"),isha:B("এশা","Isha","Isyak","العشاء","عشاء","Isha")};
+  function tmin(hm){var m=/^(\d{1,2}):(\d{2})/.exec(hm||"");return m?(+m[1])*60+(+m[2]):null;}
+  function fmt12(m){var h=Math.floor(m/60)%24,mm=m%60,ap=h<12?"AM":"PM";h=h%12||12;return num(h+":"+String(mm).padStart(2,"0"))+" "+ap;}
+  function nextInfo(){var X=window.AMX;if(!X||!X.azanTimes)return null;var tm=X.azanTimes()||{},n=X.nowMin?X.nowMin():null;if(n==null){var d=new Date();n=d.getHours()*60+d.getMinutes();}
+    var list=PR.map(function(p){return {p:p,m:tmin(tm[p])};}).filter(function(x){return x.m!=null;});if(!list.length)return null;
+    var nx=list.filter(function(x){return x.m>n;})[0],tomorrow=false;if(!nx){nx=list[0];tomorrow=true;}
+    var left=Math.round((tomorrow?nx.m+1440:nx.m)-n);var cur=list.filter(function(x){return x.m<=n;}).pop();return {list:list,nx:nx,left:left,cur:cur&&cur.p};}
+  var npEl=null;
+  function npDraw(){var info=nextInfo();if(!npEl)return;npEl.innerHTML="";
+    if(!info){npEl.appendChild(el("div",{class:"np-top"},el("small",null,t(B("নামাজের সময়","Prayer times","Waktu solat","مواقيت الصلاة","نماز کے اوقات","Nyakati za swala"))),el("b",null,t(B("শহর দিয়ে সময় সেট করো ›","Set your city for times ›","Tetapkan bandar ›","حدد مدينتك ›","شہر سیٹ کریں ›","Weka mji wako ›")))));return;}
+    var h=Math.floor(info.left/60),m=info.left%60;
+    npEl.appendChild(el("div",{class:"np-top"},el("small",null,t(B("পরবর্তী নামাজ","Next prayer","Solat seterusnya","الصلاة القادمة","اگلی نماز","Swala ijayo"))),
+      el("b",null,t(PRN[info.nx.p])+" · "+fmt12(info.nx.m)),el("span",{class:"left"},t(B("বাকি ","in ","dalam ","بعد ","باقی ","baada ya "))+num(h)+"h "+num(m)+"m")));
+    var row=el("div",{class:"np-row"});info.list.forEach(function(x){row.appendChild(el("span",{class:"np-p"+(x.p===info.nx.p?" nx":x.p===info.cur?" cur":"")},el("small",null,t(PRN[x.p])),el("b",null,fmt12(x.m).replace(/ (AM|PM)$/,"")),el("i",null,x.m<720?"AM":"PM")));});
+    npEl.appendChild(row);}
+  function npMount(){var hero=document.querySelector(".duo")||document.querySelector("header.hero");if(!hero)return;
+    if(!npEl){npEl=el("button",{type:"button",class:"v5np","aria-label":t(B("আযান ও নামাজের সময় খোলো","Open azan & prayer times","Buka azan","افتح الأذان","اذان کھولیں","Fungua adhana")),onclick:function(){window.setView("azan");}});}
+    if(!npEl.isConnected)hero.insertAdjacentElement("afterend",npEl);npDraw();}
+  setInterval(function(){if(npEl&&npEl.isConnected)npDraw();},30000);
+  setTimeout(npMount,600);
+
+  // =====================================================================
+  // SETTINGS + BACKUP as their own screens (they were hidden inside Today before)
+  // =====================================================================
+  function adopt(sec,node,title,sub){sec.innerHTML="";sec.appendChild(V.head(title,sub,"more"));if(node){node.classList.add("v4open");sec.appendChild(node);}}
+  V.section("settings",{open:function(r){adopt(r,document.getElementById("settings"),t(B("সেটিংস","Settings","Tetapan","الإعدادات","ترتیبات","Mipangilio")),t(B("নাম, শহর, টাইমজোন, রিমাইন্ডার","Name, city, timezone, reminders","Nama, bandar, zon masa","الاسم، المدينة، المنطقة الزمنية","نام، شہر، ٹائم زون","Jina, mji, saa")));}});
+  V.section("backup",{open:function(r){adopt(r,document.querySelector(".backup:not(#settings)"),t(B("ব্যাকআপ ও রিস্টোর","Backup & restore","Sandaran & pulih","النسخ الاحتياطي","بیک اپ","Hifadhi nakala")),t(B("ফাইলে সেভ বা ফিরিয়ে আনো","Save to a file or bring it back","Simpan ke fail","حفظ في ملف","فائل میں محفوظ","Hifadhi kwenye faili")));}});
+
+  // =====================================================================
+  // SHARE WITH FRIENDS · premium brochure PDF (QR + link + features)
+  // =====================================================================
+  var APPURL="https://uowyeasin-cyber.github.io/AmalnamaForever/";
+  V5.share=function(){var box=el("div",{class:"v5share"},
+      el("div",{class:"pv"},el("img",{src:"icon-192.png",alt:""}),el("div",null,el("b",null,"Amalnama"),el("small",null,t(B("ফ্রি · বিজ্ঞাপন নেই · ৬ ভাষা","Free · no ads · 6 languages","Percuma · tiada iklan · 6 bahasa","مجاني · بلا إعلانات · ٦ لغات","مفت · اشتہار نہیں · ٦ زبانیں","Bure · bila matangazo · lugha 6"))))),
+      el("a",{class:"v4btn gold",href:"Amalnama-Brochure.pdf",download:"Amalnama-Brochure.pdf",style:"justify-content:center;text-decoration:none"},ic("install",18),t(B("ব্রোশিওর PDF ডাউনলোড","Download brochure PDF","Muat turun brosur PDF","تنزيل الكتيب PDF","بروشر PDF ڈاؤن لوڈ","Pakua brosha PDF"))),
+      el("button",{class:"v4btn",type:"button",style:"justify-content:center",onclick:function(){var txt=t(B("Amalnama — নামাজ, কুরআন, হাদিস, হিসাব আর ইসলামিক মিডিয়া এক অ্যাপে। ফ্রি, বিজ্ঞাপন নেই:","Amalnama — prayer, Quran, hadith, finance and Islamic media in one app. Free, no ads:","Amalnama — solat, Al-Quran, hadis dan kewangan dalam satu aplikasi. Percuma:","عملنامه — الصلاة والقرآن والحديث في تطبيق واحد. مجاني:","عملنامہ — نماز، قرآن، حدیث ایک ایپ میں۔ مفت:","Amalnama — swala, Qur'ani na hadithi katika programu moja. Bure:"));
+        fetch("Amalnama-Brochure.pdf").then(function(r){return r.blob();}).then(function(bl){var f=new File([bl],"Amalnama-Brochure.pdf",{type:"application/pdf"});
+          if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:"Amalnama",text:txt+" "+APPURL});
+          if(navigator.share)return navigator.share({title:"Amalnama",text:txt,url:APPURL});throw 0;})
+        .catch(function(e){if(e&&e.name==="AbortError")return;try{navigator.clipboard.writeText(txt+" "+APPURL);V.toast(t(B("লিংক কপি হয়েছে","Link copied","Pautan disalin","تم نسخ الرابط","لنک کاپی ہو گیا","Kiungo kimenakiliwa")));}catch(x){}});}},
+        ic("send",18),t(B("বন্ধুদের পাঠাও (WhatsApp, Messenger…)","Send to friends (WhatsApp, Messenger…)","Hantar kepada rakan","أرسل للأصدقاء","دوستوں کو بھیجیں","Tuma kwa marafiki"))),
+      el("button",{class:"v4btn",type:"button",style:"justify-content:center",onclick:function(){try{navigator.clipboard.writeText(APPURL);V.toast(t(B("লিংক কপি হয়েছে","Link copied","Pautan disalin","تم نسخ الرابط","لنک کاپی ہو گیا","Kiungo kimenakiliwa")));}catch(e){}}},APPURL.replace("https://","").replace(/\/$/,"")));
+    V.sheet(t(B("বন্ধুদের সাথে শেয়ার করো","Share with friends","Kongsi dengan rakan","شارك مع الأصدقاء","دوستوں کے ساتھ شیئر کریں","Shiriki na marafiki")),box);};
+  function shareItem(){var r=document.getElementById("v-more");if(!r||r.querySelector(".v5shareitem"))return;var list=r.querySelector(".v4list");if(!list)return;
+    var b=el("button",{type:"button",class:"v4li v5shareitem",style:"width:100%;text-align:start;color:inherit;font:inherit;cursor:pointer",onclick:V5.share},el("span",{style:"width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#F3DC9C,#C9A24F);color:#1A1406;flex:none"},ic("send",22)),el("span",{class:"t"},el("b",null,t(B("বন্ধুদের সাথে শেয়ার করো","Share with friends","Kongsi dengan rakan","شارك مع الأصدقاء","دوستوں کے ساتھ شیئر کریں","Shiriki na marafiki"))),
+      el("small",null,t(B("প্রিমিয়াম ব্রোশিওর PDF · QR কোড ও লিংক","Premium brochure PDF · QR code & link","Brosur PDF · kod QR & pautan","كتيب PDF · رمز QR ورابط","بروشر PDF · QR اور لنک","Brosha PDF · QR na kiungo")))),el("span",{class:"v4muted",style:"font-size:1.2rem"},V.RTL?"‹":"›"));
+    list.insertBefore(b,list.firstChild);}
 
   // keep page themes (Instagram white / WhatsApp / YouTube dark) in step with the open screen
   var prev=window.setView;
-  window.setView=function(v){prev(v);try{if(v==="comm"){var hd=document.getElementById("v4subhead");if(hd)hd.remove();}if(window.AMX&&AMX.v5theme)AMX.v5theme();else if(v!=="comm")["ig","wa","yt"].forEach(function(k){document.body.classList.remove("v5-"+k);});if(v==="videos")document.body.classList.add("v5-yt");}catch(e){}};
+  window.setView=function(v){prev(v);try{if(v==="comm"){var hd=document.getElementById("v4subhead");if(hd)hd.remove();}if(window.AMX&&AMX.v5theme)AMX.v5theme();else if(v!=="comm")["ig","wa","yt"].forEach(function(k){document.body.classList.remove("v5-"+k);});if(v==="videos")document.body.classList.add("v5-yt");if(v==="today")npMount();if(v==="more")shareItem();}catch(e){}};
 })();

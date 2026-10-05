@@ -8,8 +8,7 @@
   function item(icon,title,sub,go,right){return el("button",{class:"v4li",type:"button",style:"width:100%;text-align:start;color:inherit;font:inherit;cursor:pointer",onclick:go},
     el("span",{style:"width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(232,201,138,.1);color:#F7E2A6;flex:none"},ic(icon,22)),
     el("span",{class:"t"},el("b",null,title),sub?el("small",null,sub):null),right||el("span",{class:"v4muted",style:"font-size:1.2rem"},V.RTL?"‹":"›"));}
-  function showSec(id){document.querySelectorAll(".backup").forEach(function(s){s.classList.remove("v4open");});var s=id==="settings"?document.getElementById("settings"):document.querySelector(".backup:not(#settings)");
-    if(s){s.classList.add("v4open");setTimeout(function(){s.scrollIntoView({block:"start",behavior:"smooth"});},50);}}
+  function showSec(id){window.setView(id==="settings"?"settings":"backup");}
   V.section("more",{open:function(r){r.innerHTML="";document.querySelectorAll(".backup").forEach(function(s){s.classList.remove("v4open");});
     r.appendChild(V.head(t(B("আরও","More","Lagi","المزيد","مزید","Zaidi")),"Amalnama"));
     var g=window.amGoogle,conn=g&&g.connected&&g.connected();

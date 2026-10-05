@@ -1,4 +1,4 @@
-const C="amalnama-v7",R="amalnama-rt-v3",A=["./","./index.html","./config.js","./gshim.js","./i18n.js?v=1","./features.js?v=5","./chat.js?v=5","./v4.css?v=5","./v5.css?v=5","./v4-core.js?v=5","./v4-quran.js?v=5","./v4-amal.js?v=5","./v4-finance.js?v=5","./v4-extra.js?v=5","./v5.js?v=5","./manifest.webmanifest","./icon-192.png","./icon-512.png","./favicon.ico"];
+const C="amalnama-v8",R="amalnama-rt-v3",A=["./","./index.html","./config.js","./gshim.js","./i18n.js?v=1","./features.js?v=6","./chat.js?v=6","./v4.css?v=6","./v5.css?v=6","./v4-core.js?v=6","./v4-quran.js?v=6","./v4-amal.js?v=6","./v4-finance.js?v=6","./v4-extra.js?v=6","./v5.js?v=6","./manifest.webmanifest","./icon-192.png","./icon-512.png","./favicon.ico"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C&&x!==R).map(x=>caches.delete(x)))));self.clients.claim();});
 const put=(n,req,res)=>{if(res&&res.status===200){const cp=res.clone();caches.open(n).then(c=>c.put(req,cp)).catch(()=>{});}return res;};

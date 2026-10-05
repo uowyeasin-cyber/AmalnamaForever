@@ -12,6 +12,8 @@ service cloud.firestore {
     }
     function txt(t, max) { return t is string && t.size() > 0 && t.size() <= max; }
     function own() { return request.resource.data.uid == request.auth.uid; }
+    // guests (anonymous sign-in) may join and chat; posting and calls need a real (Google) account
+    function realAccount() { return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous'; }
     function cfgDoc() { return /databases/$(database)/documents/config/community; }
     function chatLocked() { return exists(cfgDoc()) && get(cfgDoc()).data.get('chatLocked', false) == true; }
 
@@ -22,7 +24,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid','name','email','photo','status','requestedAt','country','lang','intro'])
         && request.resource.data.uid == uid
         && request.resource.data.status == 'pending'
-        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.email == request.auth.token.get('email', '')
         && request.resource.data.requestedAt == request.time
         && txt(request.resource.data.name, 60);
       allow update: if isAdmin()
@@ -40,7 +42,7 @@ service cloud.firestore {
     // Posts
     match /posts/{pid} {
       allow read: if approved();
-      allow create: if approved() && own()
+      allow create: if approved() && own() && realAccount()
         && request.resource.data.keys().hasOnly(['uid','name','photo','text','createdAt','announce','likes','pinned','bg','image'])
         && (txt(request.resource.data.text, 3000)
             || (request.resource.data.text == '' && request.resource.data.get('image', '') != ''))
@@ -135,7 +137,7 @@ service cloud.firestore {
     function inCall(id) { return signedIn() && request.auth.uid in [get(callPath(id)).data.from, get(callPath(id)).data.to]; }
     match /calls/{id} {
       allow read: if signedIn() && (resource == null || request.auth.uid == resource.data.from || request.auth.uid == resource.data.to);
-      allow create: if approved() && request.resource.data.from == request.auth.uid
+      allow create: if approved() && realAccount() && request.resource.data.from == request.auth.uid
         && request.resource.data.keys().hasOnly(['from','to','type','status','offer','createdAt','chat'])
         && request.resource.data.status == 'ringing'
         && request.resource.data.type in ['audio','video']
