@@ -1,0 +1,32 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JavaScript syntax
+        run: |
+          for f in *.js tools/*.mjs server/push/api/*.js; do node --check "$f" || exit 1; done
+      - name: JSON files are valid
+        run: |
+          for f in manifest.webmanifest videos.json firebase.json server/push/package.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1; done
+      - name: Cache versions match between index.html and sw.js
+        run: |
+          node -e '
+            const fs=require("fs");
+            const idx=fs.readFileSync("index.html","utf8"), sw=fs.readFileSync("sw.js","utf8");
+            const used=[...idx.matchAll(/(?:src|href)="([a-z0-9-]+\.(?:js|css))\?v=(\d+)"/g)].map(m=>m[1]+"?v="+m[2]);
+            const missing=used.filter(u=>!sw.includes("./"+u) && !u.startsWith("lang-"));
+            if(missing.length){console.error("Not precached in sw.js:",missing);process.exit(1);}
+            console.log("OK",used.length,"versioned files");'
+      - name: Firestore rules present
+        run: grep -q "rules_version = '2'" firestore.rules

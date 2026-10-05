@@ -1,0 +1,19 @@
+name: ✨ Feature request
+description: Suggest an idea for Amalnama
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do?
+      description: Describe the need or problem, not only the solution.
+    validations: { required: true }
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+  - type: textarea
+    id: source
+    attributes:
+      label: Religious source (if relevant)
+      description: For Islamic content, please give the Quran / hadith / book reference.

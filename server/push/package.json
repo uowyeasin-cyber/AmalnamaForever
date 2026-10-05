@@ -1,0 +1,1 @@
+{"name":"amalnama-push","private":true,"type":"module","dependencies":{"web-push":"^3.6.7","jose":"^5.9.6"}}

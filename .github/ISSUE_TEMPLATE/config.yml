@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security problem
+    url: https://github.com/uowyeasin-cyber/AmalnamaForever/security/advisories/new
+    about: Please report vulnerabilities privately.
+  - name: 📱 Open the app
+    url: https://uowyeasin-cyber.github.io/AmalnamaForever/
+    about: Try the latest version.

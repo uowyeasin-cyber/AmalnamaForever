@@ -1,0 +1,20 @@
+# dependencies & local tooling
+node_modules/
+.vercel/
+.firebase/
+*.log
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# secrets (never commit these)
+.env
+.env.*
+vapid*.json
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

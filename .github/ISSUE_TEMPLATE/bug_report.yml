@@ -1,0 +1,38 @@
+name: 🐞 Bug report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for helping improve Amalnama! Please fill in as much as you can. বাংলায় লিখলেও চলবে।"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: A clear description of the problem. Screenshots help a lot.
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open …\n2. Tap …\n3. See …"
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Today / routine, Azan & prayer times, Quran, Hadith, Online Mufti, Media, Community / chat / calls, Finance, Shariah / zakat, Settings / sync, Other]
+  - type: input
+    id: device
+    attributes:
+      label: Device & browser
+      placeholder: "e.g. Android 14, Chrome 141, installed app"
+  - type: dropdown
+    id: lang
+    attributes:
+      label: App language
+      options: [বাংলা, English, Bahasa Melayu, العربية, اردو, Kiswahili]
