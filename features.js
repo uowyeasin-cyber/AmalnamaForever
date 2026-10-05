@@ -303,6 +303,8 @@
   function toast(m){if(window.V4&&V4.toast)V4.toast(m);}
   function avRing(name,photo,uid,size,ring){var a=av(photo,name,uid);a.classList.add("v5av");var w=el("span",{class:"v5ring",style:"width:"+size+"px;height:"+size+"px;background:"+(ring||"#DBDBDB")},a);return w;}
   function isActive(uid,hrs){var pp=window.AMCHAT&&AMCHAT.profile(uid);var d=pp&&ts(pp.lastSeen);return !!(d&&Date.now()-d.getTime()<(hrs||24)*3600000);}
+  // ---- floating Posts / Messages buttons on the Media page (built by V5.dock)
+  window.AMX=window.AMX||{};AMX.commSub=function(){return sub;};AMX.commGo=function(k){sub=k;render();try{scrollTo(0,0);}catch(e){}};AMX.chatUnread=function(){return chatUnread||0;};
   // ---- main render
   function render(e){if(!root)return;
     if(sub==="videos"&&!e&&vidBox&&vidBox.isConnected&&root.contains(vidBox)){setBodyTheme();return;}
@@ -310,10 +312,10 @@
     var th=sub==="chat"&&state==="in"?"wa":sub==="videos"?"yt":"ig";root.setAttribute("data-th",th);setBodyTheme();
     var wrap=el("div",{class:"v5bleed"});root.appendChild(wrap);
     if(sub==="videos"){vidBox=el("div");wrap.appendChild(vidBox);
-      var corner=function(k,lbl,d){return function(){var b=el("button",{type:"button","aria-label":W(lbl),title:W(lbl),class:"v5yt-cn",onclick:function(){sub=k;render();}},svg(d,{s:23}));
-        if(k==="chat"&&chatUnread)b.appendChild(el("span",{class:"dot"},num(chatUnread)));if(k==="chat")b.id="cm-chattab";return b;};};
-      if(window.V5&&V5.videos)V5.videos(vidBox,{extra:[corner("feed",Bq("পোস্ট","Posts","Hantaran","المنشورات","پوسٹس","Machapisho"),[P.sq,"M8 9h8M8 13h8M8 17h5"]),corner("chat",Bq("মেসেজ","Messages","Mesej","الرسائل","پیغامات","Ujumbe"),P.cmt)]});
+      if(window.V5&&V5.videos)V5.videos(vidBox,{});
+      if(window.V5&&V5.dock)V5.dock();
       return;}
+    if(window.V5&&V5.dock)setTimeout(V5.dock,0);
     // header
     var hd=el("header",{class:"v5c-hd"},el("button",{type:"button",class:"ib","aria-label":W(Bq("মিডিয়ায় ফিরে যাও","Back to Media","Kembali ke Media","العودة إلى الوسائط","میڈیا پر واپس","Rudi Media")),onclick:function(){sub="videos";render();}},svg(L==="ar"||L==="ur"?"M9 6l6 6-6 6":"M15 6l-6 6 6 6",{s:22,w:"2.2"})),el("span",{class:"wm"},"Amalnama"),el("span",{style:"flex:1"}));
     if(state==="in"){

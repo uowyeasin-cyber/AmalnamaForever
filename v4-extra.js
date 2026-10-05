@@ -37,19 +37,41 @@
   function notifSub(){if(!("Notification" in window))return t(B("এই ব্রাউজারে নেই","Not supported here","Tidak disokong","غير مدعوم","دستیاب نہیں","Haitumiki"));
     return Notification.permission==="granted"?t(B("চালু ✓","On ✓","Aktif ✓","مفعلة ✓","چالو ✓","Imewashwa ✓")):Notification.permission==="denied"?t(B("ব্রাউজারের সেটিংসে বন্ধ","Blocked in browser settings","Disekat","محظورة","بلاک","Imezuiwa")):t(B("চালু করতে চাপো","Tap to turn on","Ketik untuk hidupkan","اضغط للتفعيل","چالو کرنے کو دبائیں","Gusa kuwasha"));}
   function screenSub(){var s=V.screen();return t(B("আজ অ্যাপে ","Today in app: ","Hari ini: ","اليوم: ","آج ایپ میں: ","Leo: "))+num(s.app)+" "+t(B("মিনিট","min","minit","دقيقة","منٹ","dakika"))+(s.phone!=null?" · "+t(B("ফোনে ","phone ","telefon ","الهاتف ","فون ","simu "))+num(Math.floor(s.phone/60))+"h "+num(s.phone%60)+"m":"");}
-  function screenSheet(){var v=V.V();v.st=v.st||{on:true,days:{}};var on=el("input",{type:"checkbox"});on.checked=v.st.on!==false;
-    var s=V.screen(),h=el("input",{class:"v4in",type:"number",min:"0",max:"24",value:s.phone!=null?Math.floor(s.phone/60):""}),m=el("input",{class:"v4in",type:"number",min:"0",max:"59",value:s.phone!=null?s.phone%60:""});
-    var days=Object.keys(v.st.days||{}).sort().slice(-7),mx=Math.max.apply(null,days.map(function(d){var x=v.st.days[d];return Math.max(x.app||0,x.phone||0);}).concat([60]));
-    var chart=el("div",{style:"display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:120px;margin-top:8px"});
-    days.forEach(function(d){var x=v.st.days[d],p=Math.round(((x.phone!=null?x.phone:x.app)||0)/mx*100);chart.appendChild(el("div",{style:"display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end"},
-      V.ring(p,34,4,x.phone!=null&&x.phone>=240?"#E8836B":"#3ECF9E",""),el("small",{class:"v4muted",style:"font-size:.66rem"},num(d.slice(8)))));});
-    var sh=V.sheet(t(B("স্ক্রিন টাইম","Screen time","Masa skrin","وقت الشاشة","اسکرین ٹائم","Muda wa skrini")),el("div",{style:"display:grid;gap:10px"},
-      el("label",{class:"v4row",style:"justify-content:space-between"},el("span",null,t(B("অ্যাপে কাটানো সময় গোনো","Count time spent in the app","Kira masa dalam aplikasi","احسب الوقت في التطبيق","ایپ میں وقت گنیں","Hesabu muda ndani ya programu"))),on),
-      el("p",{class:"v4muted",style:"margin:0"},t(B("ফোনের মোট স্ক্রিন টাইম ওয়েব অ্যাপ নিজে পড়তে পারে না। ফোনের Digital Wellbeing / Screen Time থেকে দেখে এখানে লেখো — আজকের কথা তা দেখে পরামর্শ দেবে।","A web app can't read your phone's total screen time. Check Digital Wellbeing / Screen Time and type it here — Today's note will use it.","Aplikasi web tidak boleh membaca masa skrin telefon; taip di sini.","لا يمكن لتطبيق الويب قراءة وقت الشاشة؛ اكتبه هنا.","ویب ایپ فون کا اسکرین ٹائم نہیں پڑھ سکتی؛ یہاں لکھیں۔","Programu ya wavuti haiwezi kusoma muda wa skrini; andika hapa."))),
-      el("div",{class:"v4f"},el("label",{class:"v4lab"},t(B("আজ ফোনে (ঘণ্টা)","Phone today (hours)","Jam","ساعات","گھنٹے","Saa")),h),el("label",{class:"v4lab"},t(B("মিনিট","Minutes","Minit","دقائق","منٹ","Dakika")),m)),
-      days.length?chart:null,
-      el("button",{class:"v4btn gold",type:"button",onclick:function(){v.st.on=on.checked;var hh=parseInt(h.value,10),mm=parseInt(m.value,10);
-        var d=v.st.days[V.ymd()]=v.st.days[V.ymd()]||{app:0,phone:null};d.phone=(isNaN(hh)&&isNaN(mm))?null:((hh||0)*60+(mm||0));V.save();sh.close();if(V.refreshNote)V.refreshNote();window.setView("more");}},t(B("সেভ","Save","Simpan","حفظ","محفوظ","Hifadhi")))));}
+  function hm(m){m=Math.round(m||0);var h=Math.floor(m/60),mm=m%60;return h?num(h)+"h "+num(mm)+"m":num(mm)+" "+t(B("মিনিট","min","minit","دقيقة","منٹ","dakika"));}
+  function screenSheet(){var v=V.V();v.st=v.st||{on:true,days:{}};v.st.days=v.st.days||{};var goal=v.st.goal||180;
+    var on=el("input",{type:"checkbox",style:"width:22px;height:22px;accent-color:#C9A050"});on.checked=v.st.on!==false;
+    var s=V.screen(),h=el("input",{class:"v4in",type:"number",inputmode:"numeric",min:"0",max:"24",placeholder:"0",value:s.phone!=null?Math.floor(s.phone/60):""}),m=el("input",{class:"v4in",type:"number",inputmode:"numeric",min:"0",max:"59",placeholder:"0",value:s.phone!=null?s.phone%60:""});
+    var gsel=el("select",{class:"v4in"});[60,120,180,240,300,360].forEach(function(x){gsel.appendChild(el("option",{value:String(x)},num(x/60)+" "+t(B("ঘণ্টা","hours","jam","ساعات","گھنٹے","saa"))));});gsel.value=String(goal);
+    function card(lab,val,sub,col){return el("div",{style:"flex:1;min-width:0;padding:12px 14px;border-radius:18px;background:#0E3236;border:1px solid rgba(232,201,138,.18)"},el("small",{class:"v4muted",style:"display:block;font-size:.72rem"},lab),el("b",{style:"display:block;font-family:var(--fh);font-size:1.45rem;color:"+(col||"#F7E2A6")+";margin-top:2px"},val),sub?el("small",{class:"v4muted",style:"font-size:.7rem"},sub):null);}
+    var appCard=el("div",{style:"display:flex;gap:10px"});
+    function drawCards(){appCard.innerHTML="";var x=V.screen();var ph=x.phone,g=parseInt(gsel.value,10)||180;
+      appCard.appendChild(card(t(B("আজ Amalnama-তে","Today in Amalnama","Hari ini dalam Amalnama","اليوم في عملنامه","آج Amalnama میں","Leo ndani ya Amalnama")),x.app<1?"<"+num(1)+" "+t(B("মিনিট","min","minit","دقيقة","منٹ","dakika")):hm(x.app),t(B("নিজে থেকে গোনা হচ্ছে ●","Counted automatically ●","Dikira automatik ●","يُحسب تلقائيًا ●","خودبخود گنا جا رہا ●","Inahesabiwa yenyewe ●")),"#3ECF9E"));
+      appCard.appendChild(card(t(B("আজ ফোনে","Phone today","Telefon hari ini","الهاتف اليوم","آج فون پر","Simu leo")),ph!=null?hm(ph):"—",ph!=null?(ph>g?t(B("লক্ষ্যের চেয়ে বেশি","Over your limit","Melebihi had","فوق الحد","حد سے زیادہ","Zaidi ya kikomo")):t(B("লক্ষ্যের মধ্যে ✓","Within your limit ✓","Dalam had ✓","ضمن الحد ✓","حد کے اندر ✓","Ndani ya kikomo ✓"))):t(B("নিচে লেখো","Type it below","Taip di bawah","اكتبه أدناه","نیچے لکھیں","Andika chini")),ph!=null&&ph>g?"#E8836B":"#F7E2A6"));}
+    drawCards();var live=setInterval(function(){if(!appCard.isConnected){clearInterval(live);return;}drawCards();},15000);
+    // last 7 days chart (every day shown, even empty ones)
+    var chart=el("div",{style:"display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:150px;padding:10px 10px 0;border-radius:18px;background:#0B2A2D"});
+    function drawChart(){chart.innerHTML="";var g=parseInt(gsel.value,10)||180,days=[];for(var k=6;k>=0;k--){var d=new Date(Date.now()-k*86400000);days.push(V.ymd(d));}
+      var mx=Math.max.apply(null,days.map(function(d){var x=v.st.days[d]||{};return Math.max(x.phone||0,x.app||0);}).concat([g]));
+      days.forEach(function(d,ix){var x=v.st.days[d]||{},val=x.phone!=null?x.phone:(x.app||0),pct=Math.max(3,Math.round(val/mx*100)),over=x.phone!=null&&x.phone>g;
+        var wd=new Intl.DateTimeFormat(V.L==="bn"?"bn":V.L,{weekday:"short"}).format(new Date(d+"T12:00:00"));
+        chart.appendChild(el("div",{style:"display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;min-width:0"},
+          el("small",{style:"font-size:.6rem;color:#CFE3DE;white-space:nowrap"},val?(val>=60?num(Math.floor(val/60))+"h":num(Math.round(val))+"m"):""),
+          el("div",{style:"width:100%;max-width:26px;height:"+pct+"%;border-radius:8px 8px 3px 3px;background:"+(over?"linear-gradient(#F0A08C,#C8553D)":x.phone!=null?"linear-gradient(#F7E2A6,#B88A3E)":"linear-gradient(#5EE0B5,#1E8A68)")+(ix===6?";box-shadow:0 0 0 2px rgba(247,226,166,.6)":"")}),
+          el("small",{class:"v4muted",style:"font-size:.62rem;padding-bottom:6px"},wd)));});}
+    drawChart();gsel.onchange=function(){drawCards();drawChart();};
+    var legend=el("div",{style:"display:flex;gap:12px;flex-wrap:wrap;font-size:.7rem",class:"v4muted"},
+      el("span",null,el("i",{style:"display:inline-block;width:9px;height:9px;border-radius:3px;background:#C9A050;margin-inline-end:5px"}),t(B("ফোনের সময়","Phone time","Masa telefon","وقت الهاتف","فون کا وقت","Muda wa simu"))),
+      el("span",null,el("i",{style:"display:inline-block;width:9px;height:9px;border-radius:3px;background:#3ECF9E;margin-inline-end:5px"}),t(B("শুধু অ্যাপের সময়","App time only","Masa aplikasi","وقت التطبيق","صرف ایپ کا وقت","Muda wa programu"))),
+      el("span",null,el("i",{style:"display:inline-block;width:9px;height:9px;border-radius:3px;background:#E8836B;margin-inline-end:5px"}),t(B("লক্ষ্যের বেশি","Over limit","Melebihi had","فوق الحد","حد سے زیادہ","Zaidi ya kikomo"))));
+    var sh=V.sheet(t(B("স্ক্রিন টাইম","Screen time","Masa skrin","وقت الشاشة","اسکرین ٹائم","Muda wa skrini")),el("div",{style:"display:grid;gap:12px"},
+      appCard,chart,legend,
+      el("div",{class:"v4f"},el("label",{class:"v4lab"},t(B("আজ ফোনে (ঘণ্টা)","Phone today (hours)","Telefon hari ini (jam)","الهاتف اليوم (ساعات)","آج فون (گھنٹے)","Simu leo (saa)")),h),el("label",{class:"v4lab"},t(B("মিনিট","Minutes","Minit","دقائق","منٹ","Dakika")),m)),
+      el("p",{class:"v4muted",style:"margin:-4px 0 0;font-size:.74rem"},t(B("ফোনের মোট সময় ব্রাউজার-অ্যাপ নিজে পড়তে পারে না — Settings › Digital Wellbeing (Android) বা Screen Time (iPhone) দেখে লেখো।","A web app can't read the phone's total — check Settings › Digital Wellbeing (Android) or Screen Time (iPhone) and type it.","Lihat Digital Wellbeing / Screen Time dan taip.","راجع Digital Wellbeing / Screen Time واكتبه.","Digital Wellbeing / Screen Time دیکھ کر لکھیں۔","Angalia Digital Wellbeing / Screen Time uandike."))),
+      el("label",{class:"v4lab"},t(B("দৈনিক ফোন-সময়ের লক্ষ্য","Daily phone limit","Had harian telefon","الحد اليومي للهاتف","روزانہ فون کی حد","Kikomo cha kila siku")),gsel),
+      el("label",{class:"v4row",style:"justify-content:space-between;gap:10px"},el("span",null,t(B("অ্যাপে কাটানো সময় গোনো","Count time spent in the app","Kira masa dalam aplikasi","احسب الوقت في التطبيق","ایپ میں وقت گنیں","Hesabu muda ndani ya programu"))),on),
+      el("button",{class:"v4btn gold",type:"button",onclick:function(){v.st.on=on.checked;v.st.goal=parseInt(gsel.value,10)||180;var hh=parseInt(h.value,10),mm=parseInt(m.value,10);
+        var d=v.st.days[V.ymd()]=v.st.days[V.ymd()]||{app:0,phone:null};d.phone=(isNaN(hh)&&isNaN(mm))?null:Math.min(1440,(hh||0)*60+(mm||0));V.save();clearInterval(live);sh.close();
+        V.toast(t(B("সেভ হয়েছে ✓","Saved ✓","Disimpan ✓","تم الحفظ ✓","محفوظ ✓","Imehifadhiwa ✓")));if(V.refreshNote)V.refreshNote();window.setView("more");}},t(B("সেভ","Save","Simpan","حفظ","محفوظ","Hifadhi")))));}
   function feedback(){var ta=el("textarea",{class:"v4in",rows:"5",maxlength:"1000",placeholder:t(B("কী ভালো লাগল, কী সমস্যা হলো, নতুন কী চাও…","What you liked, what went wrong, what you'd like next…","Apa yang anda suka…","ما أعجبك، ما المشكلة…","کیا اچھا لگا، کیا مسئلہ…","Ulichopenda, tatizo…"))});
     var sh=V.sheet(t(B("মতামত","Feedback","Maklum balas","ملاحظات","رائے","Maoni")),el("div",{style:"display:grid;gap:10px"},ta,
       el("button",{class:"v4btn gold",type:"button",onclick:function(){var body=ta.value.trim();if(!body){ta.focus();return;}
@@ -83,6 +105,7 @@
     r.appendChild(el("p",{class:"v4muted",style:"text-align:center"},t(B("প্রতি ৪টা ফোকাসের পর লম্বা বিরতি। শুরুতে বিসমিল্লাহ বলো।","A long break after every 4 focus sessions. Begin with Bismillah.","Rehat panjang selepas 4 sesi.","استراحة طويلة بعد ٤ جلسات.","ہر ۴ سیشن کے بعد لمبا وقفہ۔","Mapumziko marefu baada ya vipindi 4."))));}
   try{var pl=V.V().pomoLen;if(pl)LEN=pl;PM.left=LEN.focus*60;}catch(e){}
   V.section("pomodoro",{open:function(r){proot=r;pmDraw();}});
+  V.pomo=function(){if(PM.run)PM.left=Math.max(0,Math.round((PM.end-Date.now())/1000));return {run:PM.run,left:PM.left,mode:PM.mode};};
 
   // ---------- Videos (YouTube-style, in-app, privacy-enhanced player)
   var VIDS=[
@@ -121,7 +144,7 @@
     "Never invent references; if unsure, say so. Where the four madhhabs differ, briefly show the main views (note the Hanafi view since many users are from South Asia). "+
     "Keep answers concise, practical, gentle, with a suggestion for action. For personal, family, divorce, inheritance shares, finance contracts, medical or legal matters, or anything serious, remind the user to confirm with a qualified local mufti. "+
     "Do not issue takfir, do not discuss sectarian attacks, stay respectful. You are an AI and not a human mufti.";
-  var MODELS=["gemini-3.5-flash","gemini-3.5-flash-lite","gemini-2.5-flash"];
+  var MODELS=["gemini-3.5-flash","gemini-3.5-flash-lite"];
   var ai=null,aiErr=null,mroot=null,busy=false;
   function loadAI(){if(ai)return Promise.resolve(ai);var Vn="12.19.0";
     return Promise.all([import("https://www.gstatic.com/firebasejs/"+Vn+"/firebase-app.js"),import("https://www.gstatic.com/firebasejs/"+Vn+"/firebase-ai.js")]).then(function(m){
@@ -139,6 +162,16 @@
   function offline(q){for(var i=0;i<OFF.length;i++)if(OFF[i][0].test(q))return t(OFF[i][1]);
     return t(B("এই মুহূর্তে লাইভ উত্তর আনা যাচ্ছে না (ইন্টারনেট বা সার্ভার)। একটু পরে আবার জিজ্ঞেস করো, অথবা নিকটস্থ নির্ভরযোগ্য মুফতির কাছে জানতে চাও।","I can't fetch a live answer right now (internet or server). Please ask again shortly, or consult a trusted local mufti.","Tidak dapat menjawab sekarang. Cuba lagi.","تعذر الإجابة الآن. حاول لاحقًا.","ابھی جواب نہیں مل سکا۔ بعد میں کوشش کریں۔","Haiwezekani sasa. Jaribu tena."));}
   V.section("mufti",{open:function(r){mroot=r;mdraw();}});
+  // light markdown for answers: **bold**, *italic*, headings, bullet and numbered lists (built safely, no innerHTML)
+  function md(box,txt){box.innerHTML="";var list=null;
+    function inline(p,str){var re=/(\*\*([^*]+)\*\*|__([^_]+)__|\*([^*\n]+)\*)/g,last=0,mm;while((mm=re.exec(str))){if(mm.index>last)p.appendChild(document.createTextNode(str.slice(last,mm.index)));
+        p.appendChild(mm[2]||mm[3]?el("strong",null,mm[2]||mm[3]):el("em",null,mm[4]));last=re.lastIndex;}if(last<str.length)p.appendChild(document.createTextNode(str.slice(last)));return p;}
+    String(txt||"").replace(/\r/g,"").split("\n").forEach(function(line){var l=line.trim();var b=/^([-*•]|\d+[.)])\s+(.*)$/.exec(l);
+      if(b){var ord=/\d/.test(b[1]);if(!list||list.ord!==ord){list=el(ord?"ol":"ul",{style:"margin:6px 0;padding-inline-start:22px;display:grid;gap:4px"});list.ord=ord;box.appendChild(list);}list.appendChild(inline(el("li"),b[2]));return;}
+      list=null;if(!l){return;}var h=/^#{1,4}\s+(.*)$/.exec(l);
+      if(h){box.appendChild(inline(el("div",{style:"font-weight:700;color:#F7E2A6;margin:8px 0 2px"}),h[1]));return;}
+      if(/^-{3,}$/.test(l)){box.appendChild(el("hr",{style:"border:0;border-top:1px solid rgba(232,201,138,.25);margin:8px 0"}));return;}
+      box.appendChild(inline(el("p",{style:"margin:0 0 6px"}),l));});}
   function mdraw(){var r=mroot,v=V.V();v.mufti=v.mufti||[];r.innerHTML="";
     var hdr=el("div",{class:"v4h"},el("button",{class:"v4back",type:"button","aria-label":"Back",onclick:function(){window.setView("today");}},ic("back",20)),
       el("span",{style:"width:52px;height:52px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#F7E2A6,#B88A3E,#F7E2A6,#C9A050,#F7E2A6);flex:none"},(function(){var s=V.muftiAvatar("mf");s.setAttribute("width","48");s.setAttribute("height","48");s.style.display="block";return s;})()),
@@ -148,7 +181,7 @@
     var log=el("div",{style:"display:grid;gap:10px;margin-top:6px",role:"log","aria-live":"polite"});
     if(!v.mufti.length){log.appendChild(el("div",{class:"v4bubble ai"},t(B("আসসালামু আলাইকুম! দ্বীনের যেকোনো প্রশ্ন করো — আমি কুরআন, সহিহ হাদিস, ইজমা ও কিয়াসের রেফারেন্সসহ সংক্ষেপে উত্তর দেব। জটিল ব্যক্তিগত বিষয়ে স্থানীয় মুফতির সাথে নিশ্চিত হয়ে নিও।","Assalamu alaykum! Ask any question about the deen — I'll answer briefly with references from the Quran, authentic hadith, Ijma and Qiyas. For complex personal matters, confirm with a local mufti.","Assalamualaikum! Tanya apa sahaja tentang agama.","السلام عليكم! اسأل عن أي مسألة في الدين.","السلام علیکم! دین کا کوئی بھی سوال پوچھیں۔","Assalamu alaykum! Uliza swali lolote la dini."))));
       var sug=el("div",{style:"display:flex;flex-wrap:wrap;gap:6px"});[B("সফরে নামাজ কসর কখন?","When do I shorten prayer when travelling?","Bila boleh qasar?","متى أقصر الصلاة؟","سفر میں قصر کب؟","Lini kufupisha swala?"),B("ছাত্র অবস্থায় যাকাত দিতে হবে?","Do I pay zakat as a student?","Pelajar wajib zakat?","هل على الطالب زكاة؟","طالب علم پر زکوٰۃ؟","Mwanafunzi alipe zaka?"),B("ফজর মিস হলে কী করব?","What should I do if I miss Fajr?","Jika terlepas Subuh?","إذا فاتني الفجر؟","فجر چھوٹ جائے تو؟","Nikikosa Alfajiri?")].forEach(function(q){sug.appendChild(el("button",{class:"v4pill",type:"button",onclick:function(){send(t(q));}},t(q)));});log.appendChild(sug);}
-    v.mufti.forEach(function(m){log.appendChild(el("div",{class:"v4bubble "+(m.r==="me"?"me":"ai")},m.x));});
+    v.mufti.forEach(function(m){var bb=el("div",{class:"v4bubble "+(m.r==="me"?"me":"ai")});if(m.r==="me")bb.textContent=m.x;else md(bb,m.x);log.appendChild(bb);});
     r.appendChild(log);
     var inp=el("textarea",{class:"v4in",rows:"1",maxlength:"800",placeholder:t(B("প্রশ্ন লেখো…","Type your question…","Tulis soalan…","اكتب سؤالك…","سوال لکھیں…","Andika swali…")),style:"resize:none;flex:1"});
     inp.addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();go();}});
@@ -159,7 +192,7 @@
     setTimeout(function(){window.scrollTo({top:document.body.scrollHeight});},30);}
   function send(q){if(busy)return;var v=V.V();v.mufti=v.mufti||[];var hist=v.mufti.slice();v.mufti.push({r:"me",x:q});busy=true;mdraw();
     var log=mroot.querySelector("[role=log]"),b=el("div",{class:"v4bubble ai"},"…");log.appendChild(b);
-    ask(hist,q,function(s){b.textContent=s;}).then(function(all){v.mufti.push({r:"ai",x:all||offline(q)});})
+    ask(hist,q,function(s){md(b,s);}).then(function(all){v.mufti.push({r:"ai",x:all||offline(q)});})
       .catch(function(e){aiErr=e;try{console.warn("Mufti AI",e);}catch(x){}v.mufti.push({r:"ai",x:offline(q)});})
       .then(function(){v.mufti=v.mufti.slice(-40);V.save();busy=false;mdraw();});}
 })();

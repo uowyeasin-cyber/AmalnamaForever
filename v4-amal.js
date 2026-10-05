@@ -169,8 +169,8 @@
     r.appendChild(el("div",{class:"v4grid"},
       tile("book",t(B("মাসআলার বই","Masail books","Kitab masalah","كتب المسائل","مسائل کی کتابیں","Vitabu vya masuala")),t(B("নির্ভরযোগ্য ফিকহ","Trusted fiqh","Fiqh muktabar","فقه معتمد","معتبر فقہ","Fiqhi ya kuaminika")),function(){go("v4books");}),
       tile("hadith",t(B("সিহাহ সিত্তাহ","Sihah Sittah","Kutub Sittah","الكتب الستة","صحاح ستہ","Vitabu sita")),t(B("ইবারত ও অর্থ","Text & meaning","Teks & makna","النص والمعنى","عبارت و ترجمہ","Maandishi na maana")),function(){window.setView("hadith");}),
-      tile("calc",t(B("যাকাত ক্যালকুলেটর","Zakat calculator","Kalkulator zakat","حاسبة الزكاة","زکوٰۃ کیلکولیٹر","Kikokotoo cha zaka")),t(B("নিসাব ও ২.৫%","Nisab & 2.5%","Nisab & 2.5%","النصاب و٢٫٥٪","نصاب اور ڈھائی فیصد","Nisabu na 2.5%")),function(){go("v4zakat");}),
       tile("moon",t(B("ইসলামিক দিন","Islamic days","Hari Islam","المناسبات الإسلامية","اسلامی دن","Siku za Kiislamu")),t(B("আজ ও সামনে","Today & upcoming","Hari ini & akan datang","اليوم والقادمة","آج اور آنے والے","Leo na zijazo")),function(){go("v4idays");})));
+    var lt=r.querySelector(".v4grid").lastElementChild;if(lt)lt.style.gridColumn="1 / -1";
     function go(id){var x=document.getElementById(id);if(x)x.scrollIntoView({block:"start",behavior:"smooth"});}
     // Islamic days
     var idc=el("div",{class:"v4card",id:"v4idays"},el("h2",null,t(B("ইসলামিক গুরুত্বপূর্ণ দিন","Important Islamic days","Hari penting Islam","المناسبات الإسلامية","اہم اسلامی دن","Siku muhimu za Kiislamu"))),
@@ -187,9 +187,10 @@
     bk.appendChild(el("h2",{style:"margin-top:16px"},t(B("মাসআলার নির্ভরযোগ্য বই","Trusted books of masail","Kitab rujukan","كتب معتمدة","معتبر کتابیں","Vitabu vya kuaminika"))));
     var bl=el("div",{class:"v4list"});BOOKLIST.forEach(function(b,bi){bl.appendChild(el("button",{class:"v4li",type:"button",style:"color:inherit;width:100%;text-align:start;font:inherit;cursor:pointer",onclick:function(){if(window.V5&&V5.openBook)V5.openBook(bi);}},ic("book",22),el("span",{class:"t"},el("b",null,t(b[0])),el("small",null,b[1])),el("small",{class:"v4muted"},t(B("পড়ো ›","Read ›","Baca ›","اقرأ ›","پڑھیں ›","Soma ›")))));});
     bk.appendChild(bl);bk.appendChild(el("p",{class:"v4muted",style:"margin-top:8px"},t(B("সংক্ষিপ্ত সাধারণ তথ্য; ব্যক্তিগত ফতোয়ার জন্য নির্ভরযোগ্য মুফতির কাছে যাও।","Short general information; for a personal fatwa ask a qualified mufti.","Maklumat umum; untuk fatwa rujuk mufti.","معلومات عامة؛ للفتوى راجع مفتيًا.","عمومی معلومات؛ فتویٰ کے لیے مفتی سے رجوع کریں۔","Taarifa za jumla; kwa fatwa muulize mufti."))));
-    r.appendChild(zakat());r.appendChild(idc);r.appendChild(bk);}});
+    r.appendChild(idc);r.appendChild(bk);}});
 
-  // ---------- Zakat calculator
+  // ---------- Zakat calculator (opens from the floating button on the Shariah page)
+  V.openZakat=function(){var c=zakat();c.removeAttribute("id");var h=c.querySelector("h2");if(h)h.remove();c.style.margin="0";V.sheet(t(B("যাকাত ক্যালকুলেটর","Zakat calculator","Kalkulator zakat","حاسبة الزكاة","زکوٰۃ کیلکولیٹر","Kikokotoo cha zaka")),c);};
   function zakat(){var Z=V.V().zakat||{gp:"",sp:"",cash:"",gold:"",silver:"",biz:"",recv:"",debt:"",basis:"silver"};var cur=(V.V().fin&&V.V().fin.cur)||"RM";
     var c=el("div",{class:"v4card gold",id:"v4zakat"},el("h2",null,t(B("যাকাত ক্যালকুলেটর","Zakat calculator","Kalkulator zakat","حاسبة الزكاة","زکوٰۃ کیلکولیٹر","Kikokotoo cha zaka"))),
       el("div",{class:"v4muted"},t(B("নিসাব: স্বর্ণ ৮৭.৪৮ গ্রাম বা রুপা ৬১২.৩৬ গ্রাম · হার ২.৫% · সম্পদ এক চান্দ্র বছর থাকলে","Nisab: 87.48 g gold or 612.36 g silver · rate 2.5% · after one lunar year","Nisab: emas 87.48 g atau perak 612.36 g · 2.5%","النصاب: ٨٧٫٤٨ غ ذهب أو ٦١٢٫٣٦ غ فضة · ٢٫٥٪","نصاب: سونا ۸۷.۴۸ گرام یا چاندی ۶۱۲.۳۶ گرام · ڈھائی فیصد","Nisabu: dhahabu 87.48 g au fedha 612.36 g · 2.5%"))));

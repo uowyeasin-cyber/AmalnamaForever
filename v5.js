@@ -302,6 +302,32 @@
       el("small",null,t(B("প্রিমিয়াম ব্রোশিওর PDF · QR কোড ও লিংক","Premium brochure PDF · QR code & link","Brosur PDF · kod QR & pautan","كتيب PDF · رمز QR ورابط","بروشر PDF · QR اور لنک","Brosha PDF · QR na kiungo")))),el("span",{class:"v4muted",style:"font-size:1.2rem"},V.RTL?"‹":"›"));
     list.insertBefore(b,list.firstChild);}
 
+  // =====================================================================
+  // FLOATING DOCK · small "live" buttons in the Mufti style, above the Mufti button
+  // Today → Pomodoro · Media → Posts + Messages · Shariah → Zakat calculator
+  // =====================================================================
+  var curV="today",dockEl=null,pomoT=null;
+  var SVGP={posts:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+    chat:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.4-4.4A8.5 8.5 0 1 1 20.5 11.5z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke-width="2.6"/></svg>'};
+  function fab(o){var inner=el("span",{class:"in"});if(o.svg)inner.innerHTML=o.svg;else inner.appendChild(ic(o.icon,22));
+    var b=el("button",{type:"button",class:"v6fab"+(o.cls?" "+o.cls:""),"aria-label":o.label,title:o.label,onclick:o.go},inner,el("span",{class:"live","aria-hidden":"true"}),el("span",{class:"lb","aria-hidden":"true"},o.label));
+    if(o.id)b.id=o.id;if(o.badge)b.appendChild(el("span",{class:"dot"},num(o.badge)));return b;}
+  function pomoBadge(b){clearInterval(pomoT);function d(){var s=V.pomo&&V.pomo();var x=b.querySelector(".tm");if(!s||!s.run){if(x)x.remove();b.classList.remove("on");return;}
+      if(!x){x=el("span",{class:"tm"});b.appendChild(x);}b.classList.add("on");x.textContent=num(String(Math.floor(s.left/60)).padStart(2,"0")+":"+String(s.left%60).padStart(2,"0"));}
+    d();pomoT=setInterval(function(){if(!b.isConnected){clearInterval(pomoT);return;}d();},1000);}
+  V5.dock=function(){if(!dockEl){dockEl=el("div",{id:"v6dock"});document.body.appendChild(dockEl);}
+    var list=[],v=curV;
+    if(v==="today")list.push({cls:"pomo",icon:"timer",label:t(B("পোমোডোরো ফোকাস","Pomodoro focus","Fokus Pomodoro","تركيز بومودورو","پومودورو فوکس","Pomodoro")),go:function(){window.setView("pomodoro");}});
+    if(v==="shariah")list.push({icon:"calc",label:t(B("যাকাত ক্যালকুলেটর","Zakat calculator","Kalkulator zakat","حاسبة الزكاة","زکوٰۃ کیلکولیٹر","Kikokotoo cha zaka")),go:function(){if(V.openZakat)V.openZakat();}});
+    if(v==="comm"&&(!window.AMX||!AMX.commSub||AMX.commSub()==="videos")){
+      list.push({svg:SVGP.posts,label:t(B("পোস্ট","Posts","Hantaran","المنشورات","پوسٹس","Machapisho")),go:function(){AMX.commGo("feed");}});
+      list.push({svg:SVGP.chat,id:"cm-chattab",badge:window.AMX&&AMX.chatUnread?AMX.chatUnread():0,label:t(B("মেসেজ","Messages","Mesej","الرسائل","پیغامات","Ujumbe")),go:function(){AMX.commGo("chat");}});}
+    var key=v+":"+list.length;if(dockEl.dataset.k===key)return;dockEl.dataset.k=key;dockEl.innerHTML="";
+    list.forEach(function(o,i){var b=fab(o);b.style.animationDelay=(i*0.4)+"s";dockEl.appendChild(b);if(o.cls==="pomo")pomoBadge(b);});
+    dockEl.classList.remove("hello");void dockEl.offsetWidth;if(list.length)dockEl.classList.add("hello");};
+  var prev2=window.setView;
+  window.setView=function(v){prev2(v);curV=v;try{if(v==="comm"&&window.AMX&&AMX.commSub&&AMX.commSub()!=="videos"&&dockEl)dockEl.dataset.k="";V5.dock();}catch(e){}};
+  setTimeout(function(){try{V5.dock();}catch(e){}},700);
   // keep page themes (Instagram white / WhatsApp / YouTube dark) in step with the open screen
   var prev=window.setView;
   window.setView=function(v){prev(v);try{if(v==="comm"){var hd=document.getElementById("v4subhead");if(hd)hd.remove();}if(window.AMX&&AMX.v5theme)AMX.v5theme();else if(v!=="comm")["ig","wa","yt"].forEach(function(k){document.body.classList.remove("v5-"+k);});if(v==="videos")document.body.classList.add("v5-yt");if(v==="today")npMount();if(v==="more")shareItem();}catch(e){}};
