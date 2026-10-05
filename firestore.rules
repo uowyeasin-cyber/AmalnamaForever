@@ -220,5 +220,48 @@ service cloud.firestore {
         allow delete: if inCall(id);
       }
     }
+  
+    // ---- Family: shared budgets & goals (doc id = 10-char invite code) ----
+    function famDoc(fid) { return /databases/$(database)/documents/families/$(fid); }
+    function inFam(fid) { return signedIn() && exists(famDoc(fid)) && request.auth.uid in get(famDoc(fid)).data.members; }
+    match /families/{fid} {
+      allow get: if signedIn();
+      allow list: if signedIn() && request.auth.uid in resource.data.members;
+      allow create: if signedIn() && fid.size() == 10
+        && request.resource.data.keys().hasOnly(['name','owner','members','names','cur','createdAt'])
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.members == [request.auth.uid]
+        && txt(request.resource.data.name, 40)
+        && request.resource.data.names.keys().hasOnly([request.auth.uid]);
+      allow update: if signedIn() && request.resource.data.members.size() <= 12 && (
+        // owner: rename, currency, remove members, hand over ownership when leaving
+        (request.auth.uid == resource.data.owner
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','cur','names','members','owner'])
+          && request.resource.data.members.toSet().difference(resource.data.members.toSet()).size() == 0
+          && request.resource.data.owner in request.resource.data.members
+          && txt(request.resource.data.name, 40))
+        // a member leaves
+        || (request.auth.uid in resource.data.members && request.auth.uid != resource.data.owner
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members','names'])
+          && request.resource.data.members.toSet() == resource.data.members.toSet().difference([request.auth.uid].toSet())
+          && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid]))
+        // a member changes only their own display name
+        || (request.auth.uid in resource.data.members
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['names'])
+          && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid]))
+        // someone with the code joins (adds only themself)
+        || (!(request.auth.uid in resource.data.members)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members','names'])
+          && request.resource.data.members.toSet() == resource.data.members.toSet().union([request.auth.uid].toSet())
+          && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid])
+          && txt(request.resource.data.names[request.auth.uid], 40))
+      );
+      allow delete: if signedIn() && request.auth.uid == resource.data.owner;
+      match /{sub}/{id} {
+        allow read, delete: if sub in ['budgets','goals','tx'] && inFam(fid);
+        allow create: if sub in ['budgets','goals','tx'] && inFam(fid) && request.resource.data.by == request.auth.uid;
+        allow update: if sub in ['budgets','goals'] && inFam(fid);
+      }
+    }
   }
 }

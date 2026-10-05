@@ -233,6 +233,9 @@
       try{if(localStorage.getItem("am-emu")==="1"&&/^(localhost|127\.0\.0\.1)$/.test(location.hostname)){auth.useEmulator("http://127.0.0.1:9099");db.useEmulator("127.0.0.1",8085);}}catch(e){}
       auth.onAuthStateChanged(onUser);
       return auth.getRedirectResult().catch(function(){});});}
+  // shared Firebase access for other modules (family budgets): resolves after the first sign-in state is known
+  var authKnown=null;
+  X.fb=function(){return init().then(function(){if(!authKnown)authKnown=new Promise(function(res){var u=auth.onAuthStateChanged(function(){u();res();});});return authKnown;}).then(function(){return {fb:fb,auth:auth,db:db,FV:FV,user:auth.currentUser};});};
   function clear(){unsub.splice(0).forEach(function(f){try{f();}catch(e){}});if(window.AMCHAT)AMCHAT.stop();chatOn=false;chatUnread=0;}
   var chatOn=false,chatUnread=0;
   function enterChat(){if(chatOn||!window.AMCHAT||!me)return;chatOn=true;

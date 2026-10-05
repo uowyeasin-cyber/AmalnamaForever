@@ -2,6 +2,15 @@
 
 All notable changes to Amalnama. Dates are in 2026.
 
+## [11.0.0] - 2026-10-06
+### Added
+- **Qibla compass**: live compass that points to the Kaaba. Shows the bearing and the distance to Makkah, glows and vibrates when you are aligned, and falls back to your Azan city when GPS is off.
+- **Masjid & Surau tracker**: nearby mosques and suraus from OpenStreetMap within 1–10 km, with a map, directions, saved places, a "Prayed here" jamaah log and weekly stats. Works offline from the last results.
+- **Hifz tracker**: memorisation progress for all 114 surahs, a juz heat-map, a daily ayah goal and streak, and spaced-repetition revision (1→60 days).
+- **Family budget & goals**: create a family or join with a 10-character code (up to 12 members). Shared monthly budgets, expenses and savings goals (Hajj, Umrah…) sync live through Firestore.
+### Security
+- New `families` Firestore rules: only members can read or write; joining adds only yourself; owners manage members.
+
 ## [9.0.0] — 5 Oct
 ### Added
 - Calls and messages ring even when the app is closed (Web Push with **Answer / Decline**, missed‑call notice).

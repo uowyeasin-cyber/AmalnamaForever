@@ -211,6 +211,7 @@
   var TODAYV=["today","plan","routine","acad","events","week","month"];
   var SPACE={amal:"amal",quran:"amal",azan:"amal",hadith:"amal",dua:"amal",shariah:"shariah",finance:"finance",comm:"comm",more:"more",pomodoro:"more",videos:"comm",mufti:"mufti",admin:"more",settings:"more",backup:"more",books:"shariah"};
   var MY=[];
+  V4.space=function(k,sp){SPACE[k]=sp;};
   V4.section=function(k,mod){var s=document.getElementById("v-"+k);if(!s){s=el("section",{id:"v-"+k,class:"v4s",hidden:true});
       var all=document.querySelectorAll("section[id^='v-']");all[all.length-1].insertAdjacentElement("afterend",s);}
     if(MY.indexOf(k)<0)MY.push(k);X.register(k,mod);return s;};
