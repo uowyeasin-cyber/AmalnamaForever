@@ -19,14 +19,16 @@ const RECAT=[[/\bdebate|\bvs\.?\s|atheis|christian(?:ity)? ?(?:apolog|debate)|sp
   [/gaza|palestin|al-?aqsa|sudan|yemen|uyghur|kashmir|rohingya|ummah|গাজা|ফিলিস্তিন|রোহিঙ্গা|উম্মাহ/i,"ummah"]];
 const dec=s=>s.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'");
 const out=[];
-for(const [id,name,cat] of CH){
-  try{let x=null,st=0;for(let i=0;i<4&&x==null;i++){try{const r=await fetch("https://www.youtube.com/feeds/videos.xml?channel_id="+id,{headers:{"User-Agent":"Mozilla/5.0"},signal:AbortSignal.timeout(20000)});st=r.status;if(r.ok)x=await r.text();}catch(e){st=e.message;}if(x==null)await new Promise(r=>setTimeout(r,2000*(i+1)));}
+// channels are fetched six at a time; YouTube's feed sometimes answers 404 by mistake, so each one gets three quick tries
+async function one([id,name,cat]){
+  try{let x=null,st=0;for(let i=0;i<3&&x==null;i++){try{const r=await fetch("https://www.youtube.com/feeds/videos.xml?channel_id="+id,{headers:{"User-Agent":"Mozilla/5.0"},signal:AbortSignal.timeout(12000)});st=r.status;if(r.ok)x=await r.text();}catch(e){st=e.message;}if(x==null&&i<2)await new Promise(r=>setTimeout(r,1000*(i+1)));}
     if(x==null)throw new Error(st);const es=x.split("<entry>").slice(1,16);
     for(const e of es){const v=(e.match(/<yt:videoId>([^<]+)/)||[])[1],t=(e.match(/<title>([^<]*)/)||[])[1],p=(e.match(/<published>([^<]+)/)||[])[1],
         short=/\/shorts\//.test((e.match(/<link[^>]+href="([^"]+)"/)||[])[1]||""),views=+((e.match(/views="(\d+)"/)||[])[1]||0);
       if(v&&t&&!short&&!out.some(o=>o.id===v)){const tt=dec(t);let c2=cat;if(cat!=="tilawat")for(const [re,k] of RECAT)if(re.test(tt)){c2=k;break;}out.push({id:v,t:tt,ch:name,cat:c2,pub:p,views});}}
   }catch(err){console.error("skip",name,err.message);}
 }
+for(let i=0;i<CH.length;i+=6)await Promise.all(CH.slice(i,i+6).map(one));
 out.sort((a,b)=>(b.pub||"").localeCompare(a.pub||""));
 writeFileSync("videos.json",JSON.stringify({updated:new Date().toISOString(),items:out}));
 console.log("videos:",out.length);

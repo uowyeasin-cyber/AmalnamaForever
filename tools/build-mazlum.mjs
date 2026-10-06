@@ -37,9 +37,9 @@ const dec = (s) => String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").
 const tag = (x, t) => { const m = x.match(new RegExp("<" + t + "[^>]*>([\\s\\S]*?)</" + t + ">")); return m ? dec(m[1]) : ""; };
 async function get(url, tries = 3) {
   for (let i = 0; i < tries; i++) {
-    try { const r = await fetch(url, {headers: UA, signal: AbortSignal.timeout(20000)}); if (r.ok) return await r.text(); if (r.status < 500 && r.status !== 404 && r.status !== 429) break; }
+    try { const r = await fetch(url, {headers: UA, signal: AbortSignal.timeout(12000)}); if (r.ok) return await r.text(); if (r.status < 500 && r.status !== 404 && r.status !== 429) break; }
     catch (e) { /* retry */ }
-    await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
+    if (i < tries - 1) await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
   }
   return null;
 }
