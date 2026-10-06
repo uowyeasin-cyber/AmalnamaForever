@@ -553,3 +553,5 @@ body.v9p .v6fab::after,body.v9p #v4mufti::after{animation:v6ring 2.6s ease-out 1
 .v5p .media.vid.ld .play svg{display:none}.v5p .media.vid.ld .play::after{content:"";display:block}
 .v5p .media.vid .dur{position:absolute;right:10px;bottom:10px;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.7);color:#fff;font-size:.75rem;font-weight:600}
 .v5c-prev video{width:100%;max-height:260px;border-radius:14px;display:block;background:#000}
+/* Online Mufti: the header stays on screen while the chat scrolls */
+.v4h.mf-sticky{position:sticky;top:0;z-index:40;margin:-8px -16px 10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;background:#0A2427;border-bottom:1px solid rgba(232,201,138,.16);box-shadow:0 10px 24px rgba(0,0,0,.35)}

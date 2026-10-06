@@ -62,7 +62,31 @@
       r:["নাগরিকত্ব অস্বীকার ও ২০১৭-র গণহত্যা; এখন নির্যাতন, জোরপূর্বক শ্রম ও জমি দখল","Denied citizenship and the 2017 genocide; now torture, forced labour and land seizures"],
       d:["জাতিসংঘ মানবাধিকার দপ্তর (সেপ্টেম্বর ২০২৬): সেনাবাহিনী ও আরাকান আর্মি দুজনই গুরুতর নির্যাতন করছে। ২০২৬-এর এপ্রিল পর্যন্ত প্রায় দেড় লাখ নতুন শরণার্থী বাংলাদেশে এসেছে; সমুদ্রপথে পালাতে গিয়ে বহু মৃত্যু।","UN Human Rights Office (September 2026): both the army and the Arakan Army commit grave abuses. Nearly 150,000 new refugees reached Bangladesh by April 2026, and many die fleeing by sea."],
       g:[["UNHCR","https://donate.unhcr.org/"],["BRAC","https://www.brac.net/"],["MSF","https://www.msf.org/donate"]],
-      src:[["OHCHR","https://www.ohchr.org/en/stories/2026/09/myanmars-rohingya-and-other-minorities-face-renewed-terror-illicit-economies-boom"]]}];
+      src:[["OHCHR","https://www.ohchr.org/en/stories/2026/09/myanmars-rohingya-and-other-minorities-face-renewed-terror-illicit-economies-boom"]]},
+    {k:"lebanon",flag:"🇱🇧",n:["লেবানন","Lebanon"],c:"#00A651",
+      z:["ইসরায়েলি বিমান হামলা (জাতিসংঘের প্রতিবেদন অনুযায়ী); হিজবুল্লাহ-ইসরায়েল যুদ্ধে বেসামরিক মানুষ মাঝখানে","Israeli airstrikes (according to UN reports); civilians caught between Hezbollah and Israel"],
+      m:["দক্ষিণ লেবানন ও বৈরুতের সাধারণ মানুষ — বিশেষ করে শিশু ও বাস্তুচ্যুত পরিবার","Ordinary people in southern Lebanon and Beirut — especially children and displaced families"],
+      s:["দক্ষিণ লেবানন, বেকা উপত্যকা ও বৈরুতের দক্ষিণ শহরতলি","Southern Lebanon, the Bekaa valley and Beirut's southern suburbs"],
+      r:["২০২৬-এর আঞ্চলিক যুদ্ধের অংশ হিসেবে হামলা; যুদ্ধবিরতির পরও আক্রমণ","Strikes as part of the 2026 regional war; attacks continue despite truces"],
+      d:["জাতিসংঘ (জুন ২০২৬): যুদ্ধবিরতির মধ্যেও লেবাননে প্রতিদিন গড়ে ১২টি শিশু নিহত বা আহত হচ্ছে। হাজার হাজার পরিবার ঘরছাড়া।","UN (June 2026): even during the truce, an average of 12 children a day are killed or maimed in Lebanon. Thousands of families have fled their homes."],
+      g:[["UNICEF","https://www.unicef.org/"],["Lebanese Red Cross","https://www.redcross.org.lb/"]],
+      src:[["UN News","https://news.un.org/en/story/2026/06/1167736"],["OHCHR","https://www.ohchr.org/en/press-releases/2026/04/turk-condemns-deadly-wave-israeli-strikes-lebanon"]]},
+    {k:"india",flag:"🇮🇳",n:["ভারতের মুসলিম","Muslims in India"],c:"#FF9933",
+      z:["কিছু রাজ্য সরকার, পুলিশ ও উগ্র হিন্দুত্ববাদী গোষ্ঠী (মানবাধিকার সংস্থাগুলোর প্রতিবেদন অনুযায়ী)","Some state governments, police and Hindu nationalist mobs (according to human rights groups)"],
+      m:["ভারতের মুসলিম নাগরিক — বিশেষ করে বাংলাভাষী মুসলিম, ছোট ব্যবসায়ী ও শ্রমিক","Indian Muslims — especially Bengali-speaking Muslims, small traders and workers"],
+      s:["আসাম, উত্তর প্রদেশ, গুজরাট, পশ্চিমবঙ্গ, দিল্লি ও অন্যান্য রাজ্য","Assam, Uttar Pradesh, Gujarat, West Bengal, Delhi and other states"],
+      r:["বুলডোজারে ঘর-মসজিদ ভাঙা, গণপিটুনি, 'বাংলাদেশি' সন্দেহে বের করে দেওয়া (পুশইন)","Bulldozer demolitions of homes and mosques, mob lynchings, expulsions of people branded 'Bangladeshi'"],
+      d:["HRW World Report 2026: মুসলিমদের বাড়ি ভাঙা, বিচার ছাড়া বহিষ্কার এবং সমালোচকদের মামলায় ফাঁসানোর অভিযোগ।","HRW World Report 2026: demolitions of Muslim homes, expulsions without due process and prosecution of critics."],
+      g:[["Amnesty International","https://www.amnesty.org/en/get-involved/"]],
+      src:[["HRW","https://www.hrw.org/world-report/2026/country-chapters/india"],["HRW","https://www.hrw.org/news/2026/02/04/india-religious-minorities-critics-unlawfully-targeted"]]},
+    {k:"world",flag:"🌐",n:["বিশ্বজুড়ে","Worldwide"],c:"#7C5CC4",
+      z:["খবরে উল্লিখিত হামলাকারী বা দায়ী পক্ষ","The attacker or party named in the report"],
+      m:["সেই এলাকার মুসলিম ব্যক্তি, মসজিদ বা সম্প্রদায়","The Muslim people, mosque or community in the report"],
+      s:["খবরে উল্লিখিত দেশ ও শহর — ইউরোপ, আমেরিকা, আফ্রিকা, এশিয়া","The country and city named in the report — Europe, the Americas, Africa, Asia"],
+      r:["ইসলামবিদ্বেষ, ঘৃণামূলক অপরাধ, মসজিদে হামলা, হিজাব বা ধর্মচর্চায় নিষেধাজ্ঞা","Islamophobia, hate crimes, attacks on mosques, bans on hijab or worship"],
+      d:["অঞ্চলের নির্দিষ্ট তালিকার বাইরে পৃথিবীর যেকোনো জায়গায় মুসলিমদের ওপর হামলা বা বৈষম্যের খবর এখানে আসে। প্রতিটা খবরের মূল সূত্র খুলে বিস্তারিত পড়ো।","Reports of attacks on or discrimination against Muslims anywhere in the world outside the listed regions. Open each report's source for the details."],
+      g:[["Islamic Relief","https://www.islamic-relief.org/"],["CAIR","https://www.cair.com/"]],
+      src:[["Google News","https://news.google.com/"]]}];
   var RK={};REG.forEach(function(r){RK[r.k]=r;});
   var TODO=[["🤲 দোয়া ও কুনুতে নাজিলা — নামাজে নিয়মিত মজলুমদের জন্য দোয়া করো।","🤲 Make dua and qunut an-nazilah — pray for the oppressed in your salah."],
     ["💝 যাচাই করা সংস্থায় দান করো — নিচের লিংকগুলো দেখো।","💝 Give to verified charities — see the links below."],
@@ -74,9 +98,16 @@
   // ---- data
   var DATA=null,loading=null;
   try{DATA=JSON.parse(localStorage.getItem("am-mz")||"null");}catch(e){}
+  // live: the app's own server builds the feed on request (cached 1–5 minutes); mazlum.json is the two-hourly backup
+  var LIVE=(window.AMALNAMA_PUSH&&AMALNAMA_PUSH.url||"").replace(/\/api\/ring.*$/,"/api/feed");
+  function getJ(u,ms){var ac=window.AbortController?new AbortController():null,tm=ac&&setTimeout(function(){ac.abort();},ms);
+    return fetch(u,{signal:ac&&ac.signal,cache:"no-store"}).then(function(r){clearTimeout(tm);if(!r.ok)throw new Error(r.status);return r.json();}).then(function(d){if(!d||!d.items||d.items.length<20)throw new Error("few");return d;});}
+  function keep(d){if(!d||!d.items)return DATA;if(DATA&&DATA.updated&&Date.parse(d.updated)<Date.parse(DATA.updated)&&!(d.items.length>DATA.items.length))return DATA;DATA=d;try{localStorage.setItem("am-mz",JSON.stringify(d));}catch(e){}return DATA;}
   function load(force){if(loading&&!force)return loading;
-    loading=fetch("mazlum.json?t="+(force?Date.now():Math.floor(Date.now()/9e5)),{cache:force?"reload":"default"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
-      .then(function(d){if(d&&d.items){DATA=d;try{localStorage.setItem("am-mz",JSON.stringify(d));}catch(e){}}return DATA;}).catch(function(){return DATA;});return loading;}
+    var bucket=force?Math.floor(Date.now()/6e4):Math.floor(Date.now()/3e5);
+    var stat=getJ("mazlum.json?t="+Math.floor(Date.now()/9e5),12000).then(keep).catch(function(){return DATA;});
+    var live=LIVE?getJ(LIVE+"?k=mazlum&t="+bucket,25000).then(keep).catch(function(){return null;}):Promise.resolve(null);
+    loading=live.then(function(d){return d||stat;});return loading;}
   function ago(p){var d=Date.parse(p);if(!d)return "";var m=Math.max(1,Math.floor((Date.now()-d)/6e4));if(m<60)return num(m)+T(" মিনিট আগে","m ago");var h=Math.floor(m/60);if(h<24)return num(h)+T(" ঘণ্টা আগে","h ago");return num(Math.floor(h/24))+T(" দিন আগে","d ago");}
   // ---- round live Palestine flag
   function flag(size){var NS="http://www.w3.org/2000/svg",s=document.createElementNS(NS,"svg");s.setAttribute("viewBox","0 0 60 60");s.setAttribute("width",size);s.setAttribute("height",size);s.setAttribute("aria-hidden","true");
@@ -136,7 +167,7 @@
     if(!items.length)list.appendChild(el("p",{class:"mz-empty"},T("এই মুহূর্তে কিছু নেই — একটু পরে রিফ্রেশ করো।","Nothing here right now — refresh a little later.")));
     items.slice(0,st.n).forEach(function(it){var c=card(it);if(c)list.appendChild(c);});
     if(items.length>st.n)root.appendChild(el("button",{type:"button",class:"v4btn",style:"width:100%;justify-content:center;margin-top:12px",onclick:function(){st.n+=16;render(root);}},T("আরও দেখাও","Show more")+" ("+num(items.length-st.n)+")"));
-    root.appendChild(el("p",{class:"mz-foot"},T("সূত্র: Google News, BBC বাংলা, Al Jazeera, Middle East Eye, TRT World ও বিশ্বস্ত ইসলামিক চ্যানেল। প্রতি ২ ঘণ্টায় নতুন আপডেট — টেনে বা ↻ চেপে রিফ্রেশ করো।","Sources: Google News, BBC Bangla, Al Jazeera, Middle East Eye, TRT World and trusted Islamic channels. New updates every 2 hours — pull or tap ↻ to refresh.")));
+    root.appendChild(el("p",{class:"mz-foot"},T("সূত্র: Google News, BBC বাংলা, Al Jazeera, Middle East Eye, TRT World ও বিশ্বস্ত ইসলামিক চ্যানেল। ↻ চাপলেই সাথে সাথে সর্বশেষ খবর আসে।","Sources: Google News, BBC Bangla, Al Jazeera, Middle East Eye, TRT World and trusted Islamic channels. Tap ↻ for the very latest, straight away.")));
     if(!opts.embed)pull(root);}
   function refresh(root){var b=root.querySelector(".mz-hero .rf");if(b)b.classList.add("spin");var before=DATA&&DATA.updated;
     load(true).then(function(){if(!root.isConnected)return;render(root);V.toast(DATA&&DATA.updated!==before?T("নতুন আপডেট এসেছে","New updates loaded"):T("সব আপডেট দেখানো হচ্ছে","You're up to date"));});}
@@ -150,7 +181,10 @@
   // ---- entry: round live flag on the More page
   function moreCard(){var r=document.getElementById("v-more");if(!r||r.querySelector(".mz-entry"))return;var h=r.querySelector(".v4h");if(!h)return;
     h.insertAdjacentElement("afterend",el("button",{type:"button",class:"v4card mz-entry",onclick:function(){window.setView("mazlum");}},liveIcon(58),
-      el("span",{style:"flex:1;min-width:0;text-align:start"},el("b",null,T("মজলুম কর্নার","Mazlum Corner")),el("small",null,T("ফিলিস্তিন · সুদান · ইয়েমেন · ইরান · উইঘুর · কাশ্মীর · রোহিঙ্গা","Palestine · Sudan · Yemen · Iran · Uyghur · Kashmir · Rohingya"))),
+      el("span",{style:"flex:1;min-width:0;text-align:start"},el("b",null,T("মজলুম কর্নার","Mazlum Corner")),el("small",null,T("ফিলিস্তিন · সুদান · লেবানন · ইয়েমেন · ইরান · উইঘুর · কাশ্মীর · রোহিঙ্গা · ভারত · বিশ্বজুড়ে","Palestine · Sudan · Lebanon · Yemen · Iran · Uyghur · Kashmir · Rohingya · India · worldwide"))),
       el("span",{class:"v4muted"},V.RTL?"‹":"›")));}
   var mo=null,pv=window.setView;window.setView=function(v){pv(v);try{if(v==="more"){setTimeout(moreCard,0);var m=document.getElementById("v-more");if(m&&!mo){mo=new MutationObserver(function(){if(!m.querySelector(".mz-entry"))moreCard();});mo.observe(m,{childList:true});}}}catch(e){}};
+  // loaded after the first screen: finish the page that is already open
+  try{var cur=document.querySelector("section.v4s:not([hidden])");if(cur&&cur.id==="v-more")moreCard();
+    var yt=document.querySelector(".v5yt");if(yt&&yt.isConnected&&!yt.querySelector(".mz-chip")&&!yt.querySelector("iframe")&&window.V5&&V5.videos)V5.videos(yt,yt._opts);}catch(e){}
 })();

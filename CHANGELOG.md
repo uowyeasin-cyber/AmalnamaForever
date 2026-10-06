@@ -2,6 +2,16 @@
 
 All notable changes to Amalnama. Dates are in 2026.
 
+## [13.0.0] - 2026-10-06
+### Added
+- **User manual**: a 17-page premium PDF guide to every feature (Amalnama-User-Manual.pdf), designed and developed by Yeasin Arafat. It opens from More › Share with friends.
+- **Mazlum Corner**: Lebanon, Muslims in India and a worldwide feed (Islamophobia, attacks on mosques and Muslims anywhere). Refresh now fetches live reports within minutes via the app's server (`/api/feed`), falling back to the two-hourly file.
+- Media refresh also loads the newest uploads live.
+### Changed
+- Online Mufti only returns the salam when you greet first, and its header stays visible while you scroll.
+- Faster start: Qibla, Masjid, Hifz, Family and Mazlum code loads just after the first screen; the video list draws in chunks.
+- Feed builders share one module (tools/feeds-core.mjs).
+
 ## [12.0.0] - 2026-10-06
 ### Added
 - **Mazlum Corner**: the latest news, videos and lectures about oppressed Muslims in Palestine, Sudan, Yemen, Iran, the Uyghur region, Kashmir and among the Rohingya. Every update shows the oppressor, the oppressed, the place, the cause and what we can do (dua, verified charities, sources). It is the first category in Media, and a round live Palestine-flag button on the More page. Content refreshes every 2 hours.

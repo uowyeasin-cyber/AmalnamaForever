@@ -144,7 +144,12 @@ appCard.appendChild(card(t(B("আজ ফোনে","Phone today","Telefon hari i
     "Base answers on the Quran, authentic Sunnah, Ijma and Qiyas. ALWAYS end with a short 'References' list: Quran as Surah name + number:ayah; hadith as collection + number (sunnah.com numbering) with grade when known; mention Ijma/Qiyas or the madhhab view where relevant. "+
     "Never invent references; if unsure, say so. Where the four madhhabs differ, briefly show the main views (note the Hanafi view since many users are from South Asia). "+
     "Keep answers concise, practical, gentle, with a suggestion for action. For personal, family, divorce, inheritance shares, finance contracts, medical or legal matters, or anything serious, remind the user to confirm with a qualified local mufti. "+
-    "Do not issue takfir, do not discuss sectarian attacks, stay respectful. You are an AI and not a human mufti.";
+    "Do not issue takfir, do not discuss sectarian attacks, stay respectful. You are an AI and not a human mufti. "+
+    "Greetings: do NOT begin with any greeting. Only if the user's latest message itself contains a salam (e.g. 'Assalamu alaikum', 'সালাম', 'السلام عليكم') reply first with 'Wa alaikumus salam wa rahmatullah' in their language; otherwise start directly with the answer.";
+  // the model sometimes returns a salam nobody gave — drop it unless the user greeted first
+  var SALAM=/(assalam|as-?salam|salaam|salam\b|সালাম|আস্-?সালাম|السلام|سلام)/i;
+  var REPLY=/^\s*(?:\*\*)?\s*(?:wa?[ -]?(?:a?l|'a?l)[a-z]*kum|ওয়া?\s*-?\s*(?:আ|এ)?লাইকুম|ওয়ালাইকুম|و\s*عليكم|وعليكم|wa ?alaykum|walaikum|wa'?alaikum)[^\n]*\n*/i;
+  function noSalam(q,txt){return SALAM.test(q)?txt:String(txt||"").replace(REPLY,"");}
   // flash-lite answers in a few seconds; the bigger model is the backup (it thinks long and can stall on slow phone networks)
   var MODELS=["gemini-3.5-flash-lite","gemini-3.5-flash"];
   var ai=null,aiErr=null,mroot=null,busy=false;
@@ -176,7 +181,7 @@ appCard.appendChild(card(t(B("আজ ফোনে","Phone today","Telefon hari i
       if(/^-{3,}$/.test(l)){box.appendChild(el("hr",{style:"border:0;border-top:1px solid rgba(232,201,138,.25);margin:8px 0"}));return;}
       box.appendChild(inline(el("p",{style:"margin:0 0 6px"}),l));});}
   function mdraw(){var r=mroot,v=V.V();v.mufti=v.mufti||[];r.innerHTML="";
-    var hdr=el("div",{class:"v4h"},el("button",{class:"v4back",type:"button","aria-label":"Back",onclick:function(){window.setView("today");}},ic("back",20)),
+    var hdr=el("div",{class:"v4h mf-sticky"},el("button",{class:"v4back",type:"button","aria-label":"Back",onclick:function(){window.setView("today");}},ic("back",20)),
       el("span",{style:"width:52px;height:52px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#F7E2A6,#B88A3E,#F7E2A6,#C9A050,#F7E2A6);flex:none"},(function(){var s=V.muftiAvatar("mf");s.setAttribute("width","48");s.setAttribute("height","48");s.style.display="block";return s;})()),
       el("h1",{style:"font-size:1.25rem"},t(B("অনলাইন মুফতি","Online Mufti","Mufti dalam talian","المفتي عبر الإنترنت","آن لائن مفتی","Mufti mtandaoni")),el("span",{class:"sub"},el("span",{class:"v4live",style:"margin-inline-end:6px;vertical-align:middle"}),t(B("লাইভ · কুরআন, হাদিস, ইজমা ও কিয়াসের রেফারেন্সসহ","Live · with Quran, Hadith, Ijma & Qiyas references","Langsung · dengan rujukan","مباشر · مع المراجع","لائیو · حوالوں کے ساتھ","Moja kwa moja · na marejeo")))),
       v.mufti.length?el("button",{class:"v4ico",type:"button","aria-label":t(B("নতুন আলাপ","New chat","Sembang baharu","محادثة جديدة","نئی گفتگو","Mazungumzo mapya")),onclick:function(){v.mufti=[];V.save();mdraw();}},ic("refresh",20)):null);
@@ -195,7 +200,7 @@ appCard.appendChild(card(t(B("আজ ফোনে","Phone today","Telefon hari i
     setTimeout(function(){window.scrollTo({top:document.body.scrollHeight});},30);}
   function send(q){if(busy)return;var v=V.V();v.mufti=v.mufti||[];var hist=v.mufti.slice();v.mufti.push({r:"me",x:q});busy=true;mdraw();
     var log=mroot.querySelector("[role=log]"),b=el("div",{class:"v4bubble ai"},"…");log.appendChild(b);
-    ask(hist,q,function(s){md(b,s);}).then(function(all){v.mufti.push({r:"ai",x:all||offline(q)});})
+    ask(hist,q,function(s){md(b,noSalam(q,s));}).then(function(all){all=noSalam(q,all);v.mufti.push({r:"ai",x:all||offline(q)});})
       .catch(function(e){aiErr=e;try{console.warn("Mufti AI",e);}catch(x){}v.mufti.push({r:"ai",x:offline(q)});})
       .then(function(){v.mufti=v.mufti.slice(-40);V.save();busy=false;mdraw();});}
 })();

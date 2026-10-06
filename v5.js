@@ -160,7 +160,10 @@
   // fresh videos: videos.json is rebuilt every few hours from trusted channels (GitHub Action)
   var DYN=[],dynAt=0,dynLoading=null;
   function vload(force,root){if(dynLoading&&!force)return dynLoading;
-    dynLoading=fetch("videos.json?t="+(force?Date.now():Math.floor(Date.now()/36e5)),{cache:force?"reload":"default"}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    var live=(window.AMALNAMA_PUSH&&AMALNAMA_PUSH.url||"").replace(/\/api\/ring.*$/,"/api/feed");
+    function grab(u,ms){var ac=window.AbortController?new AbortController():null,tm=ac&&setTimeout(function(){ac.abort();},ms);return fetch(u,{signal:ac&&ac.signal,cache:force?"no-store":"default"}).then(function(r){clearTimeout(tm);return r.ok?r.json():null;}).then(function(d){if(!d||!d.items||d.items.length<20)throw new Error("few");return d;});}
+    // refresh asks the app's server for what was uploaded minutes ago; videos.json (rebuilt every 2 hours) is the backup
+    dynLoading=(force&&live?grab(live+"?k=videos&t="+Math.floor(Date.now()/6e4),25000).catch(function(){return grab("videos.json?t="+Date.now(),12000);}):grab("videos.json?t="+Math.floor(Date.now()/36e5),12000)).catch(function(){return null;}).then(function(d){
       if(d&&d.items){DYN=d.items.filter(function(x){return x&&x.id&&VC[x.cat];}).map(function(x){return [x.id,x.t,x.ch,x.cat,"",x.pub||""];});dynAt=Date.now();if(!vs.playing)vs.cur=null;if(root&&root.isConnected)vrender(root,root._opts);}
       return DYN;}).catch(function(){return DYN;});return dynLoading;}
   function isNew(v){var d=v[5]&&Date.parse(v[5]);return d&&Date.now()-d<3*864e5;}
@@ -198,10 +201,14 @@
     root.appendChild(chips);
     if(vs.cat==="mazlum"&&window.AMZ){var mz=el("div",{class:"mz-embed"});root.appendChild(mz);AMZ.render(mz,{embed:true});return;}
     var lst=el("div",{class:"v5yt-list"});
-    list.filter(function(v){return vs.cat==="all"||v[3]===vs.cat;}).forEach(function(v){if(v[0]===cur[0])return;
+    // draw 16 videos now and the rest in chunks as you scroll — opening Media stays instant
+    var vl=list.filter(function(v){return (vs.cat==="all"||v[3]===vs.cat)&&v[0]!==cur[0];}),vi=0;
+    function more(){vl.slice(vi,vi+16).forEach(row);vi+=16;if(vi<vl.length){var sen=el("div",{style:"height:1px"});lst.appendChild(sen);
+      if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){io.disconnect();sen.remove();more();}},{rootMargin:"600px"});io.observe(sen);}else{sen.remove();more();}}}
+    function row(v){
       lst.appendChild(el("button",{type:"button",onclick:function(){vplay(v,root);}},el("span",{class:"th"},vthumb(v[0]),v[4]?el("span",{class:"dur"},V.L==="bn"?v[4]:v[4].replace(/[০-৯]/g,function(d){return "০১২৩৪৫৬৭৮৯".indexOf(d);})):null),
-        el("span",{class:"tt"},el("b",null,v[1]),el("small",null,v[2]),el("small",null,t(VC[v[3]][0])+(v[5]?" · "+vago(v[5]):""),isNew(v)?el("i",{class:"nw"},t(B("নতুন","New","Baharu","جديد","نیا","Mpya"))):null))));});
-    root.appendChild(lst);
+        el("span",{class:"tt"},el("b",null,v[1]),el("small",null,v[2]),el("small",null,t(VC[v[3]][0])+(v[5]?" · "+vago(v[5]):""),isNew(v)?el("i",{class:"nw"},t(B("নতুন","New","Baharu","جديد","نیا","Mpya"))):null))));}
+    more();root.appendChild(lst);
     root.appendChild(el("p",{class:"v5yt-foot"},t(B("নিচে টেনে রিফ্রেশ করলে নতুন ভিডিও আসবে","Pull down to refresh for new videos","Tarik ke bawah untuk muat semula","اسحب للأسفل للتحديث","نئی ویڈیوز کے لیے نیچے کھینچیں","Vuta chini kuonyesha upya"))));
     vpull(root);}
   function vsearch(root,all){var inp=el("input",{class:"v5in",type:"search",placeholder:t(B("ভিডিও খুঁজো…","Search videos…","Cari video…","ابحث…","تلاش…","Tafuta…"))});var out=el("div",{class:"v5yt-sr"});
@@ -296,9 +303,10 @@
   var APPURL="https://uowyeasin-cyber.github.io/AmalnamaForever/";
   V5.share=function(){var box=el("div",{class:"v5share"},
       el("div",{class:"pv"},el("img",{src:"icon-192.png",alt:""}),el("div",null,el("b",null,"Amalnama"),el("small",null,t(B("ফ্রি · বিজ্ঞাপন নেই · ৬ ভাষা","Free · no ads · 6 languages","Percuma · tiada iklan · 6 bahasa","مجاني · بلا إعلانات · ٦ لغات","مفت · اشتہار نہیں · ٦ زبانیں","Bure · bila matangazo · lugha 6"))))),
-      el("a",{class:"v4btn gold",href:"Amalnama-Brochure.pdf",download:"Amalnama-Brochure.pdf",style:"justify-content:center;text-decoration:none"},ic("install",18),t(B("ব্রোশিওর PDF ডাউনলোড","Download brochure PDF","Muat turun brosur PDF","تنزيل الكتيب PDF","بروشر PDF ڈاؤن لوڈ","Pakua brosha PDF"))),
+      el("a",{class:"v4btn gold",href:"Amalnama-User-Manual.pdf",target:"_blank",rel:"noopener",style:"justify-content:center;text-decoration:none"},ic("book",18),t(B("ইউজার ম্যানুয়াল পড়ো (PDF · সব ফিচার)","Read the user manual (PDF · every feature)","Baca manual pengguna (PDF)","اقرأ دليل المستخدم (PDF)","یوزر مینوئل پڑھیں (PDF)","Soma mwongozo (PDF)"))),
+      el("a",{class:"v4btn",href:"Amalnama-User-Manual.pdf",download:"Amalnama-User-Manual.pdf",style:"justify-content:center;text-decoration:none"},ic("install",18),t(B("PDF ডাউনলোড","Download the PDF","Muat turun PDF","تنزيل PDF","PDF ڈاؤن لوڈ","Pakua PDF"))),
       el("button",{class:"v4btn",type:"button",style:"justify-content:center",onclick:function(){var txt=t(B("Amalnama — নামাজ, কুরআন, হাদিস, হিসাব আর ইসলামিক মিডিয়া এক অ্যাপে। ফ্রি, বিজ্ঞাপন নেই:","Amalnama — prayer, Quran, hadith, finance and Islamic media in one app. Free, no ads:","Amalnama — solat, Al-Quran, hadis dan kewangan dalam satu aplikasi. Percuma:","عملنامه — الصلاة والقرآن والحديث في تطبيق واحد. مجاني:","عملنامہ — نماز، قرآن، حدیث ایک ایپ میں۔ مفت:","Amalnama — swala, Qur'ani na hadithi katika programu moja. Bure:"));
-        fetch("Amalnama-Brochure.pdf").then(function(r){return r.blob();}).then(function(bl){var f=new File([bl],"Amalnama-Brochure.pdf",{type:"application/pdf"});
+        fetch("Amalnama-User-Manual.pdf").then(function(r){return r.blob();}).then(function(bl){var f=new File([bl],"Amalnama-User-Manual.pdf",{type:"application/pdf"});
           if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:"Amalnama",text:txt+" "+APPURL});
           if(navigator.share)return navigator.share({title:"Amalnama",text:txt,url:APPURL});throw 0;})
         .catch(function(e){if(e&&e.name==="AbortError")return;try{navigator.clipboard.writeText(txt+" "+APPURL);V.toast(t(B("লিংক কপি হয়েছে","Link copied","Pautan disalin","تم نسخ الرابط","لنک کاپی ہو گیا","Kiungo kimenakiliwa")));}catch(x){}});}},
@@ -307,7 +315,7 @@
     V.sheet(t(B("বন্ধুদের সাথে শেয়ার করো","Share with friends","Kongsi dengan rakan","شارك مع الأصدقاء","دوستوں کے ساتھ شیئر کریں","Shiriki na marafiki")),box);};
   function shareItem(){var r=document.getElementById("v-more");if(!r||r.querySelector(".v5shareitem"))return;var list=r.querySelector(".v4list");if(!list)return;
     var b=el("button",{type:"button",class:"v4li v5shareitem",style:"width:100%;text-align:start;color:inherit;font:inherit;cursor:pointer",onclick:V5.share},el("span",{style:"width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#F3DC9C,#C9A24F);color:#1A1406;flex:none"},ic("send",22)),el("span",{class:"t"},el("b",null,t(B("বন্ধুদের সাথে শেয়ার করো","Share with friends","Kongsi dengan rakan","شارك مع الأصدقاء","دوستوں کے ساتھ شیئر کریں","Shiriki na marafiki"))),
-      el("small",null,t(B("প্রিমিয়াম ব্রোশিওর PDF · QR কোড ও লিংক","Premium brochure PDF · QR code & link","Brosur PDF · kod QR & pautan","كتيب PDF · رمز QR ورابط","بروشر PDF · QR اور لنک","Brosha PDF · QR na kiungo")))),el("span",{class:"v4muted",style:"font-size:1.2rem"},V.RTL?"‹":"›"));
+      el("small",null,t(B("ইউজার ম্যানুয়াল PDF · QR কোড ও লিংক","User manual PDF · QR code & link","Manual pengguna PDF · kod QR & pautan","دليل المستخدم PDF · رمز QR ورابط","یوزر مینوئل PDF · QR اور لنک","Mwongozo PDF · QR na kiungo")))),el("span",{class:"v4muted",style:"font-size:1.2rem"},V.RTL?"‹":"›"));
     list.insertBefore(b,list.firstChild);}
 
   // =====================================================================
@@ -341,7 +349,7 @@
   // NAVIGATION MEMORY · back button walks back through screens; a refresh reopens the same screen
   // =====================================================================
   var navPop=false,lastNav=null,SPACES=["today","amal","finance","comm","shariah","more"];
-  function validView(v){return !!v&&/^[a-z]+$/.test(v)&&(SPACES.indexOf(v)>=0||!!document.getElementById("v-"+v));}
+  function validView(v){return !!v&&/^[a-z]+$/.test(v)&&(SPACES.indexOf(v)>=0||!!document.getElementById("v-"+v)||(window.AMLAZYV||[]).indexOf(v)>=0);}
   var prev3=window.setView;
   window.setView=function(v){prev3(v);try{if(!validView(v))return;var url=location.pathname+location.search+"#"+v;
       if(!navPop&&v!==lastNav){if(lastNav===null||(history.state&&history.state.amv===v))history.replaceState({amv:v},"",url);else history.pushState({amv:v},"",url);}

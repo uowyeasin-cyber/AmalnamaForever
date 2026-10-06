@@ -317,4 +317,6 @@
       el("span",{style:"flex:1;min-width:0;text-align:start"},el("b",null,T("পারিবারিক বাজেট ও লক্ষ্য","Family budget & goals","Bajet & sasaran keluarga","ميزانية وأهداف العائلة","فیملی بجٹ و اہداف","Bajeti ya familia")),el("small",null,T("সবাই মিলে খরচ আর সঞ্চয় — লাইভ","Spend and save together — live","Belanja & simpan bersama","أنفقوا وادخروا معًا","مل کر خرچ و بچت","Pamoja — moja kwa moja"))),el("span",{class:"v4muted"},V.RTL?"‹":"›")));}
   var mo=null;
   var pv3=window.setView;window.setView=function(v){pv3(v);try{if(v==="amal")setTimeout(amalTiles,0);if(v==="finance"){setTimeout(familyCard,0);var f=document.getElementById("v-finance");if(f&&!mo){mo=new MutationObserver(function(){if(!f.querySelector(".v9famcard"))familyCard();});mo.observe(f,{childList:true});}}}catch(e){}};
+  // loaded after the first screen: finish the page that is already open
+  try{var cur=document.querySelector("section.v4s:not([hidden])");if(cur){if(cur.id==="v-amal")amalTiles();if(cur.id==="v-finance")familyCard();}}catch(e){}
 })();
