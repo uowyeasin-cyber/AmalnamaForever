@@ -119,10 +119,13 @@
   // VIDEOS · YouTube style (in-app privacy-enhanced player, prayer-time picks, categories, pull to refresh)
   // =====================================================================
   var VC={trend:[B("ট্রেন্ডিং","Trending","Trending","الأكثر رواجًا","ٹرینڈنگ","Zinazovuma"),"#5A1E22"],
+    golden:[B("সোনালী অতীত ও আবিষ্কার","Golden age & innovation","Zaman kegemilangan","العصر الذهبي والابتكار","سنہری دور و ایجادات","Enzi ya dhahabu"),"#3D3110"],
     history:[B("ইসলামিক ইতিহাস","Islamic history","Sejarah Islam","التاريخ الإسلامي","اسلامی تاریخ","Historia ya Kiislamu"),"#3A2A16"],
+    debate:[B("বিতর্ক ও যুক্তি","Debates","Debat","مناظرات","مناظرے","Midahalo"),"#3A1F3D"],
     life:[B("লাইফস্টাইল","Lifestyle","Gaya hidup","أسلوب الحياة","طرزِ زندگی","Mtindo wa maisha"),"#1F3D2F"],
     edu:[B("শিক্ষা","Learning","Pendidikan","تعليم","تعلیم","Elimu"),"#1C3550"],
     dawah:[B("দাওয়াহ","Dawah","Dakwah","دعوة","دعوت","Daawa"),"#2E2440"],
+    ummah:[B("উম্মাহর খবর","Ummah affairs","Hal ehwal ummah","شؤون الأمة","امت کے حالات","Mambo ya Umma"),"#3B1A1A"],
     tilawat:[B("তিলাওয়াত","Recitation","Tilawah","تلاوة","تلاوت","Kisomo"),"#2A2312"]};
   // [youtubeId, title, channel, category, duration]
   var VL=[
@@ -158,16 +161,19 @@
   var DYN=[],dynAt=0,dynLoading=null;
   function vload(force,root){if(dynLoading&&!force)return dynLoading;
     dynLoading=fetch("videos.json?t="+(force?Date.now():Math.floor(Date.now()/36e5)),{cache:force?"reload":"default"}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(d&&d.items){DYN=d.items.filter(function(x){return x&&x.id&&VC[x.cat];}).map(function(x){return [x.id,x.t,x.ch,x.cat,"",x.pub||""];});dynAt=Date.now();if(root&&root.isConnected)vrender(root,root._opts);}
+      if(d&&d.items){DYN=d.items.filter(function(x){return x&&x.id&&VC[x.cat];}).map(function(x){return [x.id,x.t,x.ch,x.cat,"",x.pub||""];});dynAt=Date.now();if(!vs.playing)vs.cur=null;if(root&&root.isConnected)vrender(root,root._opts);}
       return DYN;}).catch(function(){return DYN;});return dynLoading;}
   function isNew(v){var d=v[5]&&Date.parse(v[5]);return d&&Date.now()-d<3*864e5;}
   function vshuffle(list){var h=vhist();return list.map(function(x,i){var r=((Math.sin((i+1)*9301+vs.seed*49297)+1)/2)*3;var d=x[5]&&Date.parse(x[5]);var fresh=d?Math.max(0,3-(Date.now()-d)/864e5):0;return {x:x,s:r+fresh-(h[x[0]]||0)*1.5};}).sort(function(a,b){return b.s-a.s;}).map(function(o){return o.x;});}
-  function vrefresh(root){vs.seed=Math.random();vload(true,root).then(function(){vrender(root,root._opts);V.toast(t(B("নতুন ভিডিও সাজানো হলো","Fresh videos loaded","Video baharu dimuatkan","تم تحميل فيديوهات جديدة","نئی ویڈیوز آ گئیں","Video mpya zimepakiwa")));});}
+  function vrefresh(root){if(vs.cat==="mazlum"&&window.AMZ){var mzb=root.querySelector(".mz-embed .mz-hero .rf");if(mzb){mzb.click();return;}}vs.seed=Math.random();if(!vs.playing)vs.cur=null;vload(true,root).then(function(){if(!vs.playing)vs.cur=null;vrender(root,root._opts);V.toast(t(B("নতুন ভিডিও সাজানো হলো","Fresh videos loaded","Video baharu dimuatkan","تم تحميل فيديوهات جديدة","نئی ویڈیوز آ گئیں","Video mpya zimepakiwa")));});}
+  // the big player opens on something new: the freshest videos you haven't watched yet (changes on every refresh)
+  function vhero(recs){var h=vhist(),fresh=DYN.filter(function(x){return !h[x[0]]&&x[3]!=="tilawat";}).sort(function(a,b){return (b[5]||"").localeCompare(a[5]||"");}).slice(0,10);
+    if(!fresh.length)return recs[0];return fresh[Math.floor(vs.seed*fresh.length)%fresh.length];}
   function vplay(item,root){var h=vhist();h[item[0]]=(h[item[0]]||0)+1;V.save();vs.cur=item;vs.playing=true;vrender(root,root._opts);try{root.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}}
   function vthumb(id,cls){var im=el("img",{src:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",alt:"",loading:"lazy",class:cls||""});return im;}
   function vrender(root,opts){root._opts=opts||root._opts||{};opts=root._opts;root.innerHTML="";root.classList.add("v5yt");if(!dynAt)vload(false,root);
     var slot=vslot();var recs=VR[slot].map(function(x){return [x[0],x[1],x[2],"tilawat","",t(PNM[slot]),true];}).concat(VE.map(function(x){return [x[0],x[1],x[2],"tilawat","",t(B("প্রতি নামাজের পর","After every prayer","Selepas setiap solat","بعد كل صلاة","ہر نماز کے بعد","Baada ya kila swala")),false];}));
-    var list=vshuffle(DYN.concat(VL));if(!vs.cur)vs.cur=recs[0];
+    var list=vshuffle(DYN.concat(VL));if(!vs.cur)vs.cur=vhero(recs);
     var cur=vs.cur;
     var hd=el("header",{class:"v5yt-hd"},
       el("span",{class:"logo"},V.sv("svg",{width:28,height:20,viewBox:"0 0 28 20","aria-hidden":"true"},V.sv("rect",{width:28,height:20,rx:6,fill:"#E3242B"}),V.sv("path",{d:"M11.5 6v8l6.5-4z",fill:"#fff"})),"Amalnama "+t(B("ভিডিও","Videos","Video","فيديو","ویڈیو","Video"))),
@@ -186,9 +192,11 @@
     recs.forEach(function(v){rc.appendChild(el("button",{type:"button",class:v[6]?"hot":"",onclick:function(){vplay(v,root);}},el("span",{class:"th"},vthumb(v[0]),el("span",{class:"tag"},v[5])),el("span",{class:"tt"},v[1])));});
     root.appendChild(rc);
     var chips=el("div",{class:"v5yt-chips",role:"tablist"});
+    if(window.AMZ)chips.appendChild(el("button",{type:"button",role:"tab",class:"mz-chip","aria-selected":String(vs.cat==="mazlum"),onclick:function(){vs.cat="mazlum";vrender(root);}},AMZ.flag(20),t(B("মজলুম কর্নার","Mazlum Corner","Sudut Mazlum","ركن المظلومين","مظلوم کارنر","Kona la Wanaodhulumiwa")),el("i",{class:"lv"})));
     [["all",B("সব","All","Semua","الكل","سب","Zote")]].concat(Object.keys(VC).filter(function(k){return k!=="tilawat";}).map(function(k){return [k,VC[k][0]];})).forEach(function(c){
       chips.appendChild(el("button",{type:"button",role:"tab","aria-selected":String(vs.cat===c[0]),onclick:function(){vs.cat=c[0];vrender(root);}},t(c[1])));});
     root.appendChild(chips);
+    if(vs.cat==="mazlum"&&window.AMZ){var mz=el("div",{class:"mz-embed"});root.appendChild(mz);AMZ.render(mz,{embed:true});return;}
     var lst=el("div",{class:"v5yt-list"});
     list.filter(function(v){return vs.cat==="all"||v[3]===vs.cat;}).forEach(function(v){if(v[0]===cur[0])return;
       lst.appendChild(el("button",{type:"button",onclick:function(){vplay(v,root);}},el("span",{class:"th"},vthumb(v[0]),v[4]?el("span",{class:"dur"},V.L==="bn"?v[4]:v[4].replace(/[০-৯]/g,function(d){return "০১২৩৪৫৬৭৮৯".indexOf(d);})):null),

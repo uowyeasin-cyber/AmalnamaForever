@@ -43,9 +43,13 @@ service cloud.firestore {
     match /posts/{pid} {
       allow read: if approved();
       allow create: if approved() && own() && realAccount()
-        && request.resource.data.keys().hasOnly(['uid','name','photo','text','createdAt','announce','likes','pinned','bg','image'])
+        && request.resource.data.keys().hasOnly(['uid','name','photo','text','createdAt','announce','likes','pinned','bg','image','video'])
         && (txt(request.resource.data.text, 3000)
-            || (request.resource.data.text == '' && request.resource.data.get('image', '') != ''))
+            || (request.resource.data.text == '' && (request.resource.data.get('image', '') != '' || request.resource.data.get('video', null) != null)))
+        && (request.resource.data.get('video', null) == null || (request.resource.data.video is map
+            && request.resource.data.video.keys().hasOnly(['n','mime','size','thumb','dur'])
+            && request.resource.data.video.n is int && request.resource.data.video.n <= 40
+            && request.resource.data.video.get('thumb', '') is string && request.resource.data.video.get('thumb', '').size() <= 200000))
         && request.resource.data.get('image', '') is string && request.resource.data.get('image', '').size() <= 900000
         && request.resource.data.get('bg', 0) is int && request.resource.data.get('bg', 0) >= 0 && request.resource.data.get('bg', 0) < 8
         && request.resource.data.createdAt == request.time
@@ -79,6 +83,32 @@ service cloud.firestore {
         && txt(request.resource.data.text, 1000)
         && request.resource.data.createdAt == request.time;
       allow delete: if isAdmin() || (approved() && resource.data.uid == request.auth.uid);
+    }
+
+    // Stories: text, photo or video that members see for 24 hours
+    match /stories/{sid} {
+      allow read: if approved();
+      allow create: if approved() && own() && realAccount()
+        && request.resource.data.keys().hasOnly(['uid','name','photo','type','text','bg','image','media','createdAt'])
+        && request.resource.data.type in ['text','image','video']
+        && request.resource.data.get('text', '') is string && request.resource.data.get('text', '').size() <= 300
+        && (request.resource.data.type != 'text' || txt(request.resource.data.text, 300))
+        && request.resource.data.get('image', '') is string && request.resource.data.get('image', '').size() <= 900000
+        && (request.resource.data.type != 'video' || (request.resource.data.media is map && request.resource.data.media.n is int && request.resource.data.media.n <= 30
+            && request.resource.data.media.get('thumb', '') is string && request.resource.data.media.get('thumb', '').size() <= 200000))
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin() || (approved() && resource.data.uid == request.auth.uid);
+    }
+    // Pieces of post and story videos (each piece fits in one document)
+    match /blobs/{bid} {
+      allow read: if approved();
+      allow create: if approved() && own() && realAccount()
+        && request.resource.data.keys().hasOnly(['uid','d','i','n','ref','mime','createdAt'])
+        && request.resource.data.d is string && request.resource.data.d.size() <= 800000
+        && request.resource.data.n is int && request.resource.data.n <= 40
+        && bid == request.resource.data.ref + '_' + string(request.resource.data.i)
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin() || (approved() && (resource == null || resource.data.uid == request.auth.uid));
     }
 
     // Public profile inside the community: name, photo, about. Only approved members can see it.

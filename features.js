@@ -366,16 +366,104 @@
     if(me)c.appendChild(el("button",{class:"v5c-link",type:"button",onclick:function(){clear();auth.signOut();}},T("c.signout")+(me.email?" · "+me.email:"")));}
   // ---- stories row (members, ring = active in last 24 h)
   var storyEl=null;
-  function stories(){storyEl=el("div",{class:"v5c-stories"});body.appendChild(storyEl);drawStories();}
-  function drawStories(){if(!storyEl||!storyEl.isConnected)return;storyEl.innerHTML="";
-    var mine=el("button",{type:"button",onclick:meMenu},avRing(myName(),myPhoto(),me.uid,68,"#DBDBDB"),el("span",{class:"n"},W(Bq("তুমি","You","Anda","أنت","آپ","Wewe"))));storyEl.appendChild(mine);
+  function stories(){storyEl=el("div",{class:"v5c-stories"});body.appendChild(storyEl);drawStories();watchStories();}
+  function online(uid){var pp=window.AMCHAT&&AMCHAT.profile(uid);var d=pp&&ts(pp.lastSeen);return !!(d&&Date.now()-d.getTime()<4*60000);}
+  function drawStories(){if(!storyEl||!storyEl.isConnected)return;storyEl.innerHTML="";var seen=seenStories(),my=storiesBy(me.uid);
+    var mine=el("button",{type:"button",onclick:meMenu,"aria-label":W(Bq("তুমি · স্টোরি যোগ করো","You · add a story","Anda · tambah cerita","أنت · أضف قصة","آپ · اسٹوری شامل کریں","Wewe · ongeza hadithi"))},avRing(myName(),myPhoto(),me.uid,68,my.length?IGR:"#DBDBDB"),el("span",{class:"add","aria-hidden":"true"},"+"),el("span",{class:"n"},W(Bq("তুমি","You","Anda","أنت","آپ","Wewe"))));storyEl.appendChild(mine);
     var ps=window.AMCHAT&&AMCHAT.profiles?AMCHAT.profiles():{};
+    function rank(p){var st=storiesBy(p.uid);if(st.some(function(x){return !seen[x.id];}))return 3;if(st.length)return 2;return online(p.uid)?1:0;}
     Object.keys(ps).map(function(k){return ps[k];}).filter(function(p){return p&&p.uid&&p.uid!==me.uid;})
-      .sort(function(a,b){return (ts(b.lastSeen)||0)-(ts(a.lastSeen)||0);}).slice(0,30).forEach(function(p){
-        storyEl.appendChild(el("button",{type:"button",onclick:function(){if(window.AMCHAT)AMCHAT.openChat(p.uid);}},avRing(p.name,p.photo,p.uid,68,isActive(p.uid,24)?IGR:"#DBDBDB"),el("span",{class:"n"},p.name||"—")));});}
+      .sort(function(a,b){return (rank(b)-rank(a))||((ts(b.lastSeen)||0)-(ts(a.lastSeen)||0));}).slice(0,40).forEach(function(p){
+        var st=storiesBy(p.uid),uns=st.some(function(x){return !seen[x.id];}),on=online(p.uid);
+        storyEl.appendChild(el("button",{type:"button","aria-label":(p.name||"—")+(on?" · online":""),onclick:function(){if(st.length)viewStories(p.uid);else if(window.AMCHAT)AMCHAT.openChat(p.uid);}},
+          avRing(p.name,p.photo,p.uid,68,st.length?(uns?IGR:"#5E7470"):"rgba(255,255,255,.14)"),on?el("span",{class:"on",title:"online"}):null,el("span",{class:"n"},p.name||"—")));});}
+  // ---- stories: 24-hour text, photo or video updates
+  var storyDocs=[];
+  function seenStories(){try{return JSON.parse(localStorage.getItem("am-st-seen")||"{}");}catch(e){return {};}}
+  function markSeen(id){var s0=seenStories();s0[id]=Date.now();var k=Object.keys(s0);if(k.length>400)k.sort(function(a,b){return s0[a]-s0[b];}).slice(0,k.length-400).forEach(function(x){delete s0[x];});try{localStorage.setItem("am-st-seen",JSON.stringify(s0));}catch(e){}}
+  function storiesBy(uid){var t=Date.now()-864e5;return storyDocs.filter(function(x){var d=ts(x.createdAt);return x.uid===uid&&d&&d.getTime()>t;});}
+  function watchStories(){subUnsub.push(db.collection("stories").where("createdAt",">",new Date(Date.now()-864e5)).orderBy("createdAt").onSnapshot(function(q){
+      storyDocs=q.docs.map(function(d){var x=d.data({serverTimestamps:"estimate"});x.id=d.id;return x;});drawStories();},function(e){console.warn("stories",e);}));
+    if(!watchStories.cleaned){watchStories.cleaned=1;db.collection("stories").where("uid","==",me.uid).get().then(function(q){q.docs.forEach(function(d){var x=d.data(),c=ts(x.createdAt);
+      if(c&&c.getTime()<Date.now()-864e5){delBlobs(d.id,x.media);d.ref.delete().catch(function(){});}});}).catch(function(){});}}
+  // media (videos) are stored in ~550 KB pieces so they fit in Firestore documents
+  var PART=561000,blobCache={};
+  function b64(buf){var u=new Uint8Array(buf),r="",CH=0x8000;for(var i=0;i<u.length;i+=CH)r+=String.fromCharCode.apply(null,u.subarray(i,i+CH));return btoa(r);}
+  function upBlobs(refId,file,prog){return file.arrayBuffer().then(function(buf){var n=Math.max(1,Math.ceil(buf.byteLength/PART)),i=0,mime=file.type||"video/mp4";
+    function next(){if(prog)prog(i/n);if(i>=n)return Promise.resolve({n:n,mime:mime,size:buf.byteLength});var k=i++;
+      return db.collection("blobs").doc(refId+"_"+k).set({uid:me.uid,d:b64(buf.slice(k*PART,(k+1)*PART)),i:k,n:n,ref:refId,mime:mime,createdAt:FV.serverTimestamp()}).then(next);}
+    return next();});}
+  function loadBlobs(refId,m){if(blobCache[refId])return blobCache[refId];var jobs=[];for(var i=0;i<(m.n||1);i++)jobs.push(db.collection("blobs").doc(refId+"_"+i).get());
+    blobCache[refId]=Promise.all(jobs).then(function(qs){var parts=qs.map(function(x){if(!x.exists)throw new Error("missing");var b=atob(x.data().d),u=new Uint8Array(b.length);for(var j=0;j<b.length;j++)u[j]=b.charCodeAt(j);return u;});
+      return URL.createObjectURL(new Blob(parts,{type:m.mime||"video/mp4"}));});
+    blobCache[refId].catch(function(){delete blobCache[refId];});return blobCache[refId];}
+  function delBlobs(refId,m){if(!m||!m.n)return Promise.resolve();var b=db.batch();for(var i=0;i<m.n;i++)b.delete(db.collection("blobs").doc(refId+"_"+i));return b.commit().catch(function(e){console.warn("blobs",e);});}
+  function vidInfo(file){return new Promise(function(res){var u=URL.createObjectURL(file),v=document.createElement("video"),fin=false;
+    function done(d){if(fin)return;fin=true;URL.revokeObjectURL(u);res(d);}
+    v.muted=true;v.playsInline=true;v.preload="auto";
+    v.onloadeddata=function(){try{v.currentTime=Math.min(1,(v.duration||2)/3);}catch(e){done({thumb:"",dur:v.duration||0});}};
+    v.onseeked=function(){try{var w=480,h=Math.round(w*((v.videoHeight/v.videoWidth)||9/16));var c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(v,0,0,w,h);done({thumb:c.toDataURL("image/jpeg",.7),dur:v.duration||0,ar:(v.videoWidth/v.videoHeight)||0});}catch(e){done({thumb:"",dur:v.duration||0});}};
+    v.onerror=function(){done({thumb:"",dur:0});};setTimeout(function(){done({thumb:"",dur:v.duration||0});},9000);v.src=u;});}
+  var VMAX=20*1024*1024;
+  function pickVideo(max,cb){var fi=el("input",{type:"file",accept:"video/*",hidden:true});document.body.appendChild(fi);
+    fi.onchange=function(){var f=fi.files&&fi.files[0];fi.remove();if(!f)return;
+      if(f.size>max){alert(W(Bq("ভিডিওটা অনেক বড় — সর্বোচ্চ ","This video is too large — the limit is ","Video terlalu besar — had ","الفيديو كبير جدًا — الحد ","ویڈیو بہت بڑی ہے — حد ","Video ni kubwa mno — kikomo "))+Math.round(max/1048576)+" MB. "+W(Bq("ছোট করে বা কম রেজোলিউশনে রেকর্ড করে আবার চেষ্টা করো।","Trim it or record at a lower resolution and try again.","Potong atau rakam resolusi rendah.","قصّه أو سجّل بدقة أقل.","چھوٹی کریں یا کم ریزولوشن میں ریکارڈ کریں۔","Ifupishe au rekodi kwa ubora mdogo.")));return;}
+      cb(f);};fi.click();}
+  function addStory(){if(me&&me.isAnonymous){needGoogle();return;}
+    var box=el("div",{class:"v5st-new"});var sh=null;
+    function opt(ic,lbl,sub,fn){box.appendChild(el("button",{type:"button",onclick:function(){fn();}},el("span",{class:"ic"},ic),el("span",null,el("b",null,lbl),el("small",null,sub))));}
+    opt("✍️",W(Bq("লেখা","Text","Teks","نص","متن","Maandishi")),W(Bq("রঙিন কার্ডে একটা কথা","A line on a colour card","Kad berwarna","بطاقة ملونة","رنگین کارڈ","Kadi ya rangi")),function(){sh.close();storyText();});
+    opt("🖼️",W(Bq("ছবি","Photo","Foto","صورة","تصویر","Picha")),W(Bq("গ্যালারি বা ক্যামেরা থেকে","From gallery or camera","Dari galeri","من المعرض","گیلری سے","Kutoka galeria")),function(){var fi=el("input",{type:"file",accept:"image/*",hidden:true});document.body.appendChild(fi);
+      fi.onchange=function(){var f=fi.files&&fi.files[0];fi.remove();if(!f)return;sh.close();shrinkImg(f).then(function(d){storyMedia({image:d});}).catch(function(){toast(T("c.error"));});};fi.click();});
+    opt("🎬",W(Bq("ভিডিও","Video","Video","فيديو","ویڈیو","Video")),W(Bq("সর্বোচ্চ ১৫ MB","Up to 15 MB","Sehingga 15 MB","حتى 15 MB","15 MB تک","Hadi MB 15")),function(){pickVideo(15*1048576,function(f){sh.close();storyMedia({video:f});});});
+    sh=sheetV4(W(Bq("নতুন স্টোরি · ২৪ ঘণ্টা থাকবে","New story · stays 24 hours","Cerita baharu · 24 jam","قصة جديدة · 24 ساعة","نئی اسٹوری · 24 گھنٹے","Hadithi mpya · saa 24")),box);}
+  function storyText(){var bg=0;var ta=el("textarea",{class:"v5c-ta",maxlength:"300",rows:"3",placeholder:W(Bq("কী বলতে চাও?","What's on your mind?","Apa di fikiran?","بماذا تفكر؟","کیا کہنا ہے؟","Unawaza nini?"))});
+    var pv=el("div",{class:"v5st-pv"});function draw(){var c=PAL[bg];pv.style.background=c[0];pv.style.color=c[1];pv.textContent=ta.value||"…";}
+    var sw=el("div",{class:"v5c-sw"});PAL.forEach(function(c,i){sw.appendChild(el("button",{type:"button","aria-checked":String(i===bg),role:"radio",style:"background:"+c[0]+";color:"+c[1],onclick:function(){bg=i;sw.querySelectorAll("button").forEach(function(b,j){b.setAttribute("aria-checked",String(j===i));});draw();}},"Aa"));});
+    ta.oninput=draw;draw();var go=el("button",{class:"v5c-blue",type:"button"},W(Bq("স্টোরি দাও","Share story","Kongsi cerita","شارك القصة","اسٹوری شیئر","Shiriki")));
+    var sh=sheetV4(W(Bq("লেখা স্টোরি","Text story","Cerita teks","قصة نصية","متن اسٹوری","Hadithi ya maandishi")),el("div",{class:"v5c-comp"},pv,ta,sw,go));
+    go.onclick=function(){var t=ta.value.trim();if(!t){ta.focus();return;}go.disabled=true;
+      db.collection("stories").add({uid:me.uid,name:myName(),photo:myPhoto(),type:"text",text:t.slice(0,300),bg:bg,createdAt:FV.serverTimestamp()}).then(function(){sh.close();toast("✓");}).catch(function(e){go.disabled=false;oops(e);});};}
+  function storyMedia(m){var cap=el("input",{class:"v5c-in",maxlength:"200",placeholder:W(Bq("ক্যাপশন (ঐচ্ছিক)","Caption (optional)","Kapsyen (pilihan)","تعليق (اختياري)","کیپشن (اختیاری)","Maelezo (hiari)"))});
+    var pv=el("div",{class:"v5st-pv media"});var url=null;
+    if(m.image)pv.appendChild(el("img",{src:m.image,alt:""}));else{url=URL.createObjectURL(m.video);pv.appendChild(el("video",{src:url,muted:true,autoplay:true,loop:true,playsinline:true}));}
+    var go=el("button",{class:"v5c-blue",type:"button"},W(Bq("স্টোরি দাও","Share story","Kongsi cerita","شارك القصة","اسٹوری شیئر","Shiriki")));
+    var sh=sheetV4(W(Bq("নতুন স্টোরি","New story","Cerita baharu","قصة جديدة","نئی اسٹوری","Hadithi mpya")),el("div",{class:"v5c-comp"},pv,cap,go));
+    go.onclick=function(){go.disabled=true;var ref=db.collection("stories").doc(),d={uid:me.uid,name:myName(),photo:myPhoto(),type:m.image?"image":"video",text:cap.value.trim().slice(0,200),createdAt:FV.serverTimestamp()};
+      var job=m.image?Promise.resolve(d.image=m.image):vidInfo(m.video).then(function(inf){return upBlobs(ref.id,m.video,function(f){go.textContent="⬆ "+num(Math.round(f*100))+"%";}).then(function(r){d.media={n:r.n,mime:r.mime,size:r.size,thumb:inf.thumb,dur:Math.round(inf.dur||0)};});});
+      job.then(function(){return ref.set(d);}).then(function(){if(url)URL.revokeObjectURL(url);sh.close();toast("✓");}).catch(function(e){go.disabled=false;go.textContent=W(Bq("আবার চেষ্টা করো","Try again","Cuba lagi","حاول مجددًا","دوبارہ کوشش","Jaribu tena"));if(m.video)delBlobs(ref.id,{n:99});oops(e);});};}
+  function viewStories(uid,startId){var list=storiesBy(uid);if(!list.length)return;var seen=seenStories(),idx=0;
+    if(startId)idx=Math.max(0,list.findIndex(function(x){return x.id===startId;}));else{var f=list.findIndex(function(x){return !seen[x.id];});if(f>0)idx=f;}
+    var ov=el("div",{class:"v5sv",role:"dialog","aria-modal":"true"}),bars=el("div",{class:"bars"}),stage=el("div",{class:"stg"}),p=list[0],raf=null,t0=0,dur=5000,vid=null,paused=false,pausedAt=0;
+    list.forEach(function(){bars.appendChild(el("i",null,el("b")));});
+    var when=el("small",null,""),own=uid===me.uid||isAdmin;
+    var head=el("div",{class:"hd"},avRing(p.name,p.photo,p.uid,38,"transparent"),el("div",{class:"who"},el("b",null,p.name||"—"),when),
+      own?el("button",{type:"button",class:"x","aria-label":T("c.delete"),onclick:function(){var s0=list[idx];if(!confirm(T("c.confirmDelete")))return;delBlobs(s0.id,s0.media);db.collection("stories").doc(s0.id).delete().then(function(){close();}).catch(oops);}},svg(["M4 7h16","M9 7V4.5h6V7","M6.5 7l1 13h9l1-13"],{s:20})):null,
+      el("button",{type:"button",class:"x","aria-label":"✕",onclick:function(){close();}},"✕"));
+    ov.appendChild(bars);ov.appendChild(head);ov.appendChild(stage);
+    function setBars(i,f){[].forEach.call(bars.children,function(b,j){b.firstChild.style.width=(j<i?100:j>i?0:Math.min(100,f*100))+"%";});}
+    function tick(){if(!ov.isConnected)return;if(!paused){var f=vid&&vid.duration?vid.currentTime/vid.duration:(Date.now()-t0)/dur;setBars(idx,f);if(!vid&&f>=1){go(idx+1);return;}}raf=requestAnimationFrame(tick);}
+    function show(i){idx=i;var x=list[i];markSeen(x.id);stage.innerHTML="";vid=null;when.textContent=ago(x.createdAt);t0=Date.now();dur=5000;setBars(i,0);
+      if(x.type==="text"){var c=PAL[(x.bg||0)%PAL.length];stage.appendChild(el("div",{class:"tx",style:"background:"+c[0]+";color:"+c[1]},x.text||""));}
+      else if(x.type==="image"){stage.appendChild(el("img",{src:x.image,alt:""}));if(x.text)stage.appendChild(el("div",{class:"cap"},x.text));}
+      else{var wait=el("div",{class:"ld"},x.media&&x.media.thumb?el("img",{src:x.media.thumb,alt:""}):null,el("span",{class:"sp"}));stage.appendChild(wait);paused=true;
+        loadBlobs(x.id,x.media||{}).then(function(u){if(idx!==i||!ov.isConnected)return;stage.innerHTML="";vid=el("video",{src:u,autoplay:true,playsinline:true});vid.onended=function(){go(idx+1);};stage.appendChild(vid);if(x.text)stage.appendChild(el("div",{class:"cap"},x.text));paused=false;vid.play().catch(function(){vid.muted=true;vid.play().catch(function(){});});})
+          .catch(function(){stage.innerHTML="";stage.appendChild(el("div",{class:"tx"},W(Bq("ভিডিও লোড হয়নি","Couldn't load the video","Gagal memuat video","تعذر تحميل الفيديو","ویڈیو لوڈ نہیں ہوئی","Video haikupakia"))));paused=false;t0=Date.now();});}}
+    function go(i){if(i<0)i=0;if(i>=list.length){close();return;}show(i);}
+    var downAt=0;ov.addEventListener("pointerdown",function(e){if(e.target.closest("button"))return;downAt=Date.now();paused=true;pausedAt=Date.now();if(vid)vid.pause();});
+    ov.addEventListener("pointerup",function(e){if(e.target.closest("button"))return;var held=Date.now()-downAt>350;t0+=Date.now()-pausedAt;paused=false;if(vid)vid.play().catch(function(){});
+      if(!held){if(e.clientX<window.innerWidth*.3)go(idx-1);else go(idx+1);}});
+    function close(fromPop){if(!ov.isConnected)return;cancelAnimationFrame(raf);if(vid)vid.pause();ov.remove();document.body.style.overflow="";window.removeEventListener("popstate",onPop);
+      if(!fromPop)try{if(history.state&&history.state.v5sv)history.back();}catch(e){}drawStories();}
+    function onPop(){close(true);}
+    document.body.appendChild(ov);document.body.style.overflow="hidden";try{history.pushState({v5sv:1},"");}catch(e){}window.addEventListener("popstate",onPop);
+    show(idx);raf=requestAnimationFrame(tick);}
+  X.v5story=function(){addStory();};
   X.v5stories=drawStories;
   function meMenu(){var items=el("div",{class:"v5c-menu"});var sh=null;
     function it(lbl,fn){items.appendChild(el("button",{type:"button",onclick:function(){if(sh)sh.close();fn();}},lbl));}
+    it("➕ "+W(Bq("স্টোরি যোগ করো","Add a story","Tambah cerita","أضف قصة","اسٹوری شامل کریں","Ongeza hadithi")),addStory);
+    if(storiesBy(me.uid).length)it("👁 "+W(Bq("আমার স্টোরি দেখো","View my story","Lihat cerita saya","عرض قصتي","میری اسٹوری","Ona hadithi yangu")),function(){viewStories(me.uid,storiesBy(me.uid)[0].id);});
     it(W(Bq("আমার প্রোফাইল","My profile","Profil saya","ملفي","میری پروفائل","Wasifu wangu")),function(){if(window.AMCHAT&&AMCHAT.profileView)AMCHAT.profileView();});
     it(W(Bq("সেভ করা পোস্ট","Saved posts","Hantaran disimpan","المحفوظات","محفوظ پوسٹس","Yaliyohifadhiwa")),function(){onlySaved=!onlySaved;render();});
     if(isAdmin)it(W(Bq("অ্যাডমিন ড্যাশবোর্ড","Admin dashboard","Papan pemuka admin","لوحة المشرف","ایڈمن ڈیش بورڈ","Dashibodi ya admin")),function(){sub="admin";render();});
@@ -399,11 +487,15 @@
     more.onclick=function(){var m=el("div",{class:"v5c-menu"});var sh=null;function it(l,f){m.appendChild(el("button",{type:"button",onclick:function(){if(sh)sh.close();f();}},l));}
       if(p.text)it(W(Bq("লেখা কপি করো","Copy text","Salin teks","نسخ النص","متن کاپی","Nakili maandishi")),function(){try{navigator.clipboard.writeText(p.text);toast("✓");}catch(e){}});
       if(isAdmin)it(p.pinned?T("c.unpin"):T("c.pin"),function(){db.collection("posts").doc(p.id).update({pinned:!p.pinned}).catch(oops);});
-      if(mine||isAdmin)it(T("c.delete"),function(){if(confirm(T("c.confirmDelete")))db.collection("posts").doc(p.id).delete().catch(oops);});
+      if(mine||isAdmin)it("✏️ "+W(Bq("এডিট করো","Edit","Sunting","تعديل","ترمیم","Hariri")),function(){editPost(p);});
+      if(mine||isAdmin)it(T("c.delete"),function(){if(confirm(T("c.confirmDelete")))db.collection("posts").doc(p.id).delete().then(function(){if(p.video)delBlobs(p.id,p.video);}).catch(oops);});
       sh=sheetV4(p.name||"",m);};
     card.appendChild(el("div",{class:"ph"},avRing(p.name,p.photo,p.uid,36,p.announce||isActive(p.uid,24)?IGR:"#DBDBDB"),el("div",{class:"who"},el("b",null,p.name||"—"),el("small",null,subl)),more));
     var text=String(p.text||""),media;
-    if(p.image){media=el("div",{class:"media"},el("img",{src:p.image,alt:"",loading:"lazy"}));}
+    if(p.video){media=el("div",{class:"media vid"},p.video.thumb?el("img",{src:p.video.thumb,alt:"",loading:"lazy"}):null,el("button",{type:"button",class:"play","aria-label":W(Bq("ভিডিও চালাও","Play video","Main video","تشغيل","ویڈیو چلائیں","Cheza video"))},svg(["M8 5.5v13l11-6.5z"],{s:30,fill:"currentColor"})),
+        p.video.dur?el("span",{class:"dur"},Math.floor(p.video.dur/60)+":"+String(p.video.dur%60).padStart(2,"0")):null);
+      media.querySelector(".play").onclick=function(e){e.stopPropagation();var mb=media;mb.classList.add("ld");loadBlobs(p.id,p.video).then(function(u){mb.innerHTML="";mb.classList.remove("ld");var v=el("video",{src:u,controls:true,autoplay:true,playsinline:true});mb.appendChild(v);v.play().catch(function(){});}).catch(function(){mb.classList.remove("ld");toast(T("c.error"));});};}
+    else if(p.image){media=el("div",{class:"media"},el("img",{src:p.image,alt:"",loading:"lazy"}));}
     else if(text&&text.length<=220){var pal=PAL[(p.bg!=null?p.bg:hashN(p.id))%PAL.length];var lines=text.split(/\n+/);var head=lines.shift();
       if(head.length>90&&!lines.length){lines=[head];head="";}
       media=el("div",{class:"media sq",style:"background:"+pal[0]+";color:"+pal[1]},svg(p.announce?P.mosque:hashN(p.id)%2?P.book:P.heart,{s:56,w:"1.4"}),head?el("div",{class:"h"},head):null,lines.length?el("div",{class:"s"},lines.join(" · ")):null);text="";}
@@ -449,23 +541,33 @@
       .catch(function(e){if(e&&e.code==="auth/credential-already-in-use"&&e.credential){return auth.signInWithCredential(e.credential).then(function(){if(sh)sh.close();});}
         go.disabled=false;if(e&&/popup-closed|cancelled-popup/.test(e.code||""))return;oops(e);});};}
   X.v5needGoogle=function(){needGoogle();};
-  function compose(ann){if(me&&me.isAnonymous){needGoogle();return;}var bg=0,img="";var ta=el("textarea",{class:"v5c-ta",maxlength:"3000",rows:"4",placeholder:T("c.write")});
+  function compose(ann){if(me&&me.isAnonymous){needGoogle();return;}var bg=0,img="",vfile=null,vurl=null;var ta=el("textarea",{class:"v5c-ta",maxlength:"3000",rows:"4",placeholder:T("c.write")});
     var prev=el("div",{class:"v5c-prev"});var fi=el("input",{type:"file",accept:"image/*",hidden:true});
     var sw=el("div",{class:"v5c-sw",role:"radiogroup","aria-label":W(Bq("কার্ডের রং","Card colour","Warna kad","لون البطاقة","کارڈ کا رنگ","Rangi ya kadi"))});
     PAL.forEach(function(c,i){sw.appendChild(el("button",{type:"button",role:"radio","aria-checked":String(i===bg),"aria-label":String(i+1),style:"background:"+c[0]+";color:"+c[1],onclick:function(){bg=i;sw.querySelectorAll("button").forEach(function(b,j){b.setAttribute("aria-checked",String(j===i));});draw();}},"Aa"));});
-    function draw(){prev.innerHTML="";if(img){prev.appendChild(el("img",{src:img,alt:""}));prev.appendChild(el("button",{type:"button",class:"x","aria-label":"✕",onclick:function(){img="";draw();}},"✕"));return;}
+    function draw(){prev.innerHTML="";if(vfile){prev.appendChild(el("video",{src:vurl,muted:true,autoplay:true,loop:true,playsinline:true}));prev.appendChild(el("button",{type:"button",class:"x","aria-label":"✕",onclick:function(){URL.revokeObjectURL(vurl);vfile=null;vurl=null;draw();}},"✕"));return;}
+      if(img){prev.appendChild(el("img",{src:img,alt:""}));prev.appendChild(el("button",{type:"button",class:"x","aria-label":"✕",onclick:function(){img="";draw();}},"✕"));return;}
       var t=ta.value.trim();if(t&&t.length<=220){var pal=PAL[bg],ls=t.split(/\n+/),h=ls.shift();prev.appendChild(el("div",{class:"sq",style:"background:"+pal[0]+";color:"+pal[1]},el("div",{class:"h"},h),ls.length?el("div",{class:"s"},ls.join(" · ")):null));}}
     ta.oninput=draw;
-    fi.onchange=function(){var f=fi.files&&fi.files[0];if(!f)return;shrinkImg(f).then(function(d){img=d;draw();}).catch(function(){toast(T("c.error"));});fi.value="";};
+    fi.onchange=function(){var f=fi.files&&fi.files[0];if(!f)return;shrinkImg(f).then(function(d){img=d;if(vfile){URL.revokeObjectURL(vurl);vfile=null;}draw();}).catch(function(){toast(T("c.error"));});fi.value="";};
     var annCb=el("input",{type:"checkbox"});if(ann===true)annCb.checked=true;
     var go=el("button",{class:"v5c-blue",type:"button"},T("c.post"));
-    var bodyEl=el("div",{class:"v5c-comp"},ta,el("div",{class:"row"},el("button",{type:"button",class:"v5c-pill",onclick:function(){fi.click();}},svg(P.img,{s:18}),W(Bq("ছবি যোগ করো","Add photo","Tambah foto","أضف صورة","تصویر شامل کریں","Ongeza picha"))),sw),prev,fi,
+    var bodyEl=el("div",{class:"v5c-comp"},ta,el("div",{class:"row"},el("button",{type:"button",class:"v5c-pill",onclick:function(){fi.click();}},svg(P.img,{s:18}),W(Bq("ছবি","Photo","Foto","صورة","تصویر","Picha"))),
+      el("button",{type:"button",class:"v5c-pill",onclick:function(){pickVideo(VMAX,function(f){if(vurl)URL.revokeObjectURL(vurl);vfile=f;vurl=URL.createObjectURL(f);img="";draw();});}},svg(["M4.2 7h10.6a1.7 1.7 0 0 1 1.7 1.7v6.6a1.7 1.7 0 0 1-1.7 1.7H4.2a1.7 1.7 0 0 1-1.7-1.7V8.7A1.7 1.7 0 0 1 4.2 7z","M16.5 10.4l5-2.9v9l-5-2.9"],{s:18}),W(Bq("ভিডিও","Video","Video","فيديو","ویڈیو","Video")))),
+      el("div",{class:"row"},sw),prev,fi,
       isAdmin?el("label",{class:"chk"},annCb,W(Bq("ঘোষণা হিসেবে পিন করো","Pin as announcement","Semat sebagai pengumuman","تثبيت كإعلان","اعلان کے طور پر پن","Bandika kama tangazo"))):null,go);
     var sh=sheetV4(W(Bq("নতুন পোস্ট","New post","Hantaran baharu","منشور جديد","نئی پوسٹ","Chapisho jipya")),bodyEl);
-    go.onclick=function(){var t=ta.value.trim();if(!t&&!img){ta.focus();return;}go.disabled=true;var a=isAdmin&&annCb.checked;
+    go.onclick=function(){var t=ta.value.trim();if(!t&&!img&&!vfile){ta.focus();return;}go.disabled=true;var a=isAdmin&&annCb.checked;
       var d={uid:me.uid,name:myName(),photo:myPhoto(),text:t,createdAt:FV.serverTimestamp(),announce:a,pinned:a,likes:[],bg:bg};if(img)d.image=img;
-      db.collection("posts").add(d).then(function(){if(sh)sh.close();sub="feed";if(root&&state==="in")render();toast(W(Bq("পোস্ট হয়েছে","Posted","Dihantar","تم النشر","پوسٹ ہو گئی","Imechapishwa")));})
-      .catch(function(e){go.disabled=false;if(e&&e.code==="permission-denied"&&img)alert(W(Bq("ছবিসহ পোস্টের জন্য Firebase-এ নতুন Firestore rules প্রকাশ (Publish) করতে হবে।","Photo posts need the new Firestore rules to be published in Firebase.","Hantaran foto memerlukan peraturan Firestore baharu.","تحتاج منشورات الصور إلى نشر قواعد Firestore الجديدة.","تصویری پوسٹ کے لیے نئے Firestore rules شائع کریں۔","Picha zinahitaji sheria mpya za Firestore.")));else oops(e);});};}
+      var ref=db.collection("posts").doc(),label=go.textContent;
+      var job=!vfile?Promise.resolve():vidInfo(vfile).then(function(inf){return upBlobs(ref.id,vfile,function(f){go.textContent="⬆ "+num(Math.round(f*100))+"%";}).then(function(r){d.video={n:r.n,mime:r.mime,size:r.size,thumb:inf.thumb,dur:Math.round(inf.dur||0)};});});
+      job.then(function(){return ref.set(d);}).then(function(){if(vurl)URL.revokeObjectURL(vurl);if(sh)sh.close();sub="feed";if(root&&state==="in")render();toast(W(Bq("পোস্ট হয়েছে","Posted","Dihantar","تم النشر","پوسٹ ہو گئی","Imechapishwa")));})
+      .catch(function(e){go.disabled=false;go.textContent=label;if(vfile)delBlobs(ref.id,{n:Math.ceil(vfile.size/PART)});if(e&&e.code==="permission-denied"&&(img||vfile))alert(W(Bq("ছবিসহ পোস্টের জন্য Firebase-এ নতুন Firestore rules প্রকাশ (Publish) করতে হবে।","Photo posts need the new Firestore rules to be published in Firebase.","Hantaran foto memerlukan peraturan Firestore baharu.","تحتاج منشورات الصور إلى نشر قواعد Firestore الجديدة.","تصویری پوسٹ کے لیے نئے Firestore rules شائع کریں۔","Picha zinahitaji sheria mpya za Firestore.")));else oops(e);});};}
+  function editPost(p){var ta=el("textarea",{class:"v5c-ta",maxlength:"3000",rows:"5"});ta.value=p.text||"";
+    var go=el("button",{class:"v5c-blue",type:"button"},W(Bq("সেভ করো","Save","Simpan","حفظ","محفوظ کریں","Hifadhi")));
+    var sh=sheetV4(W(Bq("পোস্ট এডিট","Edit post","Sunting hantaran","تعديل المنشور","پوسٹ میں ترمیم","Hariri chapisho")),el("div",{class:"v5c-comp"},ta,go));setTimeout(function(){ta.focus();},250);
+    go.onclick=function(){var t=ta.value.trim();if(!t){ta.focus();return;}if(t===(p.text||"")){sh.close();return;}go.disabled=true;
+      db.collection("posts").doc(p.id).update({text:t,edited:true}).then(function(){sh.close();toast("✓");}).catch(function(e){go.disabled=false;oops(e);});};}
   // ---- activity (likes on my posts)
   function activity(){var box=el("div",{class:"v5c-act"});var mineP=feedDocs.filter(function(p){return p.uid===me.uid&&(p.likes||[]).length;});
     if(!mineP.length)box.appendChild(el("p",{class:"mut"},W(Bq("এখনো কোনো নতুন অ্যাক্টিভিটি নেই","No activity yet","Tiada aktiviti lagi","لا يوجد نشاط بعد","ابھی کوئی سرگرمی نہیں","Hakuna shughuli bado"))));

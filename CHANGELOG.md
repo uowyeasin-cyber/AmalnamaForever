@@ -2,6 +2,15 @@
 
 All notable changes to Amalnama. Dates are in 2026.
 
+## [12.0.0] - 2026-10-06
+### Added
+- **Mazlum Corner**: the latest news, videos and lectures about oppressed Muslims in Palestine, Sudan, Yemen, Iran, the Uyghur region, Kashmir and among the Rohingya. Every update shows the oppressor, the oppressed, the place, the cause and what we can do (dua, verified charities, sources). It is the first category in Media, and a round live Palestine-flag button on the More page. Content refreshes every 2 hours.
+- Media: new Golden age & innovation, Debates and Ummah affairs shelves; more lecture and debate channels; the big player now opens on fresh, unwatched videos.
+- Community: edit posts, green online dots, 24-hour stories (text, photo, video) and video posts.
+### Changed
+- Screen time puts the phone total first, with quick +15m/+1h entry.
+- Spacing under the Family card on Finance.
+
 ## [11.0.0] - 2026-10-06
 ### Added
 - **Qibla compass**: live compass that points to the Kaaba. Shows the bearing and the distance to Makkah, glows and vibrates when you are aligned, and falls back to your Azan city when GPS is off.
