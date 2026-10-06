@@ -79,6 +79,7 @@ for (const [url, name, lang] of RSS) {
 }
 // 3 · news videos
 for (const [id, name] of YT) {
+  await new Promise((r) => setTimeout(r, 400));
   const x = await get("https://www.youtube.com/feeds/videos.xml?channel_id=" + id); if (!x) { console.error("yt skip", name); continue; }
   for (const e of x.split("<entry>").slice(1, 16)) {
     const v = (e.match(/<yt:videoId>([^<]+)/) || [])[1], t = tag(e, "title"), d = tag(e, "media:description");
@@ -96,6 +97,10 @@ if (existsSync("videos.json")) {
   } catch (e) { console.error("videos.json", e.message); }
 }
 
+// videos from the last run stay for a while if a channel failed this time
+if (existsSync("mazlum.json")) {
+  try { for (const it of JSON.parse(readFileSync("mazlum.json", "utf8")).items || []) if (it.k !== "article" && Date.now() - Date.parse(it.pub) < MAXAGE) push(it); } catch (e) { /* ignore */ }
+}
 out.sort((a, b) => (b.pub || "").localeCompare(a.pub || ""));
 // keep it light: at most 45 items per region
 const per = {}, items = out.filter((it) => (per[it.r] = (per[it.r] || 0) + 1) <= 45);
